@@ -1,0 +1,25 @@
+template:
+  params:
+    bootswatch: cerulean
+
+reference:
+- title: "wraper functions for processx::run()"
+- contents:
+  - sep_by_blank
+  - cmd_run
+  - cat_stdout
+  - cat_stderr
+  - run_cat_stderr
+  - run_cat_stdout
+- title: "misc functions for featureCounts"
+- contents:
+  - fC_read_count
+  - fC_read_summary
+  - fC_rename_col
+  - fC_merge_tbl_li
+  - fC_calc
+- title: "Calculate RPM/RPKM/TPM"
+- contents:
+  - calc_rpm
+  - calc_rpkm
+  - calc_tpm
