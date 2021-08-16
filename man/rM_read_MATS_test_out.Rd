@@ -4,10 +4,16 @@
 \alias{rM_read_MATS_test_out}
 \title{Read rMATS output file (.MATS.JC.txt/.MATS.JCEC.txt)}
 \usage{
-rM_read_MATS_test_out(fpath)
+rM_read_MATS_test_out(fpath, ..., convert_fpath, extra_col)
 }
 \arguments{
 \item{fpath}{path to file}
+
+\item{...}{ignored}
+
+\item{convert_fpath}{a function convert to file name}
+
+\item{extra_col}{named vector of additional column names and column spec. characters}
 }
 \description{
 Read rMATS output file (.MATS.JC.txt/.MATS.JCEC.txt)

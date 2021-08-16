@@ -48,12 +48,25 @@ MATS.JCEC_COLTYPES <-
 
 #' Read rMATS output file (.MATS.JC.txt/.MATS.JCEC.txt)
 #' @param fpath path to file
+#' @param ... ignored
+#' @param convert_fpath a function convert to file name
+#' @param extra_col named vector of additional column names and column spec. characters
 #' @export
 #'
-rM_read_MATS_test_out <- function(fpath) {
+rM_read_MATS_test_out <- function(fpath, ..., convert_fpath, extra_col) {
   cn_list <- c(MATS.JC_COLNAMES, MATS.JCEC_COLNAMES)
   ct_list <- c(MATS.JC_COLTYPES, MATS.JCEC_COLTYPES)
-  temp_file <- fs::path_file(path = fpath)
+
+  if(!missing(extra_col)) {
+    cn_list <- purrr::map(cn_list, ~ c(.x, names(extra_col)))
+    ct_list <- purrr::map(ct_list, ~ paste0(c(.x, extra_col), collapse = ""))
+  }
+
+  if(missing(convert_fpath)) {
+    temp_file <- fs::path_file(path = fpath)
+  } else {
+    temp_file <- convert_fpath(fpath)
+  }
 
   # Check column name
   cn <- cn_list[[temp_file]]
