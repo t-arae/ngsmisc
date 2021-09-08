@@ -18,6 +18,16 @@ reference:
   - fC_rename_col
   - fC_merge_tbl_li
   - fC_calc
+- title: "misc functions for rMATS"
+- contents:
+  - rM_read_MATS_test_out
+- title: "misc functions for clusterProfiler"
+- contents:
+  - clP_write_li_ego
+  - clP_write_li_ego_as_csv
+  - clP_plot_bar
+  - clP_wrap_barplots
+  - clP_write_li_ego_as_bar
 - title: "Calculate RPM/RPKM/TPM"
 - contents:
   - calc_rpm

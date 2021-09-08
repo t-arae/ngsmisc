@@ -1,4 +1,4 @@
-
+##### rMATS.(JC|JCEC).txt column specs ----------------------------------------
 
 return_MATS_COLUMN <- function(...) {
   part1 <- c("ID", "GeneID", "geneSymbol", "chr", "strand")
@@ -45,6 +45,9 @@ MATS.JCEC_COLNAMES <-
 MATS.JCEC_COLTYPES <-
   MATS.JC_COLTYPES %>%
   purrr::set_names(~ stringr::str_replace(.x, "JC", "JCEC"))
+
+
+##### functions for manipulate rMATS.(JC|JCEC).txt -----------------------------
 
 #' Read rMATS output file (.MATS.JC.txt/.MATS.JCEC.txt)
 #' @param fpath path to file
