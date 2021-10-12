@@ -71,6 +71,8 @@ rM_read_MATS_test_out <- function(fpath, ..., convert_fpath, extra_col) {
     temp_file <- convert_fpath(fpath)
   }
 
+  if(!any(names(cn_list) %in% temp_file)) stop("invalid filename")
+
   # Check column name
   cn <- cn_list[[temp_file]]
   header <-
@@ -84,6 +86,129 @@ rM_read_MATS_test_out <- function(fpath, ..., convert_fpath, extra_col) {
   # colnames(df) <- cn
   df
 }
+
+##### functions for plotting ---------------------------------------------------
+
+#' Filter MATS tibble list by AGI
+#' @param tbl_MATS A MATS event tibble
+#' @param AGI Character vector containing AGI interested
+#' @export
+rM_filter_by_AGI <- function(tbl_MATS, AGI) {
+  GeneID <- NULL
+  dplyr::filter(tbl_MATS, GeneID %in% AGI)
+}
+
+rM_filter_by_count <- function(tbl_MATS, f) {
+  counts <-
+    tbl_MATS[, 7:10] %>%
+    dplyr::rowwise() %>%
+    dplyr::group_split() %>%
+    lapply(function(x) paste(unlist(x), collapse = ",")) %>%
+    stringr::str_split(",") %>%
+    lapply(as.integer)
+
+  dplyr::filter(tbl_MATS, purrr::map_lgl(counts, ~ f(.x))
+}
+
+#' Extract event type from file path
+#' @param path file path
+#' @export
+rM_extract_event_type <- function(path) {
+  stringr::str_extract(fs::path_file(path), "SE|A[35]SS|MXE|RI")
+}
+
+#' Select some columns to plotting
+#' @inheritParams rM_filter_by_AGI
+#' @param event_type AS event type
+#' @export
+rM_select_switch_start_end_col <- function(tbl_MATS, event_type) {
+  ID <- GeneID <- chr <- strand <- IJC_SAMPLE_1 <- SJC_SAMPLE_1 <-
+    IJC_SAMPLE_2 <- SJC_SAMPLE_2 <- IncFormLen <- SkipFormLen <-
+    PValue <- FDR <- IncLevel1 <- IncLevel2 <- IncLevelDifference <-
+    start <- end <- NULL
+
+  start_end <-
+    dplyr::case_when(
+      event_type == "SE" ~ c("exonStart_0base", "exonEnd"),
+      event_type == "A5SS" ~ c("longExonStart_0base", "longExonEnd"),
+      event_type == "A3SS" ~ c("longExonStart_0base", "longExonEnd"),
+      event_type == "MXE" ~ c("1stExonStart_0base", "1stExonEnd"),
+      event_type == "RI" ~ c("upstreamEE", "downstreamES")
+    )
+  dplyr::select(
+    tbl_MATS, ID, GeneID, chr, strand,
+    start = start_end[1], end = start_end[2],
+    IJC_SAMPLE_1, SJC_SAMPLE_1, IJC_SAMPLE_2, SJC_SAMPLE_2,
+    IncFormLen, SkipFormLen, PValue, FDR,
+    IncLevel1, IncLevel2, IncLevelDifference
+  ) %>%
+    dplyr::mutate(
+      ID  = ID,
+      start = start,
+      end = end,
+      IncFormLen = IncFormLen,
+      SkipFormLen = SkipFormLen,
+      PValue = PValue,
+      FDR = FDR,
+      IncLevelDifference = IncLevelDifference,
+      event_type
+    )
+}
+
+#' Create tibble containing splice site info from tbl_MATS
+#' @inheritParams rM_select_switch_start_end_col
+#' @export
+rM_make_tbl_splice_site <- function(tbl_MATS, event_type) {
+  shortEE <- longExonEnd <- flankingES <- IncLevel1 <- IncLevel2 <-
+    se1 <- coord <- name <- variant <- upstreamEE <- exonEnd <-
+    exonStart_0base <- downstreamES <- ss11 <- se11 <- se21 <- NULL
+
+  # A5SS and A3SS
+  if(any(event_type %in% c("A5SS", "A3SS"))) {
+    tbl_temp <-
+      dplyr::select(tbl_MATS,
+                    ss1 = shortEE, ss2 = longExonEnd, se1 = flankingES,
+                    IncLevel1, IncLevel2) %>%
+      dplyr::mutate(se1 = se1 + 1L, se2 = se1) %>%
+      tidyr::pivot_longer(cols = -c(IncLevel1, IncLevel2), values_to = "coord") %>%
+      dplyr::mutate(
+        coord = as.integer(coord),
+        variant = stringr::str_sub(name, -1),
+        g = variant
+      )
+  } else if(event_type == "SE") {
+    tbl_temp <-
+      dplyr::select(tbl_MATS,
+                    ss11 = upstreamEE, ss21 = exonEnd,
+                    se11 = exonStart_0base, se21 = downstreamES,
+                    IncLevel1, IncLevel2) %>%
+      dplyr::mutate(ss12 = ss11,
+                    se11 = se11 + 1L,
+                    se21 = se21 + 1L,
+                    se12 = se21) %>%
+      tidyr::pivot_longer(cols = -c(IncLevel1, IncLevel2), values_to = "coord") %>%
+      dplyr::mutate(
+        coord = as.integer(coord),
+        variant = stringr::str_sub(name, -1),
+        g = stringr::str_sub(name, -2, -1)
+      )
+  } else if(event_type == "RI") {
+    tbl_temp <-
+      dplyr::select(tbl_MATS, ss1 = upstreamEE, se1 = downstreamES,
+                    IncLevel1, IncLevel2) %>%
+      # purrr::modify_at(1:2, as.integer) %>%
+      dplyr::mutate(se1 = se1 + 1L) %>%
+      tidyr::pivot_longer(cols = -c(IncLevel1, IncLevel2), values_to = "coord") %>%
+      dplyr::mutate(
+        coord = as.integer(coord),
+        variant = "skip intron",
+        g = variant
+      )
+  }
+  return(tbl_temp)
+}
+
+
 # rM_read_MATS_test_out(inf) %>% dplyr::glimpse()
 #
 #
