@@ -21,7 +21,8 @@ Imports:
     S4Vectors,
     stats,
     stringr,
-    tibble
+    tibble,
+    tidyr
 Suggests: 
     enrichplot,
     clusterProfiler,

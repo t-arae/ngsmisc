@@ -80,16 +80,16 @@ rM_read_MATS_test_out <- function(fpath, ..., convert_fpath, extra_col) {
     strsplit(split = "\t")
   if(!identical(cn, header[[1]])) stop("found column name mismatch")
 
-  df <- suppressWarnings(
-    readr::read_tsv(file = fpath, col_types = ct_list[[temp_file]])
-  )
-  # colnames(df) <- cn
+  df <- suppressMessages(suppressWarnings(
+    readr::read_tsv(file = fpath, name_repair = "minimal",
+                    col_select = -1, col_types = ct_list[[temp_file]])
+  ))
   df
 }
 
 ##### functions for plotting ---------------------------------------------------
 
-#' Filter MATS tibble list by AGI
+#' Filter MATS tibble by AGI
 #' @param tbl_MATS A MATS event tibble
 #' @param AGI Character vector containing AGI interested
 #' @export
@@ -98,16 +98,21 @@ rM_filter_by_AGI <- function(tbl_MATS, AGI) {
   dplyr::filter(tbl_MATS, GeneID %in% AGI)
 }
 
-rM_filter_by_count <- function(tbl_MATS, f) {
+#' Filter MATS tibble by function
+#' @param tbl_MATS A MATS event tibble
+#' @param filter_func A function which receive a vector of count data and return a bool.
+#' @export
+rM_filter_by_count <- function(tbl_MATS, filter_func) {
+  count_col <- c("IJC_SAMPLE_1", "SJC_SAMPLE_1", "IJC_SAMPLE_2", "SJC_SAMPLE_2")
   counts <-
-    tbl_MATS[, 7:10] %>%
+    tbl_MATS[, count_col] %>%
     dplyr::rowwise() %>%
     dplyr::group_split() %>%
     lapply(function(x) paste(unlist(x), collapse = ",")) %>%
     stringr::str_split(",") %>%
     lapply(as.integer)
 
-  dplyr::filter(tbl_MATS, purrr::map_lgl(counts, ~ f(.x))
+  dplyr::filter(tbl_MATS, purrr::map_lgl(counts, ~ filter_func(.x)))
 }
 
 #' Extract event type from file path
