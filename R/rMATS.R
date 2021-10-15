@@ -98,7 +98,7 @@ rM_filter_by_AGI <- function(tbl_MATS, AGI) {
   dplyr::filter(tbl_MATS, GeneID %in% AGI)
 }
 
-#' Filter MATS tibble by function
+#' Filter MATS tibble by readcount filtering function
 #' @param tbl_MATS A MATS event tibble
 #' @param filter_func A function which receive a vector of count data and return a bool.
 #' @export
@@ -113,6 +113,31 @@ rM_filter_by_count <- function(tbl_MATS, filter_func) {
     lapply(as.integer)
 
   dplyr::filter(tbl_MATS, purrr::map_lgl(counts, ~ filter_func(.x)))
+}
+
+#' Mutate a count stat column to MATS tibble
+#' @param tbl_MATS A MATS event tibble
+#' @param convert_func A function which receive a vector of count data and return a vector.
+#' @param stat_name A string. if it is specified, it will be used for column name.
+#' @export
+rM_mutate_count_stat <- function(tbl_MATS, convert_func, stat_name) {
+  if(missing(stat_name)) stat_name <- "count_stat"
+  count_col <- c("IJC_SAMPLE_1", "SJC_SAMPLE_1", "IJC_SAMPLE_2", "SJC_SAMPLE_2")
+  counts <-
+    tbl_MATS[, count_col] %>%
+    dplyr::rowwise() %>%
+    dplyr::group_split() %>%
+    lapply(function(x) paste(unlist(x), collapse = ",")) %>%
+    stringr::str_split(",") %>%
+    lapply(as.integer)
+
+  tbl <-
+    dplyr::mutate(
+      tbl_MATS,
+      temp = unlist(purrr::map(counts, ~ convert_func(.x)))
+    )
+  colnames(tbl)[length(tbl)] <- stat_name
+  tbl
 }
 
 #' Extract event type from file path
