@@ -79,7 +79,7 @@ integer_breaks <- function(n = 5, ...) {
 #' @param string A vector of strings.
 #' @param w A number of string width to wrap.
 #'
-wrap_strings <- function(string, w = 50) {
+wrap_strings <- function(string, w = 40) {
   as.character(string) %>% stringr::str_wrap(width = w)
 }
 

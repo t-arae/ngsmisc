@@ -4,7 +4,7 @@
 \alias{wrap_strings}
 \title{Wrap strings to defined width.}
 \usage{
-wrap_strings(string, w = 50)
+wrap_strings(string, w = 40)
 }
 \arguments{
 \item{string}{A vector of strings.}
