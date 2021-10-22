@@ -22,8 +22,7 @@ Imports:
     stats,
     stringr,
     tibble,
-    tidyr
-Suggests: 
+    tidyr,
     enrichplot,
     clusterProfiler,
     testthat (>= 3.0.0),
