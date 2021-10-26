@@ -15,8 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: install libglpk40
       - run: |
-          apt install libglpk40
+          sudo apt-get install libglpk40
 
       - uses: r-lib/actions/setup-pandoc@v1
 
