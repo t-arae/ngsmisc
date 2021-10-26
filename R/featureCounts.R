@@ -12,7 +12,7 @@ fC_read_count <- function(fpath) {
   # Check the first of lines
   fl <- readr::read_lines(file = fpath, n_max = 1L)
   if(!stringr::str_detect(fl, "^# Program:featureCounts v"))
-    stop(paste0(fpath, " is not an output from featureCounts"))
+    stop(paste0("fpath must be an output from featureCounts"))
 
   suppressMessages(
     readr::read_tsv(fpath, skip = 1L, col_types = "cccccii")
@@ -98,7 +98,7 @@ fC_calc_rpm <- function(tbl_fC) {
   dplyr::mutate(
     tbl_fC,
     dplyr::across(
-      .cols = !1:6 & !dplyr::matches("^(rpm|rpkm|tpm)_"),
+      .cols = !seq_len(6) & !dplyr::matches("^(rpm|rpkm|tpm)_"),
       .fns = ~ calc_rpm(readcount = .x),
       .names = "rpm_{.col}"
     ))
@@ -111,7 +111,7 @@ fC_calc_rpkm <- function(tbl_fC) {
   dplyr::mutate(
     tbl_fC,
     dplyr::across(
-      .cols = !1:6 & !dplyr::matches("^(rpm|rpkm|tpm)_"),
+      .cols = !seq_len(6) & !dplyr::matches("^(rpm|rpkm|tpm)_"),
       .fns = ~ calc_rpkm(readcount = .x, len = tbl_fC[[!!len_col]]),
       .names = "rpkm_{.col}"
     ))
@@ -124,7 +124,7 @@ fC_calc_tpm <- function(tbl_fC) {
   dplyr::mutate(
     tbl_fC,
     dplyr::across(
-      .cols = !1:6 & !dplyr::matches("^(rpm|rpkm|tpm)_"),
+      .cols = !seq_len(6) & !dplyr::matches("^(rpm|rpkm|tpm)_"),
       .fns = ~ calc_tpm(readcount = .x, len = tbl_fC[[!!len_col]]),
       .names = "tpm_{.col}"
     ))

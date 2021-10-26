@@ -1,10 +1,10 @@
 
 fC_count_fpath <-
-  "~/Dropbox/ngs_analysis/ngsmisc/inst/" %>%
+  system.file(package = "ngsmisc") %>%
   fs::dir_ls(regexp = "counts.txt$")
 
 fC_summary_fpath <-
-  "~/Dropbox/ngs_analysis/ngsmisc/inst/" %>%
+  system.file(package = "ngsmisc") %>%
   fs::dir_ls(regexp = "gene_counts.txt.summary$")
 
 # Test fC_read_count() ---------------------------------------------------------
