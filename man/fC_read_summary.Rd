@@ -10,7 +10,7 @@ fC_read_summary(fpath)
 \item{fpath}{featureCounts output file path}
 }
 \description{
-Read featureCounts read count summary
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \examples{
 infs <-

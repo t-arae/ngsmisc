@@ -14,7 +14,7 @@ fC_rename_col(tbl_fC, col_fpath = 7L, file_suffix = ".sort.bam$")
 \item{file_suffix}{regex pattern. default = ".sort.bam$"}
 }
 \description{
-Rename featureCounts read count table
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \examples{
 infs <-

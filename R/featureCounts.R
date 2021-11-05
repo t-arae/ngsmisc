@@ -1,5 +1,7 @@
 
 #' Read featureCounts read count table
+#' @description
+#' `r lifecycle::badge("experimental")`
 #' @param fpath featureCounts output file path
 #' @export
 #' @examples
@@ -20,6 +22,8 @@ fC_read_count <- function(fpath) {
 }
 
 #' Read featureCounts read count summary
+#' @description
+#' `r lifecycle::badge("experimental")`
 #' @param fpath featureCounts output file path
 #' @export
 #' @examples
@@ -34,6 +38,8 @@ fC_read_summary <- function(fpath) {
 }
 
 #' Rename featureCounts read count table
+#' @description
+#' `r lifecycle::badge("experimental")`
 #' @param tbl_fC featureCounts read counts tibble
 #' @param col_fpath integer. default = 7L
 #' @param file_suffix regex pattern. default = ".sort.bam$"
@@ -52,6 +58,8 @@ fC_rename_col <- function(tbl_fC, col_fpath = 7L, file_suffix = ".sort.bam$") {
 }
 
 #' Merge featureCounts read count table to a tibble
+#' @description
+#' `r lifecycle::badge("experimental")`
 #' @param tbl_li_fC list of featureCounts read counts tibbles
 #' @export
 #' @examples
@@ -75,6 +83,8 @@ fC_merge_tbl_li <- function(tbl_li_fC) {
 }
 
 #' Calculate RPM/RPKM/TPM from featureCounts read counts
+#' @description
+#' `r lifecycle::badge("experimental")`
 #' @param tbl_fC featureCounts read counts tibble
 #' @examples
 #' infs <-
