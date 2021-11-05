@@ -12,7 +12,7 @@
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Calculate RPM/RPKM/TPM from featureCounts read counts — fC_calc" />
-<meta property="og:description" content="Calculate RPM/RPKM/TPM from featureCounts read counts" />
+<meta property="og:description" content="" />
 
 
 
@@ -109,7 +109,7 @@
     </div>
 
     <div class="ref-description">
-    <p>Calculate RPM/RPKM/TPM from featureCounts read counts</p>
+    <p><a href='https://lifecycle.r-lib.org/articles/stages.html#experimental'><img src='figures/lifecycle-experimental.svg' alt='[Experimental]' /></a></p>
     </div>
 
     <pre class="usage"><span class='fu'>fC_calc_rpm</span><span class='op'>(</span><span class='va'>tbl_fC</span><span class='op'>)</span>
@@ -129,37 +129,38 @@
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>infs</span> <span class='op'>&lt;-</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span>package <span class='op'>=</span> <span class='st'>"ngsmisc"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'>fs</span><span class='fu'>::</span><span class='fu'><a href='http://fs.r-lib.org/reference/dir_ls.html'>dir_ls</a></span><span class='op'>(</span>regexp <span class='op'>=</span> <span class='st'>"_gene_counts.txt$"</span><span class='op'>)</span>
-
-<span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='va'>infs</span>, <span class='va'>fC_read_count</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'><a href='fC_merge_tbl_li.html'>fC_merge_tbl_li</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'><a href='fC_rename_col.html'>fC_rename_col</a></span><span class='op'>(</span>col_fpath <span class='op'>=</span> <span class='op'>-</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'>fC_calc_rpm</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'>fC_calc_rpkm</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'>fC_calc_tpm</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://pillar.r-lib.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; Rows: 133
-#&gt; Columns: 18
-#&gt; $ Geneid        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> "ATCG00010", "ATCG00020", "ATCG00030", "ATCG00040", "ATC…
-#&gt; $ Chr           <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> "ChrC", "ChrC", "ChrC;ChrC", "ChrC", "ChrC;ChrC", "ChrC"…
-#&gt; $ Start         <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> "4", "383", "1717;4312", "2056", "5084;6149", "6616", "7…
-#&gt; $ End           <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> "76", "1444", "1751;4347", "3636", "5283;6188", "6687", …
-#&gt; $ Strand        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> "-", "-", "-;-", "-", "-;-", "-", "+", "+", "+", "+;+", …
-#&gt; $ Length        <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> 73, 1062, 71, 1581, 240, 72, 186, 111, 88, 73, 72, 1524,…
-#&gt; $ sample_1      <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> 332, 102, 137, 222, 96, 31, 1998, 1, 980, 251, 3113386, …
-#&gt; $ sample_2      <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> 293, 97, 137, 234, 91, 50, 1824, 14, 943, 224, 3356663, …
-#&gt; $ sample_3      <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> 97, 53, 68, 60, 40, 20, 651, 0, 184, 63, 4453752, 166, 3…
-#&gt; $ rpm_sample_1  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> 3.494239e+01, 1.073531e+01, 1.441900e+01, 2.336509e+01, …
-#&gt; $ rpm_sample_2  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> 2.839144e+01, 9.399215e+00, 1.327518e+01, 2.267439e+01, …
-#&gt; $ rpm_sample_3  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> 7.000186e+00, 3.824844e+00, 4.907347e+00, 4.330012e+00, …
-#&gt; $ rpkm_sample_1 <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> 4.786629e+02, 1.010858e+01, 2.030845e+02, 1.477868e+01, …
-#&gt; $ rpkm_sample_2 <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> 3.889239e+02, 8.850485e+00, 1.869744e+02, 1.434181e+01, …
-#&gt; $ rpkm_sample_3 <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> 9.589296e+01, 3.601548e+00, 6.911756e+01, 2.738780e+00, …
-#&gt; $ tpm_sample_1  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> 7.815872e+01, 1.650585e+00, 3.316076e+01, 2.413144e+00, …
-#&gt; $ tpm_sample_2  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> 6.368434e+01, 1.449223e+00, 3.061612e+01, 2.348399e+00, …
-#&gt; $ tpm_sample_3  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> 1.576913e+01, 5.922571e-01, 1.136605e+01, 4.503792e-01, …</div></pre>
+    <pre class="examples"><span class='r-in'><span class='va'>infs</span> <span class='op'>&lt;-</span></span>
+<span class='r-in'>  <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span>package <span class='op'>=</span> <span class='st'>"ngsmisc"</span><span class='op'>)</span> <span class='op'><a href='%>%.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'>fs</span><span class='fu'>::</span><span class='fu'><a href='http://fs.r-lib.org/reference/dir_ls.html'>dir_ls</a></span><span class='op'>(</span>regexp <span class='op'>=</span> <span class='st'>"_gene_counts.txt$"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='va'>infs</span>, <span class='va'>fC_read_count</span><span class='op'>)</span> <span class='op'><a href='%>%.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'><a href='fC_merge_tbl_li.html'>fC_merge_tbl_li</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='%>%.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'><a href='fC_rename_col.html'>fC_rename_col</a></span><span class='op'>(</span>col_fpath <span class='op'>=</span> <span class='op'>-</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='%>%.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'>fC_calc_rpm</span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='%>%.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'>fC_calc_rpkm</span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='%>%.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'>fC_calc_tpm</span><span class='op'>(</span><span class='op'>)</span> <span class='op'><a href='%>%.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://pillar.r-lib.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Rows: 133</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Columns: 18</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $ Geneid        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> "ATCG00010", "ATCG00020", "ATCG00030", "ATCG00040", "ATC…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $ Chr           <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> "ChrC", "ChrC", "ChrC;ChrC", "ChrC", "ChrC;ChrC", "ChrC"…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $ Start         <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> "4", "383", "1717;4312", "2056", "5084;6149", "6616", "7…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $ End           <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> "76", "1444", "1751;4347", "3636", "5283;6188", "6687", …</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $ Strand        <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> "-", "-", "-;-", "-", "-;-", "-", "+", "+", "+", "+;+", …</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $ Length        <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> 73, 1062, 71, 1581, 240, 72, 186, 111, 88, 73, 72, 1524,…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $ sample_1      <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> 332, 102, 137, 222, 96, 31, 1998, 1, 980, 251, 3113386, …</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $ sample_2      <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> 293, 97, 137, 234, 91, 50, 1824, 14, 943, 224, 3356663, …</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $ sample_3      <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> 97, 53, 68, 60, 40, 20, 651, 0, 184, 63, 4453752, 166, 3…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $ rpm_sample_1  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> 3.494239e+01, 1.073531e+01, 1.441900e+01, 2.336509e+01, …</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $ rpm_sample_2  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> 2.839144e+01, 9.399215e+00, 1.327518e+01, 2.267439e+01, …</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $ rpm_sample_3  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> 7.000186e+00, 3.824844e+00, 4.907347e+00, 4.330012e+00, …</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $ rpkm_sample_1 <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> 4.786629e+02, 1.010858e+01, 2.030845e+02, 1.477868e+01, …</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $ rpkm_sample_2 <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> 3.889239e+02, 8.850485e+00, 1.869744e+02, 1.434181e+01, …</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $ rpkm_sample_3 <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> 9.589296e+01, 3.601548e+00, 6.911756e+01, 2.738780e+00, …</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $ tpm_sample_1  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> 7.815872e+01, 1.650585e+00, 3.316076e+01, 2.413144e+00, …</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $ tpm_sample_2  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> 6.368434e+01, 1.449223e+00, 3.061612e+01, 2.348399e+00, …</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $ tpm_sample_3  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> 1.576913e+01, 5.922571e-01, 1.136605e+01, 4.503792e-01, …</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

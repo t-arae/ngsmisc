@@ -12,7 +12,7 @@
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Read featureCounts read count table — fC_read_count" />
-<meta property="og:description" content="Read featureCounts read count table" />
+<meta property="og:description" content="" />
 
 
 
@@ -109,7 +109,7 @@
     </div>
 
     <div class="ref-description">
-    <p>Read featureCounts read count table</p>
+    <p><a href='https://lifecycle.r-lib.org/articles/stages.html#experimental'><img src='figures/lifecycle-experimental.svg' alt='[Experimental]' /></a></p>
     </div>
 
     <pre class="usage"><span class='fu'>fC_read_count</span><span class='op'>(</span><span class='va'>fpath</span><span class='op'>)</span></pre>
@@ -125,25 +125,26 @@
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>infs</span> <span class='op'>&lt;-</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span>package <span class='op'>=</span> <span class='st'>"ngsmisc"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'>fs</span><span class='fu'>::</span><span class='fu'><a href='http://fs.r-lib.org/reference/dir_ls.html'>dir_ls</a></span><span class='op'>(</span>regexp <span class='op'>=</span> <span class='st'>"_gene_counts.txt$"</span><span class='op'>)</span>
-<span class='fu'>fC_read_count</span><span class='op'>(</span><span class='va'>infs</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 133 × 7</span>
-#&gt;    Geneid    Chr       Start     End       Strand Length `some/sample_1.sort.ba…
-#&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>
-#&gt; <span style='color: #BCBCBC;'> 1</span> ATCG00010 ChrC      4         76        -          73                     332
-#&gt; <span style='color: #BCBCBC;'> 2</span> ATCG00020 ChrC      383       1444      -        <span style='text-decoration: underline;'>1</span>062                     102
-#&gt; <span style='color: #BCBCBC;'> 3</span> ATCG00030 ChrC;ChrC 1717;4312 1751;4347 -;-        71                     137
-#&gt; <span style='color: #BCBCBC;'> 4</span> ATCG00040 ChrC      2056      3636      -        <span style='text-decoration: underline;'>1</span>581                     222
-#&gt; <span style='color: #BCBCBC;'> 5</span> ATCG00050 ChrC;ChrC 5084;6149 5283;6188 -;-       240                      96
-#&gt; <span style='color: #BCBCBC;'> 6</span> ATCG00060 ChrC      6616      6687      -          72                      31
-#&gt; <span style='color: #BCBCBC;'> 7</span> ATCG00070 ChrC      7017      7202      +         186                    <span style='text-decoration: underline;'>1</span>998
-#&gt; <span style='color: #BCBCBC;'> 8</span> ATCG00080 ChrC      7583      7693      +         111                       1
-#&gt; <span style='color: #BCBCBC;'> 9</span> ATCG00090 ChrC      7785      7872      +          88                     980
-#&gt; <span style='color: #BCBCBC;'>10</span> ATCG00100 ChrC;ChrC 8646;9383 8669;9431 +;+        73                     251
-#&gt; <span style='color: #949494;'># … with 123 more rows</span></div><div class='input'>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='va'>infs</span> <span class='op'>&lt;-</span></span>
+<span class='r-in'>  <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span>package <span class='op'>=</span> <span class='st'>"ngsmisc"</span><span class='op'>)</span> <span class='op'><a href='%>%.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'>fs</span><span class='fu'>::</span><span class='fu'><a href='http://fs.r-lib.org/reference/dir_ls.html'>dir_ls</a></span><span class='op'>(</span>regexp <span class='op'>=</span> <span class='st'>"_gene_counts.txt$"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'>fC_read_count</span><span class='op'>(</span><span class='va'>infs</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 133 × 7</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    Geneid    Chr       Start     End       Strand Length `some/sample_1.sort.ba…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>                   <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> ATCG00010 ChrC      4         76        -          73                     332</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> ATCG00020 ChrC      383       1444      -        <span style='text-decoration: underline;'>1</span>062                     102</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> ATCG00030 ChrC;ChrC 1717;4312 1751;4347 -;-        71                     137</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> ATCG00040 ChrC      2056      3636      -        <span style='text-decoration: underline;'>1</span>581                     222</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> ATCG00050 ChrC;ChrC 5084;6149 5283;6188 -;-       240                      96</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> ATCG00060 ChrC      6616      6687      -          72                      31</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> ATCG00070 ChrC      7017      7202      +         186                    <span style='text-decoration: underline;'>1</span>998</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> ATCG00080 ChrC      7583      7693      +         111                       1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> ATCG00090 ChrC      7785      7872      +          88                     980</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> ATCG00100 ChrC;ChrC 8646;9383 8669;9431 +;+        73                     251</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 123 more rows</span></span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
