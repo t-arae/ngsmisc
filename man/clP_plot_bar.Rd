@@ -4,12 +4,14 @@
 \alias{clP_plot_bar}
 \title{Write ego result as barplot}
 \usage{
-clP_plot_bar(li_ego, n = 10)
+clP_plot_bar(li_ego, n = 10, width = 40)
 }
 \arguments{
 \item{li_ego}{A list of enrichResult-class objects}
 
 \item{n}{A number of GOterms to show. (default=10)}
+
+\item{width}{A number of string width to wrap. (default: 40)}
 }
 \description{
 Write ego result as barplot
