@@ -10,7 +10,7 @@ fC_merge_tbl_li(tbl_li_fC)
 \item{tbl_li_fC}{list of featureCounts read counts tibbles}
 }
 \description{
-Merge featureCounts read count table to a tibble
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \examples{
 infs <-

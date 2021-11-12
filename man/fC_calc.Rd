@@ -17,7 +17,7 @@ fC_calc_tpm(tbl_fC)
 \item{tbl_fC}{featureCounts read counts tibble}
 }
 \description{
-Calculate RPM/RPKM/TPM from featureCounts read counts
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \examples{
 infs <-
