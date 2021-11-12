@@ -177,7 +177,7 @@ clP_write_li_ego_as_bar <- function(path_li_ego_rds) {
     clP_plot_bar() %>%
     clP_wrap_barplots()
   if(is.null(pgp)) {
-    message(stringr::str_glue("li_ego_{label} has no significant enrichemnt."))
+    message(stringr::str_glue("li_ego_{label} has no significant enrichment."))
     return()
   }
   ggplot2::ggsave(outf, pgp, width = 15, height = 6)
