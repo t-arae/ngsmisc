@@ -4,12 +4,12 @@
 \alias{wrap_strings}
 \title{Wrap strings to defined width.}
 \usage{
-wrap_strings(string, w = 40)
+wrap_strings(string, width = 40)
 }
 \arguments{
 \item{string}{A vector of strings.}
 
-\item{w}{A number of string width to wrap.}
+\item{width}{A number of string width to wrap. (default: 40)}
 }
 \description{
 Wrap strings to defined width.

@@ -77,10 +77,10 @@ integer_breaks <- function(n = 5, ...) {
 
 #' Wrap strings to defined width.
 #' @param string A vector of strings.
-#' @param w A number of string width to wrap.
+#' @param width A number of string width to wrap. (default: 40)
 #'
-wrap_strings <- function(string, w = 40) {
-  as.character(string) %>% stringr::str_wrap(width = w)
+wrap_strings <- function(string, width = 40) {
+  as.character(string) %>% stringr::str_wrap(width = width)
 }
 
 #' Theme for the barplot
@@ -99,9 +99,10 @@ clP_gp_theme_bar <- function() {
 #' Write ego result as barplot
 #' @param li_ego A list of enrichResult-class objects
 #' @param n A number of GOterms to show. (default=10)
+#' @inheritParams wrap_strings
 #' @export
 #'
-clP_plot_bar <- function(li_ego, n = 10) {
+clP_plot_bar <- function(li_ego, n = 10, width = 40) {
   li_gp <- list()
   for(ont in c("BP", "CC", "MF")) {
     if(is.null(li_ego[[ont]])) {
@@ -110,7 +111,7 @@ clP_plot_bar <- function(li_ego, n = 10) {
       li_gp[[ont]] <- patchwork::plot_spacer()
     } else {
       li_ego[[ont]]@result$Description <-
-        wrap_strings(li_ego[[ont]]@result$Description)
+        wrap_strings(li_ego[[ont]]@result$Description, width = width)
       q_cutoff <- li_ego[[ont]]@qvalueCutoff
       num_sig_term <- clP_num_significant(li_ego[[ont]])
       sub <- ifelse(
@@ -136,9 +137,10 @@ clP_plot_bar <- function(li_ego, n = 10) {
 
 #' Wrapping barplots of enrichResult-objects
 #' @param li_gp list of ggplot objects
+#' @param fill_fun A function to colorize bar
 #' @export
 #'
-clP_wrap_barplots <- function(li_gp) {
+clP_wrap_barplots <- function(li_gp, fill_fun = ggplot2::scale_fill_viridis_c) {
   q_cutoff <- li_gp$q_cutoff
   if(is.na(q_cutoff)) return(NULL)
 
@@ -155,7 +157,7 @@ clP_wrap_barplots <- function(li_gp) {
     li_gp[names(li_gp) != "q_cutoff"] %>%
     patchwork::wrap_plots(guides = "collect") +
     patchwork::plot_annotation(caption = stringr::str_glue("qvalue < {q_cutoff}")) &
-    ggplot2::scale_fill_viridis_c(limits = fill_range)
+    fill_fun(limits = fill_range)
   pgp
 }
 
@@ -175,7 +177,7 @@ clP_write_li_ego_as_bar <- function(path_li_ego_rds) {
     clP_plot_bar() %>%
     clP_wrap_barplots()
   if(is.null(pgp)) {
-    message(stringr::str_glue("li_ego_{label} has no significant enrichemnt."))
+    message(stringr::str_glue("li_ego_{label} has no significant enrichment."))
     return()
   }
   ggplot2::ggsave(outf, pgp, width = 15, height = 6)
