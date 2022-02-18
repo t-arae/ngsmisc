@@ -1,0 +1,4 @@
+name: Basic NGS data processing via nerdctl
+description: >
+   A template for NGS data processing
+create_dir: FALSE

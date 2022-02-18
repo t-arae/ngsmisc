@@ -1,0 +1,147 @@
+---
+title: 'Rmd template for works using external commands via docker'
+author: "Toshihiro Arae"
+output: 
+  html_document:
+    date: "`r format(Sys.time(), '%Y/%m/%d')`"
+    toc: true
+    toc_float: true
+    number_section: true
+    code_folding: "show"
+    highlight: "tango"
+---
+
+<!--START templates/ngstool_docker header-->
+```{css, echo=F}
+.scroll_dark {
+  max-height: 300px;
+  overflow-y: auto;
+  color: #DDDDDD;
+  background-color: #444444;
+}
+```
+
+```{r chunk eval setting, echo=F}
+eval_ngs_idx <- FALSE # Chunk evaluation setting for indexing
+eval_ngs <- FALSE # Chunk evaluation setting for the general NGS tool running
+# source(fs::path(here::here(), "script_r", "MISC.R"))
+```
+<!--END templates/ngstool_docker header-->
+
+<!--START templates/ngstool_docker body_1-->
+# General directory setting
+```{r general directory}
+wd <- here::here()
+shared <- fs::path(fs::path_dir(wd), "shared")
+```
+
+# Loading packages
+```{r package}
+library(magrittr)
+```
+
+# Common setup
+## Docker command
+```{r docker_cmd}
+cmd_docker <- "docker run --rm -v {wd}:/data:delegated -v {shared}:/config:delegated"
+```
+
+## Shell script header and footer
+```{r shell header footer}
+sh_header <-
+  c("#!/bin/bash",
+    "set -eu",
+    "set -o pipefail",
+    "ln -sf /config/ /data/shared"
+  )
+sh_footer <-
+  c("unlink /data/shared")
+```
+<!--END templates/ngstool_docker body_1-->
+
+<!--START templates/ngstool_docker body_2-->
+# Container
+## Container image name
+```{r container image name}
+img_name <- "samtools_a"
+```
+
+## NGSTOOL version & usage
+```{r NGSTOOL version, class.output="scroll_dark", comment=""}
+# samtools example
+"docker run --rm {img_name} samtools --version" %>%
+  stringr::str_glue() %>%
+  ngsmisc::run_cat_stdout()
+```
+
+```{r NGSTOOL help, class.output="scroll_dark", comment=""}
+# samtools example
+"docker run --rm {img_name} samtools --help" %>%
+  stringr::str_glue() %>%
+  ngsmisc::run_cat_stdout()
+```
+<!--END templates/ngstool_docker body_2-->
+
+<!--START templates/ngstool_docker body_3-->
+# Command run
+## Create commands (something)
+```{r create cmd_something}
+bs <- "\\" # backslash
+core <- 8
+cmd_something <- "
+echo '### Processing \"{label}\" ###'
+# do_something {bs}
+#  --amazing_param {lucky_num} {bs}
+#  -i {inf} {bs}
+#  -o {outf}
+"
+
+### Setting some parameters
+in_dir <- fs::path("inst")
+out_dir <- fs::path("inst")
+fs::dir_create(fs::path(wd, out_dir))
+
+sample_label <-
+  fs::dir_ls(fs::path(wd, in_dir), regexp = ".[^.]+$") %>%
+  fs::path_file() %>%
+  stringr::str_remove(".[^.]+$")
+
+lucky_num <- 777
+
+temp_cmd <- character()
+for(i in seq_along(sample_label)){
+  label <- sample_label[i]
+  inf <- paste0(in_dir, "/", sample_label[i], ".Rmd")
+  outf <- paste0(out_dir, "/", sample_label[i], ".html")
+  temp_cmd[i] <- glue::glue(cmd_something, .trim = FALSE)
+}
+readr::write_lines(c(sh_header, temp_cmd, sh_footer), here::here("temp.sh"))
+```
+
+```{r cat cmd_something, class.output="scroll_dark", comment=""}
+cat(readr::read_lines(fs::path(wd, "temp.sh")), sep = "\n")
+```
+
+## Run commands (something)
+```{r run cmd_something, eval=eval_ngs}
+out <-
+  stringr::str_glue(cmd_docker, img_name, "bash temp.sh", .sep = " ") %>%
+  ngsmisc::sep_by_blank() %>%
+  ngsmisc::cmd_run()
+# out$stdout %>% readr::write_lines(path_cmdout(wd, out_dir, "cmd_out.txt"))
+# out$stderr %>% readr::write_lines(path_cmdout(wd, out_dir, "cmd_err.txt"))
+```
+
+## Reports (something)
+```{r report cmd_something, class.output="scroll_dark", comment=""}
+# readr::read_lines(path_cmdout(wd, out_dir, "cmd_out.txt")) %>% cat(sep = "\n")
+# readr::read_lines(path_cmdout(wd, out_dir, "cmd_err.txt")) %>% cat(sep = "\n")
+```
+<!--END templates/ngstool_docker body_3-->
+
+<!--START templates/ngstool_docker footer-->
+# Sessioninfo
+```{r sessioninfo}
+sessionInfo()
+```
+<!--END templates/ngstool_docker footer-->
