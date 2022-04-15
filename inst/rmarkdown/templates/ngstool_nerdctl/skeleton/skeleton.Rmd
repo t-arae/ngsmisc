@@ -1,9 +1,9 @@
 ---
 title: 'Rmd template for works using external commands via nerdctl on lima'
 author: "Toshihiro Arae"
+date: "`r format(Sys.time(), '%Y/%m/%d')`"
 output: 
   html_document:
-    date: "`r format(Sys.time(), '%Y/%m/%d')`"
     toc: true
     toc_float: true
     number_section: true
@@ -42,9 +42,9 @@ library(magrittr)
 
 # Common setup
 ## lima + nerdctl command
-```{r lima_nerd_cmd}
+```{r cmd_lima_nerd}
 nerdctl <- "/opt/homebrew/bin/limactl shell default nerdctl"
-lima_nerd_cmd <- "{nerdctl} run --rm -v {wd}:/data -v {shared}:/config"
+cmd_lima_nerd <- "{nerdctl} run --rm -v {wd}:/data -v {shared}:/config"
 ```
 
 ## Shell script header and footer
@@ -126,7 +126,7 @@ cat(readr::read_lines(fs::path(wd, "temp.sh")), sep = "\n")
 ## Run commands (something)
 ```{r run cmd_something, eval=eval_ngs}
 out <-
-  stringr::str_glue(cmd_docker, img_name, "bash temp.sh", .sep = " ") %>%
+  stringr::str_glue(cmd_lima_nerd, img_name, "bash temp.sh", .sep = " ") %>%
   ngsmisc::sep_by_blank() %>%
   ngsmisc::cmd_run()
 # out$stdout %>% readr::write_lines(path_cmdout(wd, out_dir, "cmd_out.txt"))

@@ -1,9 +1,9 @@
 ---
 title: 'Rmd template for works using external commands via docker'
 author: "Toshihiro Arae"
+date: "`r format(Sys.time(), '%Y/%m/%d')`"
 output: 
   html_document:
-    date: "`r format(Sys.time(), '%Y/%m/%d')`"
     toc: true
     toc_float: true
     number_section: true
