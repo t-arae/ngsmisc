@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ngsmisc</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0.9001</span>
       </span>
     </div>
 
@@ -44,13 +44,36 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">clP_write_li_ego_as_bar</span><span class="op">(</span><span class="va">path_li_ego_rds</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">clP_write_li_ego_as_bar</span><span class="op">(</span>
+  <span class="va">path_li_ego_rds</span>,
+  file_suffix <span class="op">=</span> <span class="st">"png"</span>,
+  n <span class="op">=</span> <span class="fl">10</span>,
+  width <span class="op">=</span> <span class="fl">40</span>,
+  scale_fill <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="va"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span>,
+  plot_width <span class="op">=</span> <span class="fl">15</span>,
+  plot_height <span class="op">=</span> <span class="fl">6</span>,
+  <span class="va">...</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>path_li_ego_rds</dt>
 <dd><p>Path to RDS files of the li_ego object.</p></dd>
+<dt>file_suffix</dt>
+<dd><p>output file suffix. default: "png"</p></dd>
+<dt>n</dt>
+<dd><p>A number of GOterms to show. (default=10)</p></dd>
+<dt>width</dt>
+<dd><p>A number of string width to wrap. (default: 40)</p></dd>
+<dt>scale_fill</dt>
+<dd><p>A function controlling fill color of bars. it must be compatible with ggplot2::scale_fill_*(). default: ggplot2::scale_fill_viridis_c</p></dd>
+<dt>plot_width</dt>
+<dd><p>plot width. default: 15 (in)</p></dd>
+<dt>plot_height</dt>
+<dd><p>plot height. default: 6 (in)</p></dd>
+<dt>...</dt>
+<dd><p>Supplementary arguments passed to ggplot2::ggsave()</p></dd>
 </dl></div>
 
   </div>

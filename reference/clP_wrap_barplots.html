@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ngsmisc</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0.9001</span>
       </span>
     </div>
 
@@ -44,15 +44,15 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">clP_wrap_barplots</span><span class="op">(</span><span class="va">li_gp</span>, fill_fun <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="va"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">clP_wrap_barplots</span><span class="op">(</span><span class="va">li_gp</span>, scale_fill <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="va"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>li_gp</dt>
 <dd><p>list of ggplot objects</p></dd>
-<dt>fill_fun</dt>
-<dd><p>A function to colorize bar</p></dd>
+<dt>scale_fill</dt>
+<dd><p>A function controlling fill color of bars. it must be compatible with ggplot2::scale_fill_*(). default: ggplot2::scale_fill_viridis_c</p></dd>
 </dl></div>
 
   </div>
