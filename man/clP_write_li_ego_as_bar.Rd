@@ -4,10 +4,33 @@
 \alias{clP_write_li_ego_as_bar}
 \title{Write the enrichGO result to a barplot}
 \usage{
-clP_write_li_ego_as_bar(path_li_ego_rds)
+clP_write_li_ego_as_bar(
+  path_li_ego_rds,
+  file_suffix = "png",
+  n = 10,
+  width = 40,
+  scale_fill = ggplot2::scale_fill_viridis_c,
+  plot_width = 15,
+  plot_height = 6,
+  ...
+)
 }
 \arguments{
 \item{path_li_ego_rds}{Path to RDS files of the li_ego object.}
+
+\item{file_suffix}{output file suffix. default: "png"}
+
+\item{n}{A number of GOterms to show. (default=10)}
+
+\item{width}{A number of string width to wrap. (default: 40)}
+
+\item{scale_fill}{A function controlling fill color of bars. it must be compatible with ggplot2::scale_fill_*(). default: ggplot2::scale_fill_viridis_c}
+
+\item{plot_width}{plot width. default: 15 (in)}
+
+\item{plot_height}{plot height. default: 6 (in)}
+
+\item{...}{Supplementary arguments passed to ggplot2::ggsave()}
 }
 \description{
 Write the enrichGO result to a barplot

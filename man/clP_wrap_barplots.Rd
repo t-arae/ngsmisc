@@ -4,12 +4,12 @@
 \alias{clP_wrap_barplots}
 \title{Wrapping barplots of enrichResult-objects}
 \usage{
-clP_wrap_barplots(li_gp, fill_fun = ggplot2::scale_fill_viridis_c)
+clP_wrap_barplots(li_gp, scale_fill = ggplot2::scale_fill_viridis_c)
 }
 \arguments{
 \item{li_gp}{list of ggplot objects}
 
-\item{fill_fun}{A function to colorize bar}
+\item{scale_fill}{A function controlling fill color of bars. it must be compatible with ggplot2::scale_fill_*(). default: ggplot2::scale_fill_viridis_c}
 }
 \description{
 Wrapping barplots of enrichResult-objects

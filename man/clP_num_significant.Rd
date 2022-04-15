@@ -2,7 +2,7 @@
 % Please edit documentation in R/clusterProfiler.R
 \name{clP_num_significant}
 \alias{clP_num_significant}
-\title{Return the number of significantly enriched GOterm in the ego}
+\title{Return the number of significantly enriched GO term in the ego}
 \usage{
 clP_num_significant(ego)
 }
@@ -10,5 +10,5 @@ clP_num_significant(ego)
 \item{ego}{An enrichResult class object.}
 }
 \description{
-Return the number of significantly enriched GOterm in the ego
+Return the number of significantly enriched GO term in the ego
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/clusterProfiler.R
 \name{integer_breaks}
 \alias{integer_breaks}
-\title{Return a function to determin pretty integer break
+\title{Return a function to determine pretty integer break
 https://www.r-bloggers.com/2019/11/setting-axes-to-integer-values-in-ggplot2/}
 \usage{
 integer_breaks(n = 5, ...)
@@ -13,6 +13,6 @@ integer_breaks(n = 5, ...)
 \item{...}{Supplementary arguments passed to base::pretty()}
 }
 \description{
-Return a function to determin pretty integer break
+Return a function to determine pretty integer break
 https://www.r-bloggers.com/2019/11/setting-axes-to-integer-values-in-ggplot2/
 }
