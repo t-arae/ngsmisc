@@ -137,10 +137,10 @@ clP_plot_bar <- function(li_ego, n = 10, width = 40) {
 
 #' Wrapping barplots of enrichResult-objects
 #' @param li_gp list of ggplot objects
-#' @param fill_fun A function to colorize bar
+#' @param scale_fill A function controlling fill color of bars. it must be compatible with ggplot2::scale_fill_*(). default: ggplot2::scale_fill_viridis_c
 #' @export
 #'
-clP_wrap_barplots <- function(li_gp, fill_fun = ggplot2::scale_fill_viridis_c) {
+clP_wrap_barplots <- function(li_gp, scale_fill = ggplot2::scale_fill_viridis_c) {
   q_cutoff <- li_gp$q_cutoff
   if(is.na(q_cutoff)) return(NULL)
 
@@ -157,7 +157,7 @@ clP_wrap_barplots <- function(li_gp, fill_fun = ggplot2::scale_fill_viridis_c) {
     li_gp[names(li_gp) != "q_cutoff"] %>%
     patchwork::wrap_plots(guides = "collect") +
     patchwork::plot_annotation(caption = stringr::str_glue("qvalue < {q_cutoff}")) &
-    fill_fun(limits = fill_range)
+    scale_fill(limits = fill_range)
   pgp
 }
 
