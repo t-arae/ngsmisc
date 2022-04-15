@@ -61,7 +61,7 @@ clP_write_li_ego_as_csv <- function(path_li_ego_rds) {
   }
 }
 
-#' Return a function to determin pretty integer break
+#' Return a function to determine pretty integer break
 #' https://www.r-bloggers.com/2019/11/setting-axes-to-integer-values-in-ggplot2/
 #' @param n A integer. Number of breaks.
 #' @param ... Supplementary arguments passed to base::pretty()
