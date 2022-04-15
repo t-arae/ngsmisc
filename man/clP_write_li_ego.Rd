@@ -2,7 +2,7 @@
 % Please edit documentation in R/clusterProfiler.R
 \name{clP_write_li_ego}
 \alias{clP_write_li_ego}
-\title{Run clustreProfiler::enrichGO() and write R object of the result to a file}
+\title{Run clustreProfiler::enrichGO() and write R object to a file}
 \usage{
 clP_write_li_ego(fg, bg, out_dir, label, ...)
 }
@@ -18,5 +18,5 @@ clP_write_li_ego(fg, bg, out_dir, label, ...)
 \item{...}{Named options will be passed to clusterProfiler::enrichGO(). without "gene", "universe", "ont", "pool"}
 }
 \description{
-Run clustreProfiler::enrichGO() and write R object of the result to a file
+Run clustreProfiler::enrichGO() and write R object to a file
 }

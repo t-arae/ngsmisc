@@ -2,7 +2,7 @@
 % Please edit documentation in R/clusterProfiler.R
 \name{clP_is_significant}
 \alias{clP_is_significant}
-\title{Check the ego contains significantly enriched GOterm}
+\title{Check the ego contains significantly enriched GO term}
 \usage{
 clP_is_significant(ego)
 }
@@ -10,5 +10,5 @@ clP_is_significant(ego)
 \item{ego}{An enrichResult class object.}
 }
 \description{
-Check the ego contains significantly enriched GOterm
+Check the ego contains significantly enriched GO term
 }
