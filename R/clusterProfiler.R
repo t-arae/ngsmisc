@@ -1,5 +1,5 @@
 
-#' Run clustreProfiler::enrichGO() and write R object of the result to a file
+#' Run clustreProfiler::enrichGO() and write R object to a file
 #' @param fg A vector of foreground gene ids.
 #' @param bg A vector of background gene ids.
 #' @param out_dir Path to the output directory.
@@ -28,14 +28,14 @@ clP_path2label <- function(path_li_ego_rds) {
     stringr::str_remove(".rds$")
 }
 
-#' Check the ego contains significantly enriched GOterm
+#' Check the ego contains significantly enriched GO term
 #' @param ego An enrichResult class object.
 #'
 clP_is_significant <- function(ego) {
   any(ego@result[["qvalue"]] < ego@qvalueCutoff, na.rm = TRUE)
 }
 
-#' Return the number of significantly enriched GOterm in the ego
+#' Return the number of significantly enriched GO term in the ego
 #' @inheritParams clP_is_significant
 #'
 clP_num_significant <- function(ego) {
@@ -163,22 +163,37 @@ clP_wrap_barplots <- function(li_gp, scale_fill = ggplot2::scale_fill_viridis_c)
 
 #' Write the enrichGO result to a barplot
 #' @inheritParams clP_path2label
+#' @inheritParams clP_plot_bar
+#' @inheritParams clP_wrap_barplots
+#' @param file_suffix output file suffix. default: "png"
+#' @param plot_width plot width. default: 15 (in)
+#' @param plot_height plot height. default: 6 (in)
+#' @param ... Supplementary arguments passed to ggplot2::ggsave()
 #' @export
 #'
-clP_write_li_ego_as_bar <- function(path_li_ego_rds) {
+clP_write_li_ego_as_bar <- function(
+  path_li_ego_rds,
+  file_suffix = "png",
+  n = 10,
+  width = 40,
+  scale_fill = ggplot2::scale_fill_viridis_c,
+  plot_width = 15,
+  plot_height = 6,
+  ...
+) {
   li_ego <- readRDS(path_li_ego_rds)
   label <- clP_path2label(path_li_ego_rds)
   out_dir <- fs::path_dir(fs::path_dir(path_li_ego_rds))
 
   fs::dir_create(fs::path(out_dir, "barplot"))
-  outf <- fs::path(out_dir, "barplot", stringr::str_glue("barplot_{label}.png"))
+  outf <- fs::path(out_dir, "barplot", stringr::str_glue("barplot_{label}.{file_suffix}"))
   pgp <-
     li_ego %>%
-    clP_plot_bar() %>%
-    clP_wrap_barplots()
+    clP_plot_bar(n = n, width = width) %>%
+    clP_wrap_barplots(scale_fill = scale_fill)
   if(is.null(pgp)) {
     message(stringr::str_glue("li_ego_{label} has no significant enrichment."))
     return()
   }
-  ggplot2::ggsave(outf, pgp, width = 15, height = 6)
+  ggplot2::ggsave(outf, pgp, width = plot_width, height = plot_height, ...)
 }
