@@ -35,7 +35,7 @@ reference:
   - ds2_rcdf_filter_organella
   - ds2_rcdf_to_dds
   - ds2_dds_estimate_sizefactor
-  - ds2_dds_set_size_factor
+  - ds2_dds_set_sizefactor
   - ds2_dds_get_sizefactor
   - ds2_dds_estimate_disp
   - ds2_dds_test_nbinomLRT
