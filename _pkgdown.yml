@@ -28,6 +28,25 @@ reference:
   - clP_plot_bar
   - clP_wrap_barplots
   - clP_write_li_ego_as_bar
+- title: "misc functions for DESeq2"
+- contents:
+  - ds2_tbl_to_rcdf
+  - ds2_rcdf_filter_by_rownames
+  - ds2_rcdf_filter_organella
+  - ds2_rcdf_to_dds
+  - ds2_dds_estimate_sizefactor
+  - ds2_dds_set_size_factor
+  - ds2_dds_get_sizefactor
+  - ds2_dds_estimate_disp
+  - ds2_dds_test_nbinomLRT
+  - ds2_dds_test_nbinomWaldTest
+  - ds2_dds_get_design
+  - ds2_dds_set_design
+  - ds2_dds_get_normalized_count_tbl
+  - ds2_dds_to_ddr
+  - ds2_dds_to_tbl
+  - ds2_ddr_to_tbl
+  - ds2_ddr_plot_independent_filtering
 - title: "Calculate RPM/RPKM/TPM"
 - contents:
   - calc_rpm
