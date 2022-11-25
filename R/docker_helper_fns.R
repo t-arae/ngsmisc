@@ -79,18 +79,3 @@ run_cat_stderr <- function(statement, ...) {
   cat_stderr(cmd_run(sep_by_blank(statement), ...))
 }
 
-# comp_fqgz <- function(fqgz_path) {
-#   stringr::str_glue("genozip --replace {fqgz_path}")
-# }
-#
-# decomp_fqgz <- function(fqgz_path) {
-#   genozip_fqgz <-
-#     stringr::str_remove(fqgz_path, "\\.[^.]+$") %>%
-#     stringr::str_c(".genozip")
-#   stringr::str_glue("genounzip -z 6 {fqgz_path} {genozip_fqgz}")
-# }
-#
-# comp_fqgz_w_ref <- function(fqgz_path, ref_path) {
-#   stringr::str_glue("genozip -E {ref_path} --replace {fqgz_path}")
-# }
-
