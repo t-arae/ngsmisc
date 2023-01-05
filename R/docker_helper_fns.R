@@ -61,24 +61,46 @@ cat_stderr <- function(ps_out) {
   cat(ps_out$stderr)
 }
 
-#' Run a statement with showing stdout messages
+#' Run a command line and show/get output
+#' @description
+#' `r lifecycle::badge("experimental")`
 #' @inheritParams sep_by_blank
 #' @inheritParams cmd_run
-#' @export
+#' @examples
+#' cmd_ok <- "echo 'hoge hoge'"
+#' run_cat_stdout(cmd_ok)
+#' run_get_stdout(cmd_ok)
 #'
+#' cmd_err <- "cat sonzai_shinai_file.txt"
+#' run_cat_stderr(cmd_err, error_on_status = FALSE)
+#' run_get_stderr(cmd_err, error_on_status = FALSE)
+#'
+#' @name run_process_and
+NULL
+
+#' @rdname run_process_and
+#' @export
 run_cat_stdout <- function(statement, ...) {
   cat_stdout(cmd_run(sep_by_blank(statement), ...))
 }
 
-#' Run a statement with showing stdout messages
-#' @inheritParams sep_by_blank
-#' @inheritParams cmd_run
+#' @rdname run_process_and
 #' @export
-#'
 run_cat_stderr <- function(statement, ...) {
   cat_stderr(cmd_run(sep_by_blank(statement), ...))
 }
 
+#' @rdname run_process_and
+#' @export
+run_get_stdout <- function(statement, ...) {
+  ngsmisc::cmd_run(ngsmisc::sep_by_blank(statement), ...)$stdout
+}
+
+#' @rdname run_process_and
+#' @export
+run_get_stderr <- function(statement, ...) {
+  ngsmisc::cmd_run(ngsmisc::sep_by_blank(statement), ...)$stderr
+}
 
 #' Create file path to save the command line output
 #' @param wd a path to the working directory
@@ -99,3 +121,4 @@ path_cmdout <- function(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache") {
   }
   new_fpath
 }
+
