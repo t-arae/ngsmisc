@@ -21,6 +21,12 @@ reference:
 - title: "misc functions for rMATS"
 - contents:
   - rM_read_MATS_test_out
+  - rM_filter_by_AGI
+  - rM_filter_by_count
+  - rM_make_tbl_splice_site
+  - rM_mutate_count_stat
+  - rM_select_switch_start_end_col
+  - rM_extract_event_type
 - title: "misc functions for clusterProfiler"
 - contents:
   - clP_write_li_ego
@@ -28,6 +34,10 @@ reference:
   - clP_plot_bar
   - clP_wrap_barplots
   - clP_write_li_ego_as_bar
+  - clP_is_significant
+  - clP_num_significant
+  - clP_path2label
+  - clP_gp_theme_bar
 - title: "misc functions for DESeq2"
 - contents:
   - ds2_tbl_to_rcdf
@@ -52,3 +62,9 @@ reference:
   - calc_rpm
   - calc_rpkm
   - calc_tpm
+- title: "Misc"
+- contents:
+  - rename_col_AGI
+  - rename_col_fpath
+  - wrap_strings
+  - integer_breaks
