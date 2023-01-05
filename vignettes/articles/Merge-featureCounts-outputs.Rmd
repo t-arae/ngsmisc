@@ -1,0 +1,91 @@
+---
+title: "Merge featureCounts outputs"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Read, modify and merge read-count files.
+```{r}
+# example output files of read-count.
+infs <-
+  system.file(package = "ngsmisc") |>
+  fs::dir_ls(regexp = "_gene_counts.txt$")
+
+# read read-count file by `fC_read_count()`
+ngsmisc::fC_read_count(infs[1])
+
+# rename the 7th column of the read-count file by `fC_rename_col()`
+ngsmisc::fC_read_count(infs[1]) |>
+  ngsmisc::fC_rename_col()
+
+# read multiple read-count files and merge them by `fC_merge_tbl_li()`.
+lapply(infs, ngsmisc::fC_read_count) |>
+  ngsmisc::fC_merge_tbl_li()
+
+# example workflow using these functions
+lapply(infs, ngsmisc::fC_read_count) |>
+  lapply(ngsmisc::fC_rename_col) |>
+  ngsmisc::fC_merge_tbl_li()
+```
+
+# Calculate RPM, RPKM, TPM
+```{r}
+# example output files of read-count.
+tbl_readcount <-
+  system.file(package = "ngsmisc") |>
+  fs::dir_ls(regexp = "_gene_counts.txt$") |>
+  lapply(ngsmisc::fC_read_count) |>
+  lapply(ngsmisc::fC_rename_col) |>
+  ngsmisc::fC_merge_tbl_li()
+
+# calculate Reads Per Million mapped reads (RPM)
+tbl_readcount |> ngsmisc::fC_calc_rpm() |> dplyr::glimpse()
+# calculate Reads Per Kilobase of exon per Million reads mapped (RPKM)
+tbl_readcount |> ngsmisc::fC_calc_rpkm() |> dplyr::glimpse()
+# calculate Transcripts Per Million (TPM)
+tbl_readcount |> ngsmisc::fC_calc_tpm() |> dplyr::glimpse()
+
+# calculate all three.
+tbl_readcount |>
+  ngsmisc::fC_calc_rpm() |>
+  ngsmisc::fC_calc_rpkm() |>
+  ngsmisc::fC_calc_tpm() |>
+  dplyr::glimpse()
+```
+
+
+# Read, modify and merge read-count **summary** files.
+```{r}
+# example output files of summary.
+infs <-
+  system.file(package = "ngsmisc") |>
+  fs::dir_ls(regexp = "_gene_counts.txt.summary$")
+
+# read read-count file by `fC_read_summary()`
+ngsmisc::fC_read_summary(infs[1])
+
+# rename the 2nd column of the summary file by `fC_rename_col()` with `col_fpath` argument.
+ngsmisc::fC_read_summary(infs[1]) |>
+  ngsmisc::fC_rename_col(col_fpath = 2)
+
+# read multiple summary files and merge them by `purrr::reduce()` and `dplyr::left_join`.
+lapply(infs, ngsmisc::fC_read_summary) |>
+  purrr::reduce(dplyr::left_join, by = "Status")
+
+# example workflow using these functions
+lapply(infs, ngsmisc::fC_read_summary) |>
+  lapply(ngsmisc::fC_rename_col, col_fpath = 2) |>
+  purrr::reduce(dplyr::left_join, by = "Status")
+```
+
+
+# Sessioninfo
+```{r}
+sessioninfo::package_info()
+```
+

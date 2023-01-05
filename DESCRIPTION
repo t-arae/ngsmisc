@@ -35,3 +35,5 @@ Imports:
     rlang
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
+Suggests: 
+    rmarkdown
