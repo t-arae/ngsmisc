@@ -70,3 +70,30 @@ test_that("run_cat_stderr 1", {
   expect_output(run_cat_stderr(statement = stmt2, error_on_status = FALSE),
                 "cat: : No such file or directory")
 })
+
+# Test run_get_stdout() --------------------------------------------------------
+test_that("run_get_stdout", {
+  expect_equal(run_get_stdout(statement = stmt1), "'hello'\n")
+})
+
+# Test run_get_stderr() --------------------------------------------------------
+test_that("run_get_stderr", {
+  expect_equal(run_get_stderr(statement = stmt2, error_on_status = FALSE),
+               "cat: : No such file or directory\n")
+})
+
+# Test path_cmdout() -----------------------------------------------------------
+test_that("path_cmdout", {
+  expect_equal(path_cmdout("/path/to/wd", "cmd_out.txt", create_dir = FALSE),
+               "/path/to/wd/cmdout_cache/cmd_out.txt")
+  expect_equal(path_cmdout("/path/to/wd", "cmd_out.txt", create_dir = FALSE, save_dir = "other"),
+               "/path/to/wd/other/cmd_out.txt")
+  expect_equal(path_cmdout("/path/to/wd", "level1", "level2", "cmd_out.txt", create_dir = FALSE, save_dir = "other"),
+               "/path/to/wd/other/level1/level2/cmd_out.txt")
+
+  temp_wd <- fs::path(".", "temptemptemp")
+  if(fs::dir_exists(temp_wd)) fs::dir_delete(temp_wd)
+  path_cmdout(temp_wd, "file")
+  expect_true(fs::dir_exists(fs::path(temp_wd, "cmdout_cache")))
+  fs::dir_delete(temp_wd)
+})
