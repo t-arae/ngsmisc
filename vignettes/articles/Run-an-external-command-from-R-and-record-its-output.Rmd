@@ -1,0 +1,51 @@
+---
+title: "Run an external command from R and record its output."
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Run an external command from R
+```{r}
+# define an example command line statement.
+cmd <- "echo 'This is standard output'"
+
+# separate the command statement by white spaces using `sep_by_blank()`.
+ngsmisc::sep_by_blank(cmd)
+
+# run the separated command statement using `cmd_run()`.
+out <-
+  ngsmisc::sep_by_blank(cmd) |>
+  ngsmisc::cmd_run()
+out
+
+# show the standard output.
+out |> {\(x) cat(x$stdout)}()
+out |> ngsmisc::cat_stdout()
+
+# do the same thing above by `run_cat_stdout()`
+ngsmisc::run_cat_stdout(cmd)
+
+# or, get output by `run_get_stdout()`
+ngsmisc::run_get_stdout(cmd)
+
+# or, save output to the file using `path_cmdout()`
+fpath <- ngsmisc::path_cmdout(here::here(), "cmdout.txt")
+ngsmisc::run_get_stdout(cmd) |>
+  readr::write_lines(file = fpath)
+readr::read_lines(fpath)
+```
+
+```{r, echo=FALSE}
+fs::file_delete(fpath)
+fs::file_delete(fs::path_dir(fpath))
+```
+
+# Sessioninfo
+```{r}
+sessioninfo::package_info()
+```
