@@ -11,6 +11,7 @@ reference:
   - cat_stderr
   - run_cat_stderr
   - run_cat_stdout
+  - path_cmdout
 - title: "misc functions for featureCounts"
 - contents:
   - fC_read_count

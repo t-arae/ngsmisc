@@ -79,3 +79,23 @@ run_cat_stderr <- function(statement, ...) {
   cat_stderr(cmd_run(sep_by_blank(statement), ...))
 }
 
+
+#' Create file path to save the command line output
+#' @param wd a path to the working directory
+#' @param ... ...
+#' @param create_dir logical. if TRUE create directory of the returned path. (default: TRUE)
+#' @param save_dir directory name to save the output. (default: "cmdout_cache")
+#' @export
+#' @examples
+#' path_cmdout("/path/to/wd", "cmd_out.txt", create_dir = FALSE)
+#' path_cmdout("/path/to/wd", "cmd_out.txt", create_dir = FALSE, save_dir = "other")
+#' path_cmdout("/path/to/wd", "level1", "level2", "cmd_out.txt", create_dir = FALSE)
+#'
+path_cmdout <- function(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache") {
+  fpath <- fs::path(wd, ...)
+  new_fpath <- stringr::str_replace(fpath, wd, fs::path(wd, save_dir))
+  if(create_dir) {
+    fs::dir_create(fs::path_dir(new_fpath))
+  }
+  new_fpath
+}
