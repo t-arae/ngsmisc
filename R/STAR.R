@@ -1,4 +1,6 @@
 
+# final.log --------------------------------------------------------------------
+
 #' Read STAR final.log files and merge them into a tibble
 #' @description
 #' `r lifecycle::badge("experimental")`
@@ -74,4 +76,79 @@ ST_read_final_log <- function(fpath, to_tbl = TRUE, rename_col = function(x) x) 
 ST_merge_final_log <- function(li_tbl) {
   li_tbl %>%
     purrr::reduce(dplyr::left_join, by = c("contents_group", "contents"))
+}
+
+# SJ.out.tab -------------------------------------------------------------------
+
+#' Read STAR SJ.out.tab file as a tibble
+#'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#' @details
+#' See the section 5.5 "Splice junctions" in the STAR manual.
+#' @param fpath a path to the STAR final.log file
+#' @param parse logical. If `TRUE` parse 3rd-5th columns. (default: `TRUE`)
+#' @examples
+#' infs <-
+#'   system.file(package = "ngsmisc", "star") %>%
+#'   fs::dir_ls(regexp = ".sj.tsv$")
+#' ST_read_sj_tab(infs[1], parse = FALSE)
+#' ST_read_sj_tab(infs[1], parse = TRUE)
+#'
+#' # it can be converted to the `GenomicRanges::GRanges-class` object
+#' # ST_read_sj_tab(infs[1], parse = TRUE) %>% plyranges::as_granges()
+#'
+#' tbl_merge <-
+#'   infs %>%
+#'   lapply(ST_read_sj_tab) %>%
+#'   lapply(head) %>%
+#'   purrr::imap(~ dplyr::mutate(.x, sample = fs::path_file(.y))) %>%
+#'   dplyr::bind_rows()
+#' tbl_merge
+#'
+#' # library(ggplot2)
+#' # tbl_merge %>%
+#' #   ggplot(aes(x = paste(seqnames, start, end, sep = "\n"), y = num_uniq_map_jc)) +
+#' #   geom_col(aes(fill = sample, alpha = intron_motif)) +
+#' #   theme_linedraw(base_size = 14) +
+#' #   theme(panel.grid = element_blank()) +
+#' #   labs(x = "Coordinates", y = "Number of uniquely mapped reads\ncrossing junction") +
+#' #   scale_y_continuous(limits = c(0, NA), expand = expansion(c(0, .1))) +
+#' #   scale_fill_viridis_d() +
+#' #   scale_alpha_discrete(range = c(.5, 1))
+#'
+#' @name ST_sj_tab
+NULL
+
+#' @rdname ST_sj_tab
+#' @export
+ST_read_sj_tab <- function(fpath, parse = TRUE) {
+  COLNAMES <- c("seqnames", "start", "end", "strand", "intron_motif",
+                "annotated", "num_uniq_map_jc", "num_multi_map_jc",
+                "max_overhang")
+  tbl <- readr::read_tsv(fpath, col_names = COLNAMES, col_types = "ciiiiiiii")
+
+  if(parse) {
+    tbl <-
+      tbl %>%
+      dplyr::mutate(strand = dplyr::case_when(
+        strand == 0L ~ "*",
+        strand == 1L ~ "+",
+        strand == 2L ~ "-"
+      )) %>%
+      dplyr::mutate(intron_motif = dplyr::case_when(
+        intron_motif == 0L ~ "non-canonical",
+        intron_motif == 1L ~ "GT/AG",
+        intron_motif == 2L ~ "CT/AC",
+        intron_motif == 3L ~ "GC/AG",
+        intron_motif == 4L ~ "CT/GC",
+        intron_motif == 5L ~ "AT/AC",
+        intron_motif == 6L ~ "GT/AT"
+      )) %>%
+      dplyr::mutate(annotated = dplyr::case_when(
+        annotated == 0L ~ "unannotated",
+        annotated == 1L ~ "annotated"
+      ))
+  }
+  return(tbl)
 }
