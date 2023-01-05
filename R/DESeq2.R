@@ -7,8 +7,8 @@
 #' @export
 #'
 ds2_tbl_to_rcdf <- function(tbl, genename_col = "Geneid") {
-  tibble::column_to_rownames(tbl, var = genename_col) %>%
-    purrr::modify(as.integer)
+  purrr::modify_if(tbl, is.double, as.integer) %>%
+    tibble::column_to_rownames(var = genename_col)
 }
 
 # Functions for the readcount data.frame ---------------------------------------
@@ -143,11 +143,13 @@ ds2_dds_set_design <- function(dds, design) {
 #' @export
 #'
 ds2_dds_get_normalized_count_tbl <- function(dds, rownames = "Geneid") {
+  df <- as.data.frame(DESeq2::counts(dds))
   purrr::modify2(
-    .x = as.data.frame(DESeq2::counts(dds)),
+    .x = df,
     .y = DESeq2::sizeFactors(dds),
     .f = ~ .x / .y
   ) %>%
+    `row.names<-`(row.names(df)) %>%
     tibble::as_tibble(rownames = rownames)
 }
 
