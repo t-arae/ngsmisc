@@ -16,7 +16,7 @@ path_cmdout(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache")
 \item{save_dir}{directory name to save the output. (default: "cmdout_cache")}
 }
 \description{
-Create file path to save the command line output
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \examples{
 path_cmdout("/path/to/wd", "cmd_out.txt", create_dir = FALSE)

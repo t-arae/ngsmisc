@@ -12,7 +12,7 @@ cmd_run(sep_cmd, ...)
 \item{...}{options for pass to \code{processx::run()}}
 }
 \description{
-Run a separated command in external process
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \examples{
 cmd_ok <- "echo 'hoge hoge'"
