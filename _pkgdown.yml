@@ -7,10 +7,8 @@ reference:
 - contents:
   - sep_by_blank
   - cmd_run
-  - cat_stdout
-  - cat_stderr
-  - run_cat_stderr
-  - run_cat_stdout
+  - cat_process_out
+  - run_process_and
   - path_cmdout
 - title: "misc functions for featureCounts"
 - contents:
