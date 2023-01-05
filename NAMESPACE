@@ -3,6 +3,7 @@
 export("%>%")
 export(ST_merge_final_log)
 export(ST_read_final_log)
+export(ST_read_sj_tab)
 export(calc_rpkm)
 export(calc_rpm)
 export(calc_tpm)
