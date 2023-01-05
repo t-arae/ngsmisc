@@ -55,6 +55,53 @@ test_that("fC_merge_tbl_li() test 1", {
   expect_true(identical(temp1[,1:7], temp2[,1:7]))
 })
 
+# Test fC_calc_rpm() ---------------------------------------------------------
+fC_tbl_merged <- lapply(fC_count_fpath, fC_read_count) %>% fC_merge_tbl_li()
+test_that("fC_calc_rpm()", {
+  expect_no_error(fC_calc_rpm(fC_tbl_merged))
+  expect_equal(
+    ncol(fC_calc_rpm(fC_tbl_merged)),
+    ncol(fC_tbl_merged) + 3L
+  )
+  expect_equal(
+    colnames(fC_calc_rpm(fC_tbl_merged)),
+    c(
+      colnames(fC_tbl_merged),
+      paste0("rpm_", colnames(fC_tbl_merged)[-(1:6)])
+    )
+  )
+})
 
+# Test fC_calc_rpkm() ---------------------------------------------------------
+fC_tbl_merged <- lapply(fC_count_fpath, fC_read_count) %>% fC_merge_tbl_li()
+test_that("fC_calc_rpkm()", {
+  expect_no_error(fC_calc_rpkm(fC_tbl_merged))
+  expect_equal(
+    ncol(fC_calc_rpkm(fC_tbl_merged)),
+    ncol(fC_tbl_merged) + 3L
+  )
+  expect_equal(
+    colnames(fC_calc_rpkm(fC_tbl_merged)),
+    c(
+      colnames(fC_tbl_merged),
+      paste0("rpkm_", colnames(fC_tbl_merged)[-(1:6)])
+    )
+  )
+})
 
-
+# Test fC_calc_tpm() ---------------------------------------------------------
+fC_tbl_merged <- lapply(fC_count_fpath, fC_read_count) %>% fC_merge_tbl_li()
+test_that("fC_calc_tpm()", {
+  expect_no_error(fC_calc_tpm(fC_tbl_merged))
+  expect_equal(
+    ncol(fC_calc_tpm(fC_tbl_merged)),
+    ncol(fC_tbl_merged) + 3L
+  )
+  expect_equal(
+    colnames(fC_calc_tpm(fC_tbl_merged)),
+    c(
+      colnames(fC_tbl_merged),
+      paste0("tpm_", colnames(fC_tbl_merged)[-(1:6)])
+    )
+  )
+})
