@@ -1,0 +1,77 @@
+
+#' Read STAR final.log files and merge them into a tibble
+#' @description
+#' `r lifecycle::badge("experimental")`
+#' @param fpath a path to the STAR final.log file
+#' @param to_tbl a logical. return a tibble (TRUE) or a list (FALSE) (default: TRUE)
+#' @param rename_col a function to covert the column name of fpath. (default: function(x) x)
+#' @param li_tbl a list of data.frame
+#' @examples
+#' infs <-
+#'   system.file(package = "ngsmisc", "star") %>%
+#'   fs::dir_ls(regexp = ".final.log$")
+#' ST_read_final_log(infs[1], rename_col = fs::path_file) %>% print(n = Inf)
+#' ST_read_final_log(infs[1], to_tbl = FALSE) %>% str(vec.len = 1)
+#'
+#' f <- function(x) stringr::str_remove(fs::path_file(x), ".final.log")
+#' infs %>%
+#'   lapply(ST_read_final_log, rename_col = f) %>%
+#'   ST_merge_final_log()
+#'
+#' @name ST_final_log
+NULL
+
+#' @rdname ST_final_log
+#' @export
+ST_read_final_log <- function(fpath, to_tbl = TRUE, rename_col = function(x) x) {
+  temp <- NULL
+  # Check the first of lines
+  fl <- readLines(fpath, n = 1L)
+  if(!stringr::str_detect(fl, "Started job on |"))
+    stop(paste0("fpath must be the log file from STAR (*.final.log)"))
+
+  lines <- readLines(fpath) %>% stringr::str_trim()
+  parse <- function(x) {
+    res <-
+      lapply(x, function(x) {
+        temp <- stringr::str_split(x, " [|]\\t", simplify = TRUE)[2]
+      }) %>%
+      purrr::modify(~ ifelse(grepl("^[0-9,.]+$", .x), as.numeric(.x), .x))
+    names(res) <- lapply(x, function(x) {
+      stringr::str_split(x, " [|]\\t", simplify = TRUE)[1]
+    })
+    res
+  }
+
+  results <- list()
+  results[["Summary"]] <- parse(lines[c(1:4, 6:7)])
+  results[["Unique Reads"]] <- parse(lines[9:22])
+  results[["Multi-mapping Reads"]] <- parse(lines[24:27])
+  results[["Unmapped Reads"]] <- parse(lines[29:34])
+  results[["Chimeric Reads"]] <- parse(lines[36:37])
+
+  if(to_tbl) {
+    return(
+      tibble::tibble(
+        contents_group =
+          rep(names(results), c(6, 14, 4, 6, 2)) %>%
+          forcats::fct_inorder(),
+        contents =
+          names(unlist(stats::setNames(results, NULL))) %>%
+          forcats::fct_inorder(),
+        temp =
+          unlist(results)
+      ) %>%
+        dplyr::rename(!!rename_col(fpath) := temp)
+    )
+  } else {
+    return(results)
+  }
+}
+
+#' @rdname ST_final_log
+#' @export
+ST_merge_final_log <- function(li_tbl) {
+  li_tbl %>%
+    purrr::reduce(dplyr::left_join, by = c("contents_group", "contents"))
+}

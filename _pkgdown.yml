@@ -17,6 +17,9 @@ reference:
   - fC_rename_col
   - fC_merge_tbl_li
   - fC_calc
+- title: "misc functions for STAR"
+- contents:
+  - ST_final_log
 - title: "misc functions for rMATS"
 - contents:
   - rM_read_MATS_test_out
