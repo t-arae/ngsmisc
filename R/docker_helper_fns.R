@@ -31,32 +31,42 @@ sep_by_blank <- function(statement) {
 }
 
 #' Run a separated command in external process
-#' @param sep_cmd separated command created by sep_by_blank()
-#' @param ... options for pass to processx::run()
+#' @param sep_cmd separated command created by `sep_by_blank()`
+#' @param ... options for pass to `processx::run()`
 #' @export
 #' @examples
 #' cmd_ok <- "echo 'hoge hoge'"
 #' cmd_run(sep_by_blank(cmd_ok))
 #'
-#' cmd_err <- "sleep 100"
-#' cmd_run(sep_by_blank(cmd_err), timeout = 1, error_on_status = FALSE)
+#' cmd_err <- "cat sonzai_shinai_file.txt"
+#' cmd_run(sep_by_blank(cmd_err), error_on_status = FALSE)
 #'
 cmd_run <- function(sep_cmd, ...) {
   processx::run(command = sep_cmd[1], args = sep_cmd[-1], ...)
 }
 
-#' Show stdout messages in the process output
+#' Show the stdout/stderr message in processx::run() ouput.
+#' @description
+#' `r lifecycle::badge("experimental")`
 #' @param ps_out output from processx::run()
-#' @export
+#' @examples
+#' cmd_ok <- "echo 'hoge hoge'"
+#' cat_stdout(cmd_run(sep_by_blank(cmd_ok)))
 #'
+#' cmd_err <- "cat sonzai_shinai_file.txt"
+#' cat_stderr(cmd_run(sep_by_blank(cmd_err), error_on_status = FALSE))
+#'
+#' @name cat_process_out
+NULL
+
+#' @rdname cat_process_out
+#' @export
 cat_stdout <- function(ps_out) {
   cat(ps_out$stdout)
 }
 
-#' Show stderr messages in the process output
-#' @param ps_out output from processx::run()
+#' @rdname cat_process_out
 #' @export
-#'
 cat_stderr <- function(ps_out) {
   cat(ps_out$stderr)
 }
