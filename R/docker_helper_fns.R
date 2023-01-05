@@ -1,6 +1,6 @@
-### Some helper functions for running docker
-
 #' Separate a statement by white spaces
+#' @description
+#' `r lifecycle::badge("experimental")`
 #' @param statement a command line statement. (character)
 #' @export
 #' @examples
@@ -31,6 +31,8 @@ sep_by_blank <- function(statement) {
 }
 
 #' Run a separated command in external process
+#' @description
+#' `r lifecycle::badge("experimental")`
 #' @param sep_cmd separated command created by `sep_by_blank()`
 #' @param ... options for pass to `processx::run()`
 #' @export
@@ -113,6 +115,8 @@ run_get_stderr <- function(statement, ...) {
 }
 
 #' Create file path to save the command line output
+#' @description
+#' `r lifecycle::badge("experimental")`
 #' @param wd a path to the working directory
 #' @param ... ...
 #' @param create_dir logical. if TRUE create directory of the returned path. (default: TRUE)
@@ -131,4 +135,3 @@ path_cmdout <- function(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache") {
   }
   new_fpath
 }
-
