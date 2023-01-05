@@ -1,5 +1,6 @@
 ---
 title: "Merge featureCounts outputs"
+highlight: "tango"
 ---
 
 ```{r, include = FALSE}
@@ -83,9 +84,7 @@ lapply(infs, ngsmisc::fC_read_summary) |>
   purrr::reduce(dplyr::left_join, by = "Status")
 ```
 
-
 # Sessioninfo
 ```{r}
 sessioninfo::package_info()
 ```
-
