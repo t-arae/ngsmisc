@@ -20,6 +20,7 @@ reference:
 - title: "misc functions for STAR"
 - contents:
   - ST_final_log
+  - ST_sj_tab
 - title: "misc functions for rMATS"
 - contents:
   - rM_read_MATS_test_out
