@@ -9,7 +9,10 @@ fC_summary_fpath <-
 
 # Test fC_read_count() ---------------------------------------------------------
 fC_tbl_li <- lapply(fC_count_fpath, fC_read_count)
-test_that("fC_read_count() test 1", {
+test_that("fC_read_count() test", {
+  # Check arguments
+  expect_equal(names(formals(fC_read_count)), "fpath")
+
   expect_equal(
     fC_tbl_li[[1]],
     readr::read_tsv(file = fC_count_fpath[1], skip = 1L, col_types = "cccccii")
@@ -22,7 +25,10 @@ test_that("fC_read_count() test 1", {
 
 # Test fC_read_summary() -------------------------------------------------------
 fC_sum_li <- fC_read_summary(fpath = fC_summary_fpath)
-test_that("fC_read_summary() test 1", {
+test_that("fC_read_summary() test", {
+  # Check arguments
+  expect_equal(names(formals(fC_read_summary)), "fpath")
+
   expect_equal(dim(fC_sum_li), c(14, 4))
   expect_true(is.character(fC_sum_li[[1]]))
   expect_equal(colnames(fC_sum_li)[1], "Status")
@@ -33,6 +39,11 @@ test_that("fC_read_summary() test 1", {
 temp1 <- fC_tbl_li[[1]]
 temp2 <- fC_rename_col(fC_tbl_li[[1]])
 test_that("fC_rename_col() test 1", {
+  # Check arguments
+  expect_equal(names(formals(fC_rename_col)), c("tbl_fC", "col_fpath", "file_suffix"))
+  expect_equal(formals(fC_rename_col)[["col_fpath"]], 7L)
+  expect_equal(formals(fC_rename_col)[["file_suffix"]], ".sort.bam$")
+
   # 列名以外は変えない
   expect_true(purrr::map2_lgl(temp1, temp2, ~ all(.x == .y)) %>% all())
   #
@@ -58,6 +69,9 @@ test_that("fC_merge_tbl_li() test 1", {
 # Test fC_calc_rpm() ---------------------------------------------------------
 fC_tbl_merged <- lapply(fC_count_fpath, fC_read_count) %>% fC_merge_tbl_li()
 test_that("fC_calc_rpm()", {
+  # Check arguments
+  expect_equal(names(formals(fC_calc_rpm)), "tbl_fC")
+
   expect_no_error(fC_calc_rpm(fC_tbl_merged))
   expect_equal(
     ncol(fC_calc_rpm(fC_tbl_merged)),
@@ -75,6 +89,9 @@ test_that("fC_calc_rpm()", {
 # Test fC_calc_rpkm() ---------------------------------------------------------
 fC_tbl_merged <- lapply(fC_count_fpath, fC_read_count) %>% fC_merge_tbl_li()
 test_that("fC_calc_rpkm()", {
+  # Check arguments
+  expect_equal(names(formals(fC_calc_rpkm)), "tbl_fC")
+
   expect_no_error(fC_calc_rpkm(fC_tbl_merged))
   expect_equal(
     ncol(fC_calc_rpkm(fC_tbl_merged)),
@@ -92,6 +109,9 @@ test_that("fC_calc_rpkm()", {
 # Test fC_calc_tpm() ---------------------------------------------------------
 fC_tbl_merged <- lapply(fC_count_fpath, fC_read_count) %>% fC_merge_tbl_li()
 test_that("fC_calc_tpm()", {
+  # Check arguments
+  expect_equal(names(formals(fC_calc_tpm)), "tbl_fC")
+
   expect_no_error(fC_calc_tpm(fC_tbl_merged))
   expect_equal(
     ncol(fC_calc_tpm(fC_tbl_merged)),
