@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 ```{r}
 # example output files of read-count.
 infs <-
-  system.file(package = "ngsmisc") |>
+  system.file(package = "ngsmisc", "featurecounts") |>
   fs::dir_ls(regexp = "_gene_counts.txt$")
 
 # read read-count file by `fC_read_count()`
@@ -38,7 +38,7 @@ lapply(infs, ngsmisc::fC_read_count) |>
 ```{r}
 # example output files of read-count.
 tbl_readcount <-
-  system.file(package = "ngsmisc") |>
+  system.file(package = "ngsmisc", "featurecounts") |>
   fs::dir_ls(regexp = "_gene_counts.txt$") |>
   lapply(ngsmisc::fC_read_count) |>
   lapply(ngsmisc::fC_rename_col) |>
@@ -64,7 +64,7 @@ tbl_readcount |>
 ```{r}
 # example output files of summary.
 infs <-
-  system.file(package = "ngsmisc") |>
+  system.file(package = "ngsmisc", "featurecounts") |>
   fs::dir_ls(regexp = "_gene_counts.txt.summary$")
 
 # read read-count file by `fC_read_summary()`
