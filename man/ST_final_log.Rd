@@ -6,14 +6,12 @@
 \alias{ST_merge_final_log}
 \title{Read STAR final.log files and merge them into a tibble}
 \usage{
-ST_read_final_log(fpath, to_tbl = TRUE, rename_col = function(x) x)
+ST_read_final_log(fpath, rename_col = function(x) x)
 
 ST_merge_final_log(li_tbl)
 }
 \arguments{
 \item{fpath}{a path to the STAR final.log file}
-
-\item{to_tbl}{a logical. return a tibble (TRUE) or a list (FALSE) (default: TRUE)}
 
 \item{rename_col}{a function to covert the column name of fpath. (default: function(x) x)}
 
@@ -27,7 +25,6 @@ infs <-
   system.file(package = "ngsmisc", "star") \%>\%
   fs::dir_ls(regexp = ".final.log$")
 ST_read_final_log(infs[1], rename_col = fs::path_file) \%>\% print(n = Inf)
-ST_read_final_log(infs[1], to_tbl = FALSE) \%>\% str(vec.len = 1)
 
 f <- function(x) stringr::str_remove(fs::path_file(x), ".final.log")
 infs \%>\%

@@ -5,12 +5,12 @@
 \alias{ST_read_sj_tab}
 \title{Read STAR SJ.out.tab file as a tibble}
 \usage{
-ST_read_sj_tab(fpath, parse = TRUE)
+ST_read_sj_tab(fpath, decode = FALSE)
 }
 \arguments{
 \item{fpath}{a path to the STAR final.log file}
 
-\item{parse}{logical. If \code{TRUE} parse 3rd-5th columns. (default: \code{TRUE})}
+\item{decode}{logical. If \code{TRUE} decode values in 3rd-5th columns. (default: \code{FALSE})}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -22,15 +22,15 @@ See the section 5.5 "Splice junctions" in the STAR manual.
 infs <-
   system.file(package = "ngsmisc", "star") \%>\%
   fs::dir_ls(regexp = ".sj.tsv$")
-ST_read_sj_tab(infs[1], parse = FALSE)
-ST_read_sj_tab(infs[1], parse = TRUE)
+ST_read_sj_tab(infs[1])
+ST_read_sj_tab(infs[1], decode = TRUE)
 
 # it can be converted to the `GenomicRanges::GRanges-class` object
-# ST_read_sj_tab(infs[1], parse = TRUE) \%>\% plyranges::as_granges()
+# ST_read_sj_tab(infs[1], decode = TRUE) \%>\% plyranges::as_granges()
 
 tbl_merge <-
   infs \%>\%
-  lapply(ST_read_sj_tab) \%>\%
+  lapply(ST_read_sj_tab, decode = TRUE) \%>\%
   lapply(head) \%>\%
   purrr::imap(~ dplyr::mutate(.x, sample = fs::path_file(.y))) \%>\%
   dplyr::bind_rows()

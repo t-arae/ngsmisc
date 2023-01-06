@@ -1,31 +1,18 @@
 
 # final.log --------------------------------------------------------------------
 
-#' Read STAR final.log files and merge them into a tibble
+#' Parse STAR final.log files as a list
 #' @description
 #' `r lifecycle::badge("experimental")`
 #' @param fpath a path to the STAR final.log file
-#' @param to_tbl a logical. return a tibble (TRUE) or a list (FALSE) (default: TRUE)
-#' @param rename_col a function to covert the column name of fpath. (default: function(x) x)
-#' @param li_tbl a list of data.frame
+#' @export
 #' @examples
 #' infs <-
 #'   system.file(package = "ngsmisc", "star") %>%
 #'   fs::dir_ls(regexp = ".final.log$")
-#' ST_read_final_log(infs[1], rename_col = fs::path_file) %>% print(n = Inf)
-#' ST_read_final_log(infs[1], to_tbl = FALSE) %>% str(vec.len = 1)
+#' ST_parse_final_log(infs[1]) %>% str(vec.len = 1)
 #'
-#' f <- function(x) stringr::str_remove(fs::path_file(x), ".final.log")
-#' infs %>%
-#'   lapply(ST_read_final_log, rename_col = f) %>%
-#'   ST_merge_final_log()
-#'
-#' @name ST_final_log
-NULL
-
-#' @rdname ST_final_log
-#' @export
-ST_read_final_log <- function(fpath, to_tbl = TRUE, rename_col = function(x) x) {
+ST_parse_final_log <- function(fpath) {
   temp <- NULL
   # Check the first of lines
   fl <- readLines(fpath, n = 1L)
@@ -52,23 +39,48 @@ ST_read_final_log <- function(fpath, to_tbl = TRUE, rename_col = function(x) x) 
   results[["Unmapped Reads"]] <- parse(lines[29:34])
   results[["Chimeric Reads"]] <- parse(lines[36:37])
 
-  if(to_tbl) {
-    return(
-      tibble::tibble(
-        contents_group =
-          rep(names(results), c(6, 14, 4, 6, 2)) %>%
-          forcats::fct_inorder(),
-        contents =
-          names(unlist(stats::setNames(results, NULL))) %>%
-          forcats::fct_inorder(),
-        temp =
-          unlist(results)
-      ) %>%
-        dplyr::rename(!!rename_col(fpath) := temp)
-    )
-  } else {
-    return(results)
-  }
+  results
+}
+
+#' Read STAR final.log files and merge them into a tibble
+#' @description
+#' `r lifecycle::badge("experimental")`
+#' @param fpath a path to the STAR final.log file
+#' @param rename_col a function to covert the column name of `fpath`. (default: function(x) x)
+#' @param li_tbl a list of data.frame
+#' @examples
+#' infs <-
+#'   system.file(package = "ngsmisc", "star") %>%
+#'   fs::dir_ls(regexp = ".final.log$")
+#' ST_read_final_log(infs[1], rename_col = fs::path_file) %>% print(n = Inf)
+#'
+#' f <- function(x) stringr::str_remove(fs::path_file(x), ".final.log")
+#' infs %>%
+#'   lapply(ST_read_final_log, rename_col = f) %>%
+#'   ST_merge_final_log()
+#'
+#' @name ST_final_log
+NULL
+
+#' @rdname ST_final_log
+#' @export
+ST_read_final_log <- function(fpath, rename_col = function(x) x) {
+  temp <- NULL
+  results <- ST_parse_final_log(fpath)
+
+  return(
+    tibble::tibble(
+      contents_group =
+        rep(names(results), c(6, 14, 4, 6, 2)) %>%
+        forcats::fct_inorder(),
+      contents =
+        names(unlist(stats::setNames(results, NULL))) %>%
+        forcats::fct_inorder(),
+      temp =
+        unlist(results)
+    ) %>%
+      dplyr::rename(!!rename_col(fpath) := temp)
+  )
 }
 
 #' @rdname ST_final_log
@@ -87,20 +99,20 @@ ST_merge_final_log <- function(li_tbl) {
 #' @details
 #' See the section 5.5 "Splice junctions" in the STAR manual.
 #' @param fpath a path to the STAR final.log file
-#' @param parse logical. If `TRUE` parse 3rd-5th columns. (default: `TRUE`)
+#' @param decode logical. If `TRUE` decode values in 3rd-5th columns. (default: `FALSE`)
 #' @examples
 #' infs <-
 #'   system.file(package = "ngsmisc", "star") %>%
 #'   fs::dir_ls(regexp = ".sj.tsv$")
-#' ST_read_sj_tab(infs[1], parse = FALSE)
-#' ST_read_sj_tab(infs[1], parse = TRUE)
+#' ST_read_sj_tab(infs[1])
+#' ST_read_sj_tab(infs[1], decode = TRUE)
 #'
 #' # it can be converted to the `GenomicRanges::GRanges-class` object
-#' # ST_read_sj_tab(infs[1], parse = TRUE) %>% plyranges::as_granges()
+#' # ST_read_sj_tab(infs[1], decode = TRUE) %>% plyranges::as_granges()
 #'
 #' tbl_merge <-
 #'   infs %>%
-#'   lapply(ST_read_sj_tab) %>%
+#'   lapply(ST_read_sj_tab, decode = TRUE) %>%
 #'   lapply(head) %>%
 #'   purrr::imap(~ dplyr::mutate(.x, sample = fs::path_file(.y))) %>%
 #'   dplyr::bind_rows()
@@ -122,13 +134,13 @@ NULL
 
 #' @rdname ST_sj_tab
 #' @export
-ST_read_sj_tab <- function(fpath, parse = TRUE) {
+ST_read_sj_tab <- function(fpath, decode = FALSE) {
   COLNAMES <- c("seqnames", "start", "end", "strand", "intron_motif",
                 "annotated", "num_uniq_map_jc", "num_multi_map_jc",
                 "max_overhang")
   tbl <- readr::read_tsv(fpath, col_names = COLNAMES, col_types = "ciiiiiiii")
 
-  if(parse) {
+  if(decode) {
     tbl <-
       tbl %>%
       dplyr::mutate(strand = dplyr::case_when(

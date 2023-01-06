@@ -19,6 +19,7 @@ reference:
   - fC_calc
 - title: "misc functions for STAR"
 - contents:
+  - ST_parse_final_log
   - ST_final_log
   - ST_sj_tab
 - title: "misc functions for rMATS"
