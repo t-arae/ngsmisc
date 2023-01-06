@@ -14,7 +14,7 @@ fC_read_count(fpath)
 }
 \examples{
 infs <-
-  system.file(package = "ngsmisc") \%>\%
+  system.file(package = "ngsmisc", "featurecounts") \%>\%
   fs::dir_ls(regexp = "_gene_counts.txt$")
 fC_read_count(infs[1])
 

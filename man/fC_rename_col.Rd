@@ -18,7 +18,7 @@ fC_rename_col(tbl_fC, col_fpath = 7L, file_suffix = ".sort.bam$")
 }
 \examples{
 infs <-
-  system.file(package = "ngsmisc") \%>\%
+  system.file(package = "ngsmisc", "featurecounts") \%>\%
   fs::dir_ls(regexp = "_gene_counts.txt$")
 fC_read_count(infs[1]) \%>\% fC_rename_col()
 

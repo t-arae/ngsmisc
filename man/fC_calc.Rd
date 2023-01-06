@@ -21,7 +21,7 @@ fC_calc_tpm(tbl_fC)
 }
 \examples{
 infs <-
-  system.file(package = "ngsmisc") \%>\%
+  system.file(package = "ngsmisc", "featurecounts") \%>\%
   fs::dir_ls(regexp = "_gene_counts.txt$")
 
 lapply(infs, fC_read_count) \%>\%

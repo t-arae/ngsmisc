@@ -14,7 +14,7 @@ fC_read_summary(fpath)
 }
 \examples{
 infs <-
-  system.file(package = "ngsmisc") \%>\%
+  system.file(package = "ngsmisc", "featurecounts") \%>\%
   fs::dir_ls(regexp = "_gene_counts.txt.summary$")
 fC_read_summary(infs[1])
 
