@@ -1,6 +1,6 @@
 template:
-  params:
-    bootswatch: flatly
+  bootstrap: 5
+  bootswatch: simplex
 
 reference:
 - title: "wraper functions for processx::run()"
@@ -10,18 +10,16 @@ reference:
   - cat_process_out
   - run_process_and
   - path_cmdout
-- title: "misc functions for featureCounts"
+- title: "functions for featureCounts"
 - contents:
-  - fC_read_count
-  - fC_read_summary
-  - fC_rename_col
-  - fC_merge_tbl_li
+  - fC_count
+  - fC_summary
   - fC_calc
-- title: "misc functions for STAR"
+- title: "functions for STAR"
 - contents:
-  - ST_parse_final_log
   - ST_final_log
   - ST_sj_tab
+  - ST_parse_final_log
 - title: "misc functions for rMATS"
 - contents:
   - rM_read_MATS_test_out
@@ -68,6 +66,9 @@ reference:
   - calc_tpm
 - title: "Misc"
 - contents:
+  - rename_nth_col
+  - renamer_fpath
+  - rename_fpath
   - rename_col_AGI
   - rename_col_fpath
   - wrap_strings

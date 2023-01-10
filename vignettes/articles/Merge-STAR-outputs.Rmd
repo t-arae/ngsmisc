@@ -1,0 +1,80 @@
+---
+title: "Merge STAR outputs"
+highlight: "tango"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Read, modify and merge final.log files.
+```{r}
+# example output files of STAR final.log.
+infs <-
+  system.file(package = "ngsmisc", "star") |>
+  fs::dir_ls(regexp = "final.log$")
+
+infs[1] |> readLines() |> cat(sep = "\n")
+
+# read final.log file by `ST_read_final_log()`
+ngsmisc::ST_read_final_log(infs[1]) |>
+  ngsmisc::rename_fpath(nth = 3) |>
+  print(n = Inf)
+
+# read multiple final.log files and merge them by `ST_merge_final_log()`.
+infs |>
+  lapply(ngsmisc::ST_read_final_log) |>
+  lapply(ngsmisc::rename_fpath, nth = 3, suffix = ".final.log") |>
+  ngsmisc::ST_merge_final_log()
+```
+
+# Read, modify and merge SJ.out.tab files.
+
+```{r}
+# example output files of STAR SJ.out.tab.
+infs <-
+  system.file(package = "ngsmisc", "star") |>
+  fs::dir_ls(regexp = ".sj.tsv$")
+
+infs[1] |> readLines(n = 10) |> cat(sep = "\n")
+
+# read SJ.out.tab file by `ST_read_sj_tab()`
+ngsmisc::ST_read_sj_tab(infs[1])
+
+# decode integers in strand/intron_motif/annotated columns as interpretable strings.
+ngsmisc::ST_read_sj_tab(infs[1], decode = TRUE)
+
+# it can be converted to the `GenomicRanges::GRanges-class` object
+ngsmisc::ST_read_sj_tab(infs[1], decode = TRUE) |> plyranges::as_granges()
+
+tbl_merge <-
+  infs |>
+  lapply(ngsmisc::ST_read_sj_tab, decode = TRUE) |>
+  lapply(head) |>
+  purrr::imap(~ dplyr::mutate(.x, sample = ngsmisc::renamer_fpath()(.y))) |>
+  dplyr::bind_rows()
+tbl_merge
+
+library(ggplot2)
+
+tbl_merge |>
+  ggplot(aes(x = paste(seqnames, start, end, sep = "\n"), y = num_uniq_map_jc)) +
+  geom_col(aes(fill = sample, alpha = intron_motif)) +
+  theme_linedraw(base_size = 14) +
+  theme(panel.grid = element_blank()) +
+  labs(
+    x = "Coordinates",
+    y = "Number of uniquely mapped reads\ncrossing junction"
+  ) +
+  scale_y_continuous(limits = c(0, NA), expand = expansion(c(0, .1))) +
+  scale_fill_viridis_d() +
+  scale_alpha_discrete(range = c(.5, 1))
+```
+
+# Sessioninfo
+```{r}
+sessioninfo::package_info()
+```

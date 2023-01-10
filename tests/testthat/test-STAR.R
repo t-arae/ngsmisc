@@ -25,21 +25,15 @@ test_that("ST_parse_final_log() test", {
 # Test ST_read_final_log() -----------------------------------------------------
 test_that("ST_read_final_log() test", {
   # Check arguments
-  expect_equal(names(formals(ST_read_final_log)), c("fpath", "rename_col"))
-  expect_equal(formals(ST_read_final_log)[["rename_col"]], quote(function(x) x))
+  expect_equal(names(formals(ST_read_final_log)), c("fpath"))
+  # expect_equal(formals(ST_read_final_log)[["rename_col"]], quote(function(x) x))
 
-  tbl <- ST_read_final_log(ST_final_log_fpath[1], rename_col = fs::path_file)
+  tbl <- ST_read_final_log(ST_final_log_fpath[1]) %>% rename_fpath(nth = 3)
   expect_equal(nrow(tbl), 32)
   expect_equal(ncol(tbl), 3)
   expect_equal(colnames(tbl), c("contents_group", "contents", "sample1.final.log"))
   expect_true(is.factor(tbl$contents_group))
   expect_true(is.factor(tbl$contents))
-
-  expect_equal(
-    ST_read_final_log(ST_final_log_fpath[1], rename_col =
-                        function(x) stringr::str_remove(fs::path_file(x), ".final.log")),
-    dplyr::rename(tbl, sample1 = 3)
-  )
 })
 
 # Test ST_merge_final_log() ----------------------------------------------------
@@ -47,7 +41,9 @@ test_that("ST_merge_final_log() test", {
   # Check arguments
   expect_equal(names(formals(ST_merge_final_log)), "li_tbl")
 
-  li_tbl <- lapply(ST_final_log_fpath, ST_read_final_log, rename_col = fs::path_file)
+  li_tbl <-
+    lapply(ST_final_log_fpath, ST_read_final_log) %>%
+    lapply(rename_fpath, nth = 3)
   tbl <- ST_merge_final_log(li_tbl)
   expect_equal(
     colnames(tbl),

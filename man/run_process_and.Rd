@@ -17,7 +17,7 @@ run_get_stdout(statement, ...)
 run_get_stderr(statement, ...)
 }
 \arguments{
-\item{statement}{a command line statement. (character)}
+\item{statement}{a command line statement.}
 
 \item{...}{options for pass to \code{processx::run()}}
 }

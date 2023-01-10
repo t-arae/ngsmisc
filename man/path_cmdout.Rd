@@ -11,9 +11,9 @@ path_cmdout(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache")
 
 \item{...}{...}
 
-\item{create_dir}{logical. if TRUE create directory of the returned path. (default: TRUE)}
+\item{create_dir}{logical. if TRUE create directory of the returned path. (default: \code{TRUE})}
 
-\item{save_dir}{directory name to save the output. (default: "cmdout_cache")}
+\item{save_dir}{directory name to save the output. (default: \code{"cmdout_cache"})}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

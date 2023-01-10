@@ -1,5 +1,4 @@
 ##### rMATS.(JC|JCEC).txt column specs ----------------------------------------
-
 return_MATS_COLUMN <- function(...) {
   part1 <- c("ID", "GeneID", "geneSymbol", "chr", "strand")
   part2 <-

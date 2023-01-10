@@ -1,15 +1,37 @@
-
-#' Read featureCounts read count table
+#' Read featureCounts read count table as tibbles and merge them
+#'
 #' @description
 #' `r lifecycle::badge("experimental")`
+#'
+#' `fC_read_count()` reads a featureCounts read-count output.
+#'
+#' `fC_merge_count()` merges a list of tibbles read by `fC_read_count()` to a tibble.
+#'
 #' @param fpath featureCounts output file path
-#' @export
+#' @param li_tbl A list of featureCounts read counts tibbles
+#'
 #' @examples
+#' # example read-count files
 #' infs <-
 #'   system.file(package = "ngsmisc", "featurecounts") %>%
 #'   fs::dir_ls(regexp = "_gene_counts.txt$")
+#'
+#' # show first six lines
+#' readLines(infs[1], n = 6) %>% cat(sep = "\n")
+#'
+#' # read a read-count file
 #' fC_read_count(infs[1])
 #'
+#' # read read-count files and merge them into a tibble
+#' lapply(infs, fC_read_count) %>%
+#'   lapply(rename_fpath_bam, nth = 7) %>%
+#'   fC_merge_count()
+#'
+#' @name fC_count
+NULL
+
+#' @rdname fC_count
+#' @export
 fC_read_count <- function(fpath) {
   # Check the first of lines
   fl <- readr::read_lines(file = fpath, n_max = 1L)
@@ -21,83 +43,96 @@ fC_read_count <- function(fpath) {
   )
 }
 
-#' Read featureCounts read count summary
+#' @rdname fC_count
+#' @export
+fC_merge_count <- function(li_tbl) {
+  # Check data identity
+  temp <- purrr::map(li_tbl, dplyr::select, -7)
+  is_all_equal <-
+    purrr::map_lgl(temp, ~ identical(temp[[1]], .x)) %>%
+    all()
+  if(!is_all_equal)
+    stop("All metadata of data.frame in li_tbl must be identical")
+
+  purrr::map(li_tbl[-1], dplyr::select, 7) %>%
+    purrr::reduce(dplyr::bind_cols, .init = li_tbl[[1]])
+}
+
+
+#' Read featureCounts read count summary as tibbles and merge them
+#'
 #' @description
 #' `r lifecycle::badge("experimental")`
-#' @param fpath featureCounts output file path
-#' @export
+#'
+#' `fC_read_summary()` reads a featureCounts summary file.
+#'
+#' @param fpath featureCounts summary output file path
+#' @param li_tbl A list of featureCounts summary tibbles
+#'
 #' @examples
+#' # example summary files
 #' infs <-
 #'   system.file(package = "ngsmisc", "featurecounts") %>%
 #'   fs::dir_ls(regexp = "_gene_counts.txt.summary$")
+#'
+#' # show first six lines
+#' readLines(infs[1], n = 6) %>% cat(sep = "\n")
+#'
+#' # read a summary file
 #' fC_read_summary(infs[1])
 #'
+#' # read summary files and merge them into a tibble
+#' lapply(infs, fC_read_summary) %>%
+#'   lapply(rename_fpath_bam, nth = 2) %>%
+#'   fC_merge_summary()
+#'
+#' @name fC_summary
+NULL
+
+#' @rdname fC_summary
+#' @export
 fC_read_summary <- function(fpath) {
   purrr::map(fpath, readr::read_tsv, col_types = "ci") %>%
     purrr::reduce(dplyr::left_join, by = "Status")
 }
 
-#' Rename featureCounts read count table
-#' @description
-#' `r lifecycle::badge("experimental")`
-#' @param tbl_fC featureCounts read counts tibble
-#' @param col_fpath integer. default = 7L
-#' @param file_suffix regex pattern. default = ".sort.bam$"
+#' @rdname fC_summary
 #' @export
-#' @examples
-#' infs <-
-#'   system.file(package = "ngsmisc", "featurecounts") %>%
-#'   fs::dir_ls(regexp = "_gene_counts.txt$")
-#' fC_read_count(infs[1]) %>% fC_rename_col()
-#'
-fC_rename_col <- function(tbl_fC, col_fpath = 7L, file_suffix = ".sort.bam$") {
-  tbl_fC <-
-    rename_col_fpath(tbl = tbl_fC, col_fpath = col_fpath,
-                     rm_file_suffix = TRUE, file_suffix = file_suffix)
-  tbl_fC
-}
-
-#' Merge featureCounts read count table to a tibble
-#' @description
-#' `r lifecycle::badge("experimental")`
-#' @param tbl_li_fC list of featureCounts read counts tibbles
-#' @export
-#' @examples
-#' infs <-
-#'   system.file(package = "ngsmisc", "featurecounts") %>%
-#'   fs::dir_ls(regexp = "_gene_counts.txt$")
-#' lapply(infs, fC_read_count) %>% fC_merge_tbl_li()
-#'
-#'
-fC_merge_tbl_li <- function(tbl_li_fC) {
+fC_merge_summary <- function(li_tbl) {
   # Check data identity
-  temp <- purrr::map(tbl_li_fC, dplyr::select, -7)
+  temp <- purrr::map(li_tbl, dplyr::select, 1)
   is_all_equal <-
     purrr::map_lgl(temp, ~ identical(temp[[1]], .x)) %>%
     all()
   if(!is_all_equal)
-    stop("All metadata of data.frame in tbl_li_fC must be identical")
+    stop("All metadata of data.frame in li_tbl must be identical")
 
-  purrr::map(tbl_li_fC[-1], dplyr::select, 7) %>%
-    purrr::reduce(dplyr::bind_cols, .init = tbl_li_fC[[1]])
+  purrr::map(li_tbl[-1], dplyr::select, 2) %>%
+    purrr::reduce(dplyr::bind_cols, .init = li_tbl[[1]])
 }
 
 #' Calculate RPM/RPKM/TPM from featureCounts read counts
+#'
 #' @description
 #' `r lifecycle::badge("experimental")`
+#'
+#' `fC_calc_rpm/rpkm/tpm()` calculate normalized expression levels.
+#'
 #' @param tbl_fC featureCounts read counts tibble
+#'
 #' @examples
 #' infs <-
 #'   system.file(package = "ngsmisc", "featurecounts") %>%
 #'   fs::dir_ls(regexp = "_gene_counts.txt$")
 #'
 #' lapply(infs, fC_read_count) %>%
-#'   fC_merge_tbl_li() %>%
-#'   fC_rename_col(col_fpath = -c(1:6)) %>%
+#'   fC_merge_count() %>%
+#'   rename_fpath_bam(nth = -c(1:6)) %>%
 #'   fC_calc_rpm() %>%
 #'   fC_calc_rpkm() %>%
 #'   fC_calc_tpm() %>%
 #'   dplyr::glimpse()
+#'
 #' @name fC_calc
 NULL
 
@@ -140,3 +175,34 @@ fC_calc_tpm <- function(tbl_fC) {
     ))
 }
 
+#' Rename featureCounts read count table
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' `fC_rename_col()` renames the 7th column (file path).
+#'
+#' @keywords internal
+#'
+#' @param tbl_fC featureCounts read counts tibble
+#' @param col_fpath integer. default = 7L
+#' @param file_suffix regex pattern. default = ".sort.bam$"
+#'
+#' @examples
+#' infs <-
+#'   system.file(package = "ngsmisc", "featurecounts") %>%
+#'   fs::dir_ls(regexp = "_gene_counts.txt$")
+#' fC_read_count(infs[1]) %>% fC_rename_col()
+#'
+#' @export
+fC_rename_col <- function(tbl_fC, col_fpath = 7L, file_suffix = ".sort.bam$") {
+  lifecycle::deprecate_warn(
+    when = "1.0.0",
+    what = "fC_rename_col()",
+    with = "rename_fpath_bam()"
+  )
+  tbl_fC <-
+    rename_col_fpath(tbl = tbl_fC, col_fpath = col_fpath,
+                     rm_file_suffix = TRUE, file_suffix = file_suffix)
+  tbl_fC
+}

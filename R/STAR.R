@@ -42,21 +42,20 @@ ST_parse_final_log <- function(fpath) {
   results
 }
 
-#' Read STAR final.log files and merge them into a tibble
+#' Read STAR final.log files as tibbles and merge them
 #' @description
 #' `r lifecycle::badge("experimental")`
 #' @param fpath a path to the STAR final.log file
-#' @param rename_col a function to covert the column name of `fpath`. (default: function(x) x)
 #' @param li_tbl a list of data.frame
 #' @examples
 #' infs <-
 #'   system.file(package = "ngsmisc", "star") %>%
 #'   fs::dir_ls(regexp = ".final.log$")
-#' ST_read_final_log(infs[1], rename_col = fs::path_file) %>% print(n = Inf)
+#' ST_read_final_log(infs[1]) %>% rename_fpath(nth = 3) %>% print(n = Inf)
 #'
-#' f <- function(x) stringr::str_remove(fs::path_file(x), ".final.log")
 #' infs %>%
-#'   lapply(ST_read_final_log, rename_col = f) %>%
+#'   lapply(ST_read_final_log) %>%
+#'   lapply(rename_fpath, nth = 3, suffix = ".final.log") %>%
 #'   ST_merge_final_log()
 #'
 #' @name ST_final_log
@@ -64,7 +63,7 @@ NULL
 
 #' @rdname ST_final_log
 #' @export
-ST_read_final_log <- function(fpath, rename_col = function(x) x) {
+ST_read_final_log <- function(fpath) {
   temp <- NULL
   results <- ST_parse_final_log(fpath)
 
@@ -79,7 +78,7 @@ ST_read_final_log <- function(fpath, rename_col = function(x) x) {
       temp =
         unlist(results)
     ) %>%
-      dplyr::rename(!!rename_col(fpath) := temp)
+      dplyr::rename(!!fpath := temp)
   )
 }
 
@@ -117,17 +116,6 @@ ST_merge_final_log <- function(li_tbl) {
 #'   purrr::imap(~ dplyr::mutate(.x, sample = fs::path_file(.y))) %>%
 #'   dplyr::bind_rows()
 #' tbl_merge
-#'
-#' # library(ggplot2)
-#' # tbl_merge %>%
-#' #   ggplot(aes(x = paste(seqnames, start, end, sep = "\n"), y = num_uniq_map_jc)) +
-#' #   geom_col(aes(fill = sample, alpha = intron_motif)) +
-#' #   theme_linedraw(base_size = 14) +
-#' #   theme(panel.grid = element_blank()) +
-#' #   labs(x = "Coordinates", y = "Number of uniquely mapped reads\ncrossing junction") +
-#' #   scale_y_continuous(limits = c(0, NA), expand = expansion(c(0, .1))) +
-#' #   scale_fill_viridis_d() +
-#' #   scale_alpha_discrete(range = c(.5, 1))
 #'
 #' @name ST_sj_tab
 NULL

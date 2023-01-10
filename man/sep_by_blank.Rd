@@ -7,7 +7,7 @@
 sep_by_blank(statement)
 }
 \arguments{
-\item{statement}{a command line statement. (character)}
+\item{statement}{a command line statement.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

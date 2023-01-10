@@ -24,14 +24,14 @@ ngsmisc::fC_read_count(infs[1])
 ngsmisc::fC_read_count(infs[1]) |>
   ngsmisc::fC_rename_col()
 
-# read multiple read-count files and merge them by `fC_merge_tbl_li()`.
+# read multiple read-count files and merge them by `fC_merge_count()`.
 lapply(infs, ngsmisc::fC_read_count) |>
-  ngsmisc::fC_merge_tbl_li()
+  ngsmisc::fC_merge_count()
 
 # example workflow using these functions
 lapply(infs, ngsmisc::fC_read_count) |>
   lapply(ngsmisc::fC_rename_col) |>
-  ngsmisc::fC_merge_tbl_li()
+  ngsmisc::fC_merge_count()
 ```
 
 # Calculate RPM, RPKM, TPM
@@ -42,7 +42,7 @@ tbl_readcount <-
   fs::dir_ls(regexp = "_gene_counts.txt$") |>
   lapply(ngsmisc::fC_read_count) |>
   lapply(ngsmisc::fC_rename_col) |>
-  ngsmisc::fC_merge_tbl_li()
+  ngsmisc::fC_merge_count()
 
 # calculate Reads Per Million mapped reads (RPM)
 tbl_readcount |> ngsmisc::fC_calc_rpm() |> dplyr::glimpse()

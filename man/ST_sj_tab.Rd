@@ -36,15 +36,4 @@ tbl_merge <-
   dplyr::bind_rows()
 tbl_merge
 
-# library(ggplot2)
-# tbl_merge \%>\%
-#   ggplot(aes(x = paste(seqnames, start, end, sep = "\n"), y = num_uniq_map_jc)) +
-#   geom_col(aes(fill = sample, alpha = intron_motif)) +
-#   theme_linedraw(base_size = 14) +
-#   theme(panel.grid = element_blank()) +
-#   labs(x = "Coordinates", y = "Number of uniquely mapped reads\ncrossing junction") +
-#   scale_y_continuous(limits = c(0, NA), expand = expansion(c(0, .1))) +
-#   scale_fill_viridis_d() +
-#   scale_alpha_discrete(range = c(.5, 1))
-
 }

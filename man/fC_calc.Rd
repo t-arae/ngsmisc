@@ -18,6 +18,8 @@ fC_calc_tpm(tbl_fC)
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
+\code{fC_calc_rpm/rpkm/tpm()} calculate normalized expression levels.
 }
 \examples{
 infs <-
@@ -25,10 +27,11 @@ infs <-
   fs::dir_ls(regexp = "_gene_counts.txt$")
 
 lapply(infs, fC_read_count) \%>\%
-  fC_merge_tbl_li() \%>\%
-  fC_rename_col(col_fpath = -c(1:6)) \%>\%
+  fC_merge_count() \%>\%
+  rename_fpath_bam(nth = -c(1:6)) \%>\%
   fC_calc_rpm() \%>\%
   fC_calc_rpkm() \%>\%
   fC_calc_tpm() \%>\%
   dplyr::glimpse()
+
 }

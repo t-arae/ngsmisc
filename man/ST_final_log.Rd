@@ -4,16 +4,14 @@
 \alias{ST_final_log}
 \alias{ST_read_final_log}
 \alias{ST_merge_final_log}
-\title{Read STAR final.log files and merge them into a tibble}
+\title{Read STAR final.log files as tibbles and merge them}
 \usage{
-ST_read_final_log(fpath, rename_col = function(x) x)
+ST_read_final_log(fpath)
 
 ST_merge_final_log(li_tbl)
 }
 \arguments{
 \item{fpath}{a path to the STAR final.log file}
-
-\item{rename_col}{a function to covert the column name of fpath. (default: function(x) x)}
 
 \item{li_tbl}{a list of data.frame}
 }
@@ -24,11 +22,11 @@ ST_merge_final_log(li_tbl)
 infs <-
   system.file(package = "ngsmisc", "star") \%>\%
   fs::dir_ls(regexp = ".final.log$")
-ST_read_final_log(infs[1], rename_col = fs::path_file) \%>\% print(n = Inf)
+ST_read_final_log(infs[1]) \%>\% rename_fpath(nth = 3) \%>\% print(n = Inf)
 
-f <- function(x) stringr::str_remove(fs::path_file(x), ".final.log")
 infs \%>\%
-  lapply(ST_read_final_log, rename_col = f) \%>\%
+  lapply(ST_read_final_log) \%>\%
+  lapply(rename_fpath, nth = 3, suffix = ".final.log") \%>\%
   ST_merge_final_log()
 
 }

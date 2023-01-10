@@ -58,16 +58,16 @@ test_that("fC_rename_col() test 2", {
   expect_equal(temp2[7], "sample_1.bam")
 })
 
-# Test fC_merge_tbl_li() ---------------------------------------------------------
+# Test fC_merge_count() ---------------------------------------------------------
 temp1 <- fC_tbl_li[[1]]
-temp2 <- fC_merge_tbl_li(fC_tbl_li)
-test_that("fC_merge_tbl_li() test 1", {
+temp2 <- fC_merge_count(fC_tbl_li)
+test_that("fC_merge_count() test 1", {
   expect_equal(dim(temp2), c(133, 9))
   expect_true(identical(temp1[,1:7], temp2[,1:7]))
 })
 
 # Test fC_calc_rpm() ---------------------------------------------------------
-fC_tbl_merged <- lapply(fC_count_fpath, fC_read_count) %>% fC_merge_tbl_li()
+fC_tbl_merged <- lapply(fC_count_fpath, fC_read_count) %>% fC_merge_count()
 test_that("fC_calc_rpm()", {
   # Check arguments
   expect_equal(names(formals(fC_calc_rpm)), "tbl_fC")
@@ -87,7 +87,7 @@ test_that("fC_calc_rpm()", {
 })
 
 # Test fC_calc_rpkm() ---------------------------------------------------------
-fC_tbl_merged <- lapply(fC_count_fpath, fC_read_count) %>% fC_merge_tbl_li()
+fC_tbl_merged <- lapply(fC_count_fpath, fC_read_count) %>% fC_merge_count()
 test_that("fC_calc_rpkm()", {
   # Check arguments
   expect_equal(names(formals(fC_calc_rpkm)), "tbl_fC")
@@ -107,7 +107,7 @@ test_that("fC_calc_rpkm()", {
 })
 
 # Test fC_calc_tpm() ---------------------------------------------------------
-fC_tbl_merged <- lapply(fC_count_fpath, fC_read_count) %>% fC_merge_tbl_li()
+fC_tbl_merged <- lapply(fC_count_fpath, fC_read_count) %>% fC_merge_count()
 test_that("fC_calc_tpm()", {
   # Check arguments
   expect_equal(names(formals(fC_calc_tpm)), "tbl_fC")
