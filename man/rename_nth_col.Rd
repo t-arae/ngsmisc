@@ -14,9 +14,6 @@ rename_nth_col(tbl, nth, renamer)
 \item{renamer}{a function to convert column name.}
 }
 \description{
-Rename the Nth column name of a data.frame.
-}
-\details{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
 \code{rename_nth_col()} renames the Nth column name by applying a renamer function.

@@ -2,17 +2,34 @@
 % Please edit documentation in R/DESeq2.R
 \name{ds2_rcdf_to_dds}
 \alias{ds2_rcdf_to_dds}
-\title{Prepare DESeqDataSet object from readcount data.frame}
+\title{Prepare DESeqDataSet object from read-count data.frame}
 \usage{
 ds2_rcdf_to_dds(rcdf, coldata, design = ~1)
 }
 \arguments{
-\item{rcdf}{a data.frame created by ds2_prepare_rcdf()}
+\item{rcdf}{a data.frame created by \code{ds2_tbl_to_rcdf()}}
 
 \item{coldata}{a data.frame specifying sample info}
 
-\item{design}{design. default: ~ 1 (no design)}
+\item{design}{design. (default: \code{~ 1} (no design))}
 }
 \description{
-Prepare DESeqDataSet object from readcount data.frame
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
+\code{ds2_rcdf_to_dds()} does the same thing as \code{DESeq2::DESeqDataSetFromMatrix()}.
+}
+\examples{
+# example read-count data.frame
+rcdf <-
+  system.file(package = "ngsmisc", "deseq2") \%>\%
+  fs::dir_ls(regexp = "count.csv$") \%>\%
+  {suppressMessages(readr::read_csv(.))} \%>\%
+  ds2_tbl_to_rcdf()
+
+# convert read-count data.frame to a `DESeq2::DESeqDataSet-class` object
+ds2_rcdf_to_dds(
+  rcdf = rcdf,
+  coldata = data.frame(sample = colnames(rcdf))
+)
+
 }

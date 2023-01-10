@@ -1,17 +1,19 @@
-
-# final.log --------------------------------------------------------------------
-
 #' Parse STAR final.log files as a list
+#'
 #' @description
 #' `r lifecycle::badge("experimental")`
+#'
+#' Parse STAR final.log file as a list.
+#'
 #' @param fpath a path to the STAR final.log file
-#' @export
+#'
 #' @examples
 #' infs <-
 #'   system.file(package = "ngsmisc", "star") %>%
 #'   fs::dir_ls(regexp = ".final.log$")
 #' ST_parse_final_log(infs[1]) %>% str(vec.len = 1)
 #'
+#' @export
 ST_parse_final_log <- function(fpath) {
   temp <- NULL
   # Check the first of lines
@@ -43,8 +45,12 @@ ST_parse_final_log <- function(fpath) {
 }
 
 #' Read STAR final.log files as tibbles and merge them
+#'
 #' @description
 #' `r lifecycle::badge("experimental")`
+#'
+#' Read STAR final.log files as tibbles and merge them.
+#'
 #' @param fpath a path to the STAR final.log file
 #' @param li_tbl a list of data.frame
 #' @examples
@@ -89,14 +95,16 @@ ST_merge_final_log <- function(li_tbl) {
     purrr::reduce(dplyr::left_join, by = c("contents_group", "contents"))
 }
 
-# SJ.out.tab -------------------------------------------------------------------
-
 #' Read STAR SJ.out.tab file as a tibble
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
+#'
+#' Read (and decode data) STAR SJ.out.tab file as a tibble.
+#'
 #' @details
 #' See the section 5.5 "Splice junctions" in the STAR manual.
+#'
 #' @param fpath a path to the STAR final.log file
 #' @param decode logical. If `TRUE` decode values in 3rd-5th columns. (default: `FALSE`)
 #' @examples

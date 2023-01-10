@@ -1,7 +1,7 @@
 
 #' Rename the Nth column name of a data.frame.
 #'
-#' @details
+#' @description
 #' `r lifecycle::badge("experimental")`
 #'
 #' `rename_nth_col()` renames the Nth column name by applying a renamer function.
@@ -41,7 +41,7 @@ rename_nth_col <- function(tbl, nth, renamer) {
 
 #' Return a renaming function for extract labels from file name.
 #'
-#' @details
+#' @description
 #' `r lifecycle::badge("experimental")`
 #'
 #' `renamer_fpath()` returns a utility function to extract a label from a file path.
@@ -75,7 +75,7 @@ renamer_fpath <- function(prefix = "", suffix = "") {
 
 #' Rename file path in the column name to the label
 #'
-#' @details
+#' @description
 #' `r lifecycle::badge("experimental")`
 #'
 #' `rename_fpath_fastq()`, `rename_fpath_bam` are the renaming functions for

@@ -27,14 +27,10 @@ rename_fpath_bam(tbl, nth, prefix = "")
 }}
 }
 \description{
-Rename file path in the column name to the label
-}
-\details{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
-\code{rename_fpath_fastq()} is a renaming function for a column containing fastq filepath.
-
-\code{rename_fpath_bam()} is a renaming function for a column containing bam filepath.
+\code{rename_fpath_fastq()}, \code{rename_fpath_bam} are the renaming functions for
+a column containing fastq and bam file paths, respectively.
 }
 \examples{
 f <- function(...) data.frame(..., check.names = FALSE)

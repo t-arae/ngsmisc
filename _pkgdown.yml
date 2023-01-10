@@ -10,16 +10,17 @@ reference:
   - cat_process_out
   - run_process_and
   - path_cmdout
-- title: "functions for featureCounts"
-- contents:
-  - fC_count
-  - fC_summary
-  - fC_calc
 - title: "functions for STAR"
 - contents:
   - ST_final_log
   - ST_sj_tab
   - ST_parse_final_log
+- title: "functions for featureCounts"
+- contents:
+  - fC_count
+  - fC_summary
+  - fC_write_count
+  - fC_calc
 - title: "misc functions for rMATS"
 - contents:
   - rM_read_MATS_test_out
@@ -29,6 +30,20 @@ reference:
   - rM_mutate_count_stat
   - rM_select_switch_start_end_col
   - rM_extract_event_type
+- title: "functions for DESeq2"
+- contents:
+  - ds2_tbl_to_rcdf
+  - ds2_rcdf_filter_by_rownames
+  - ds2_rcdf_filter_organella
+  - ds2_rcdf_to_dds
+  - ds2_sizefactor
+  - ds2_dds_estimate_disp
+  - ds2_test
+  - ds2_design
+  - ds2_dds_get_normalized_count_tbl
+  - ds2_dds_to
+  - ds2_ddr_to_tbl
+  - ds2_ddr_plot_independent_filtering
 - title: "misc functions for clusterProfiler"
 - contents:
   - clP_write_li_ego
@@ -40,25 +55,6 @@ reference:
   - clP_num_significant
   - clP_path2label
   - clP_gp_theme_bar
-- title: "misc functions for DESeq2"
-- contents:
-  - ds2_tbl_to_rcdf
-  - ds2_rcdf_filter_by_rownames
-  - ds2_rcdf_filter_organella
-  - ds2_rcdf_to_dds
-  - ds2_dds_estimate_sizefactor
-  - ds2_dds_set_sizefactor
-  - ds2_dds_get_sizefactor
-  - ds2_dds_estimate_disp
-  - ds2_dds_test_nbinomLRT
-  - ds2_dds_test_nbinomWaldTest
-  - ds2_dds_get_design
-  - ds2_dds_set_design
-  - ds2_dds_get_normalized_count_tbl
-  - ds2_dds_to_ddr
-  - ds2_dds_to_tbl
-  - ds2_ddr_to_tbl
-  - ds2_ddr_plot_independent_filtering
 - title: "Calculate RPM/RPKM/TPM"
 - contents:
   - calc_rpm

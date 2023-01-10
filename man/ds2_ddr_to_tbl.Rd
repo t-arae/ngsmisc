@@ -7,10 +7,12 @@
 ds2_ddr_to_tbl(ddr, rownames = "Geneid")
 }
 \arguments{
-\item{ddr}{a DESeqResult object}
+\item{ddr}{a \code{DESeq2::DESeqResults} class object object}
 
-\item{rownames}{a column name. default: "Geneid"}
+\item{rownames}{a column name. (default: \code{"Geneid"})}
 }
 \description{
-Convert a DESeqResults object to tibble
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
+\code{ds2_ddr_to_tbl()} converts from a \code{DESeq2::DESeqResults} class object to a tibble.
 }

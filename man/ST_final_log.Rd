@@ -17,6 +17,8 @@ ST_merge_final_log(li_tbl)
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
+Read STAR final.log files as tibbles and merge them.
 }
 \examples{
 infs <-

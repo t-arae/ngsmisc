@@ -14,6 +14,8 @@ ST_read_sj_tab(fpath, decode = FALSE)
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
+Read (and decode data) STAR SJ.out.tab file as a tibble.
 }
 \details{
 See the section 5.5 "Splice junctions" in the STAR manual.

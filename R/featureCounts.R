@@ -58,6 +58,35 @@ fC_merge_count <- function(li_tbl) {
     purrr::reduce(dplyr::bind_cols, .init = li_tbl[[1]])
 }
 
+#' Write selected columns (id/column/rpm/rpkm/tpm) in a tibble to a csv file.
+#'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
+#' `fC_write_count()` writes several columns in featureCounts read-count tibble to csv file.
+#'
+#' @param tbl_fC a tibble read from featureCounts read-count output.
+#' @param fpath an output csv file path.
+#'
+#' @examples
+#' # example read-count files
+#' infs <-
+#'   system.file(package = "ngsmisc", "featurecounts") %>%
+#'   fs::dir_ls(regexp = "_gene_counts.txt$")
+#'
+#' # read read-count files and merge them into a tibble
+#' lapply(infs, fC_read_count) %>%
+#'   lapply(rename_fpath_bam, nth = 7) %>%
+#'   fC_merge_count() %>%
+#'   fC_write_count("./count.csv")
+#' readr::read_csv("./count.csv")
+#' fs::file_delete("./count.csv")
+#'
+#' @export
+fC_write_count <- function(tbl_fC, fpath) {
+  dplyr::select(tbl_fC, !c(2:6)) %>%
+    readr::write_csv(file = fpath)
+}
 
 #' Read featureCounts read count summary as tibbles and merge them
 #'

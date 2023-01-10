@@ -11,6 +11,8 @@ ST_parse_final_log(fpath)
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
+Parse STAR final.log file as a list.
 }
 \examples{
 infs <-

@@ -12,9 +12,6 @@ renamer_fpath(prefix = "", suffix = "")
 \item{suffix}{a string to specify the removing file suffix. (default: \code{""})}
 }
 \description{
-Return a renaming function for extract labels from file name.
-}
-\details{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
 \code{renamer_fpath()} returns a utility function to extract a label from a file path.

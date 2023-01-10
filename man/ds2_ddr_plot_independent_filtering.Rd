@@ -12,5 +12,7 @@ ds2_ddr_plot_independent_filtering(ddr, title = "")
 \item{title}{plot title}
 }
 \description{
-Plot independent filtering
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
+\code{ds2_ddr_plot_independent_filtering()} plots a independent filtering result.
 }
