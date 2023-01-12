@@ -10,18 +10,19 @@
 #' @param id_col character specifying the gene name column. (default: `"Geneid"`)
 #'
 #' @examples
-#' # example read-count csv file
+#' # Example read-count csv file
 #' inf <-
 #'   system.file(package = "ngsmisc", "deseq2") %>%
 #'   fs::dir_ls(regexp = "count.csv$")
 #'
-#' # read read-count csv file
-#' tbl_count <- readr::read_csv(inf)
+#' # Read read-count csv file
+#' tbl_count <- readr::read_csv(inf, show_col_types = FALSE)
 #' tbl_count
 #'
-#' # convert tibble to data.frame
+#' # Convert tibble to data.frame
 #' rcdf <- ds2_tbl_to_rcdf(tbl_count)
 #' head(rcdf)
+#'
 #' rownames(head(rcdf))
 #'
 #' @export
@@ -37,20 +38,25 @@ ds2_tbl_to_rcdf <- function(tbl, id_col = "Geneid") {
 #'
 #' `ds2_rcdf_filter_by_rownames()` filter a read-count data.frame by rownames.
 #'
-#' @param rcdf a data.frame created by `ds2_tbl_to_rcdf()`
+#' @param rcdf a read-count data.frame created by `ds2_tbl_to_rcdf()`
 #' @param pattern a regex pattern to look for.
-#' @param negate If TRUE, return non-matching elements. (default: `FALSE`)
+#' @param negate If `TRUE`, return non-matching elements. (default: `FALSE`)
 #'
 #' @examples
-#' # example read-count data.frame
+#' # Example read-count data.frame
 #' rcdf <-
 #'   system.file(package = "ngsmisc", "deseq2") %>%
 #'   fs::dir_ls(regexp = "count.csv$") %>%
-#'   {suppressMessages(readr::read_csv(.))} %>%
+#'   readr::read_csv(show_col_types = FALSE) %>%
 #'   ds2_tbl_to_rcdf()
 #'
+#' # Original read-count data.frame
 #' head(rcdf)
+#'
+#' # Filtering read-count data.frame by rownames.
 #' ds2_rcdf_filter_by_rownames(head(rcdf), pattern = "[123]0")
+#'
+#' # Invert filter by setting as `negate = TRUE`.
 #' ds2_rcdf_filter_by_rownames(head(rcdf), pattern = "[123]0", negate = TRUE)
 #'
 #' @export
@@ -62,9 +68,15 @@ ds2_rcdf_filter_by_rownames <- function(rcdf, pattern, negate = FALSE) {
 }
 
 #' Filter organella reads from readcount data.frame
+#' @description
+#' `r lifecycle::badge("deprecated")`
 #' @inheritParams ds2_rcdf_filter_by_rownames
 #' @export
 ds2_rcdf_filter_organella <- function(rcdf) {
+  lifecycle::deprecate_warn(
+    when = "0.3.0",
+    what = "ds2_rcdf_filter_organella()"
+  )
   ds2_rcdf_filter_by_rownames(rcdf, "^AT[CM]G")
 }
 
@@ -80,14 +92,14 @@ ds2_rcdf_filter_organella <- function(rcdf) {
 #' @param design design. (default: `~ 1` (no design))
 #'
 #' @examples
-#' # example read-count data.frame
+#' # Example read-count data.frame.
 #' rcdf <-
 #'   system.file(package = "ngsmisc", "deseq2") %>%
 #'   fs::dir_ls(regexp = "count.csv$") %>%
-#'   {suppressMessages(readr::read_csv(.))} %>%
+#'   readr::read_csv(show_col_types = FALSE) %>%
 #'   ds2_tbl_to_rcdf()
 #'
-#' # convert read-count data.frame to a `DESeq2::DESeqDataSet-class` object
+#' # Convert read-count data.frame to a `DESeq2::DESeqDataSet-class` object.
 #' ds2_rcdf_to_dds(
 #'   rcdf = rcdf,
 #'   coldata = data.frame(sample = colnames(rcdf))
@@ -113,32 +125,38 @@ ds2_rcdf_to_dds <- function(rcdf, coldata, design = ~ 1) {
 #'
 #' `ds2_dds_set_sizefactor()` manually sets specified size-factor to the given object.
 #'
-#' @param dds a DESeqDataSet object
-#' @param sizefactor a double vector. its length must be equal to ncol(dds)
-#' @param ... ...
+#' @param dds a `DESeqDataSet` object
+#' @param sizefactor a double vector. the length must be equal to `ncol(dds)`.
+#' @param ... further arguments passed to `DESeq2:::estimateSizeFactors.DESeqDataSet()`. see Details.
+#'
+#' @details
+#' To see the advanced settings, run `` ?DESeq2::`estimateSizeFactors,DESeqDataSet-method` ``.
 #'
 #' @examples
-#' # example read-count data.frame
+#' # Example read-count data.frame
 #' rcdf <-
 #'   system.file(package = "ngsmisc", "deseq2") %>%
 #'   fs::dir_ls(regexp = "count.csv$") %>%
-#'   {suppressMessages(readr::read_csv(.))} %>%
+#'   readr::read_csv(show_col_types = FALSE) %>%
 #'   ds2_tbl_to_rcdf()
 #'
+#' # Prepare `DESeqDataSet` object without estimating size-factor.
 #' dds_wo_sf <-
 #'   ds2_rcdf_to_dds(
 #'     rcdf = rcdf,
 #'     coldata = data.frame(sample = colnames(rcdf))
 #'   )
 #'
-#' # estimate and set library size factors
+#' # Estimate and set library size factors.
 #' dds_w_sf <- dds_wo_sf %>% ds2_dds_estimate_sizefactor()
 #'
-#' # if the specfied `dds` object has not been calculate size-factor previously,
-#' # automatically calculate size-factor and return it.
-#' dds_wo_sf %>% ds2_dds_get_sizefactor()
+#' # If the specfied `dds` object has not computed size-factor before,
+#' # it will automatically compute size-factor and return it.
 #' dds_w_sf %>% ds2_dds_get_sizefactor()
 #'
+#' dds_wo_sf %>% ds2_dds_get_sizefactor()
+#'
+#' # The size-factor can be set manually.
 #' dds_wo_sf %>% ds2_dds_set_sizefactor(1:3) %>% ds2_dds_get_sizefactor()
 #'
 #' @name ds2_sizefactor
@@ -177,6 +195,29 @@ ds2_dds_set_sizefactor <- function(dds, sizefactor) {
 #'
 #' @param dds a DESeqDataSet object
 #' @param ... pass to the DESeq2::estimateDispersions()
+#' @param ... further arguments are passed to `DESeq2::estimateDispersions()`. see Details.
+#'
+#' @details
+#' To see the advanced settings, run `` ?DESeq2::`estimateDispersions,DESeqDataSet-method` ``.
+#'
+#' @examples
+#' # Example read-count data.frame
+#' rcdf <-
+#'   system.file(package = "ngsmisc", "deseq2") %>%
+#'   fs::dir_ls(regexp = "count.csv$") %>%
+#'   readr::read_csv(show_col_types = FALSE) %>%
+#'   ds2_tbl_to_rcdf()
+#'
+#' # Prepare `DESeqDataSet` object, estimate size-factor, and compute dispersion.
+#' dds <-
+#'   ds2_rcdf_to_dds(
+#'     rcdf = rcdf,
+#'     coldata = data.frame(sample = colnames(rcdf))
+#'   ) %>%
+#'   ds2_dds_estimate_sizefactor() %>%
+#'   ds2_dds_estimate_disp()
+#'
+#' dds
 #'
 #' @export
 ds2_dds_estimate_disp <- function(dds, ...) {
@@ -194,15 +235,45 @@ ds2_dds_estimate_disp <- function(dds, ...) {
 #'
 #' @param dds a `DESeq2::DESeqDataSet` class object
 #' @param reduced reduced model. (default: `~ 1`)
-#' @param ... pass to the `DESeq2::nbinomWaldTest()`
+#' @param ... further arguments are passed to `DESeq2::nbinomLRT()` or `DESeq2::nbinomWaldTest()`. See Details.
+#'
+#' @details
+#' To see the advanced settings, run `?DESeq2::nbinomLRT()` or `?DESeq2::nbinomWaldTest()`.
+#'
+#' @examples
+#' # Example read-count data.frame
+#' rcdf <-
+#'   system.file(package = "ngsmisc", "deseq2") %>%
+#'   fs::dir_ls(regexp = "count.csv$") %>%
+#'   readr::read_csv(show_col_types = FALSE) %>%
+#'   ds2_tbl_to_rcdf()
+#'
+#' # Prepare `DESeqDataSet` object, estimate size-factor, and compute dispersion.
+#' dds <-
+#'   ds2_rcdf_to_dds(
+#'     rcdf = rcdf,
+#'     coldata = data.frame(
+#'       sample = colnames(rcdf),
+#'       group = as.factor(c("A", "A", "B"))
+#'     ),
+#'     design = ~ group
+#'   ) %>%
+#'   ds2_dds_estimate_sizefactor() %>%
+#'   ds2_dds_estimate_disp()
+#'
+#' # Likelihood ratio test
+#' ds2_dds_test_nbinomLRT(dds) %>% ds2_dds_to_ddr()
+#'
+#' # Wald test
+#' ds2_dds_test_nbinomWaldTest(dds) %>% ds2_dds_to_ddr()
 #'
 #' @name ds2_test
 NULL
 
 #' @rdname ds2_test
 #' @export
-ds2_dds_test_nbinomLRT <- function(dds, reduced = ~ 1) {
-  DESeq2::nbinomLRT(dds, reduced = reduced)
+ds2_dds_test_nbinomLRT <- function(dds, reduced = ~ 1, ...) {
+  DESeq2::nbinomLRT(dds, reduced = reduced, ...)
 }
 
 #' @rdname ds2_test
@@ -223,6 +294,28 @@ ds2_dds_test_nbinomWaldTest <- function(dds, ...) {
 #' @param dds a DESeqDataSet object
 #' @param design design
 #'
+#' @examples
+#' # Example read-count data.frame
+#' rcdf <-
+#'   system.file(package = "ngsmisc", "deseq2") %>%
+#'   fs::dir_ls(regexp = "count.csv$") %>%
+#'   readr::read_csv(show_col_types = FALSE) %>%
+#'   ds2_tbl_to_rcdf()
+#'
+#' # Prepare `DESeqDataSet` object, without specifying `design`.
+#' cd <-
+#'   data.frame(
+#'     sample = colnames(rcdf),
+#'     group = as.factor(c("A", "A", "B"))
+#'   )
+#' dds <- ds2_rcdf_to_dds(rcdf = rcdf, coldata = cd)
+#'
+#' # Get design formula
+#' dds %>% ds2_dds_get_design()
+#'
+#' # Set design formula
+#' dds %>% ds2_dds_set_design(~ group) %>% ds2_dds_get_design()
+#'
 #' @name ds2_design
 NULL
 
@@ -239,7 +332,7 @@ ds2_dds_set_design <- function(dds, design) {
   dds
 }
 
-#' Get normalized count data as a tibble
+#' Compute the normalized count using size-factor, and return as a tibble
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
@@ -248,6 +341,30 @@ ds2_dds_set_design <- function(dds, design) {
 #'
 #' @param dds a DESeqDataSet object
 #' @param rownames a column name. (default: `"Geneid"`)
+#'
+#' @examples
+#' # Example read-count data.frame
+#' rcdf <-
+#'   system.file(package = "ngsmisc", "deseq2") %>%
+#'   fs::dir_ls(regexp = "count.csv$") %>%
+#'   readr::read_csv(show_col_types = FALSE) %>%
+#'   ds2_tbl_to_rcdf()
+#'
+#' # Prepare `DESeqDataSet` object, estimate size-factor, and compute dispersion.
+#' dds <-
+#'   ds2_rcdf_to_dds(
+#'     rcdf = rcdf,
+#'     coldata = data.frame(sample = colnames(rcdf))
+#'   ) %>%
+#'   ds2_dds_estimate_sizefactor()
+#'
+#' # Get normalized counts as a tibble
+#' dds %>% ds2_dds_get_normalized_count_tbl()
+#'
+#' # If you set a manual size-factor, then use it for computing.
+#' dds %>%
+#'   ds2_dds_set_sizefactor(1:3) %>%
+#'   ds2_dds_get_normalized_count_tbl()
 #'
 #' @export
 ds2_dds_get_normalized_count_tbl <- function(dds, rownames = "Geneid") {
@@ -261,7 +378,7 @@ ds2_dds_get_normalized_count_tbl <- function(dds, rownames = "Geneid") {
     tibble::as_tibble(rownames = rownames)
 }
 
-#' Convert `DESeq2::DESeqDataSet` class object to other object
+#' Convert `DESeq2::DESeqDataSet` class object to other class object
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
@@ -272,7 +389,40 @@ ds2_dds_get_normalized_count_tbl <- function(dds, rownames = "Geneid") {
 #'
 #' @param dds a DESeqDataSet object
 #' @param rownames a column name. (default: `"Geneid"`)
-#' @param ... ...
+#' @param ... further arguments are passed to `DESeq2::results()`. See Details.
+#'
+#' @details
+#' To see the advanced settings, run `?DESeq2::results()`.
+#'
+#' @examples
+#' # Example read-count data.frame
+#' rcdf <-
+#'   system.file(package = "ngsmisc", "deseq2") %>%
+#'   fs::dir_ls(regexp = "count.csv$") %>%
+#'   readr::read_csv(show_col_types = FALSE) %>%
+#'   ds2_tbl_to_rcdf()
+#'
+#' # Prepare `DESeqDataSet` object, estimate size-factor, and compute dispersion.
+#' dds <-
+#'   ds2_rcdf_to_dds(
+#'     rcdf = rcdf,
+#'     coldata = data.frame(
+#'       sample = colnames(rcdf),
+#'       group = as.factor(c("A", "A", "B"))
+#'     ),
+#'     design = ~ group
+#'   ) %>%
+#'   ds2_dds_estimate_sizefactor() %>%
+#'   ds2_dds_estimate_disp()
+#'
+#' ## Convert `DESeqDataSet` to `DESeqResults` or tibble
+#' # Likelihood ratio test
+#' ds2_dds_test_nbinomLRT(dds) %>% ds2_dds_to_ddr()
+#' ds2_dds_test_nbinomLRT(dds) %>% ds2_dds_to_tbl()
+#'
+#' # Wald test
+#' ds2_dds_test_nbinomWaldTest(dds) %>% ds2_dds_to_ddr()
+#' ds2_dds_test_nbinomWaldTest(dds) %>% ds2_dds_to_tbl()
 #'
 #' @name ds2_dds_to
 NULL
@@ -302,7 +452,7 @@ ds2_dds_to_tbl <- function(dds, rownames = "Geneid") {
   }
 }
 
-#' Convert a DESeqResults object to tibble
+#' Convert a DESeqResults object to a tibble
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
@@ -311,6 +461,33 @@ ds2_dds_to_tbl <- function(dds, rownames = "Geneid") {
 #'
 #' @param ddr a `DESeq2::DESeqResults` class object object
 #' @param rownames a column name. (default: `"Geneid"`)
+#'
+#' @examples
+#' # Example read-count data.frame
+#' rcdf <-
+#'   system.file(package = "ngsmisc", "deseq2") %>%
+#'   fs::dir_ls(regexp = "count.csv$") %>%
+#'   readr::read_csv(show_col_types = FALSE) %>%
+#'   ds2_tbl_to_rcdf()
+#'
+#' # Prepare `DESeqDataSet` object, estimate size-factor, and compute dispersion.
+#' dds <-
+#'   ds2_rcdf_to_dds(
+#'     rcdf = rcdf,
+#'     coldata = data.frame(
+#'       sample = colnames(rcdf),
+#'       group = as.factor(c("A", "A", "B"))
+#'     ),
+#'     design = ~ group
+#'   ) %>%
+#'   ds2_dds_estimate_sizefactor() %>%
+#'   ds2_dds_estimate_disp()
+#'
+#' # Likelihood ratio test
+#' ddr <- ds2_dds_test_nbinomLRT(dds) %>% ds2_dds_to_ddr()
+#'
+#' # Convert `DESeqResults` to tibble
+#' ddr %>% ds2_ddr_to_tbl()
 #'
 #' @export
 ds2_ddr_to_tbl <- function(ddr, rownames = "Geneid") {
@@ -324,11 +501,37 @@ ds2_ddr_to_tbl <- function(ddr, rownames = "Geneid") {
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
-#' `ds2_ddr_plot_independent_filtering()` plots a independent filtering result.
+#' `ds2_ddr_plot_independent_filtering()` plots the independent filtering result.
 #'
-#' @param ddr a DESeqResult object
-#' @param title plot title
+#' @param ddr a `DESeq2::DESeqResults` class object object
+#' @param title plot title. (default: `""`)
 #'
+#' @examples
+#' # Example read-count data.frame
+#' rcdf <-
+#'   system.file(package = "ngsmisc", "deseq2") %>%
+#'   fs::dir_ls(regexp = "count.csv$") %>%
+#'   readr::read_csv(show_col_types = FALSE) %>%
+#'   ds2_tbl_to_rcdf()
+#'
+#' # Prepare `DESeqDataSet` object, estimate size-factor, and compute dispersion.
+#' dds <-
+#'   ds2_rcdf_to_dds(
+#'     rcdf = rcdf,
+#'     coldata = data.frame(
+#'       sample = colnames(rcdf),
+#'       group = as.factor(c("A", "A", "B"))
+#'     ),
+#'     design = ~ group
+#'   ) %>%
+#'   ds2_dds_estimate_sizefactor() %>%
+#'   ds2_dds_estimate_disp()
+#'
+#' # Likelihood ratio test
+#' ddr <- ds2_dds_test_nbinomLRT(dds) %>% ds2_dds_to_ddr()
+#'
+#' # Plot the result of independent filtering
+#' ddr %>% ds2_ddr_plot_independent_filtering()
 #' @export
 ds2_ddr_plot_independent_filtering <- function(ddr, title = "") {
   theta <- numRej <- x <- y <- log2FoldChange <- NULL
@@ -341,7 +544,7 @@ ds2_ddr_plot_independent_filtering <- function(ddr, title = "") {
     ggplot2::geom_vline(xintercept = ddr@metadata$filterTheta) +
     ggplot2::labs(title = title, x = "quantiles of filter",
                   y = "number of rejections") +
-    ggplot2::theme_linedraw() +
+    ggplot2::theme_linedraw(base_size = 14) +
     ggplot2::scale_x_continuous(labels = scales::percent_format()) +
     ggplot2::scale_y_continuous(
       limits = c(0, NA),

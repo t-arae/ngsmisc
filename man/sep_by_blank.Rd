@@ -16,4 +16,6 @@ sep_by_blank(statement)
 cmd <- "echo 'hoge hoge'"
 sep_by_blank(cmd)
 
+"ls -l -a" \%>\% sep_by_blank()
+
 }

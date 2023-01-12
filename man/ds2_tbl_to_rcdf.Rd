@@ -17,18 +17,19 @@ ds2_tbl_to_rcdf(tbl, id_col = "Geneid")
 \code{ds2_tbl_to_rcdf()} convert a read-count data tibble into a data.frame.
 }
 \examples{
-# example read-count csv file
+# Example read-count csv file
 inf <-
   system.file(package = "ngsmisc", "deseq2") \%>\%
   fs::dir_ls(regexp = "count.csv$")
 
-# read read-count csv file
-tbl_count <- readr::read_csv(inf)
+# Read read-count csv file
+tbl_count <- readr::read_csv(inf, show_col_types = FALSE)
 tbl_count
 
-# convert tibble to data.frame
+# Convert tibble to data.frame
 rcdf <- ds2_tbl_to_rcdf(tbl_count)
 head(rcdf)
+
 rownames(head(rcdf))
 
 }

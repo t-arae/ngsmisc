@@ -1,13 +1,28 @@
+
+#' common arguments for docker_helpler_fns.R
+#'
+#' @param statement a command line statement.
+#' @param sep_cmd separated command created by `sep_by_blank()`.
+#' @param ps_out an output from `processx::run()`
+#' @param ... further options are passed to `processx::run()`.
+#'
+#' @keywords internal
+#'
+#' @name common_args_docker_helpler_fns
+NULL
+
 #' Separate a statement by white spaces
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
-#' @param statement a command line statement.
+#' @inheritParams common_args_docker_helpler_fns
 #'
 #' @examples
 #' cmd <- "echo 'hoge hoge'"
 #' sep_by_blank(cmd)
+#'
+#' "ls -l -a" %>% sep_by_blank()
 #'
 #' @export
 sep_by_blank <- function(statement) {
@@ -38,8 +53,7 @@ sep_by_blank <- function(statement) {
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
-#' @param sep_cmd separated command created by `sep_by_blank()`
-#' @param ... options for pass to `processx::run()`
+#' @inheritParams common_args_docker_helpler_fns
 #'
 #' @examples
 #' cmd_ok <- "echo 'hoge hoge'"
@@ -58,14 +72,14 @@ cmd_run <- function(sep_cmd, ...) {
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
-#' @param ps_out output from processx::run()
+#' @inheritParams common_args_docker_helpler_fns
 #'
 #' @examples
 #' cmd_ok <- "echo 'hoge hoge'"
-#' cat_stdout(cmd_run(sep_by_blank(cmd_ok)))
+#' cmd_ok %>% sep_by_blank() %>% cmd_run() %>% cat_stdout()
 #'
 #' cmd_err <- "cat sonzai_shinai_file.txt"
-#' cat_stderr(cmd_run(sep_by_blank(cmd_err), error_on_status = FALSE))
+#' cmd_err %>% sep_by_blank() %>% cmd_run(error_on_status = FALSE) %>% cat_stderr()
 #'
 #' @name cat_process_out
 NULL
@@ -87,8 +101,7 @@ cat_stderr <- function(ps_out) {
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
-#' @inheritParams sep_by_blank
-#' @inheritParams cmd_run
+#' @inheritParams common_args_docker_helpler_fns
 #'
 #' @examples
 #' cmd_ok <- "echo 'hoge hoge'"
@@ -133,7 +146,7 @@ run_get_stderr <- function(statement, ...) {
 #'
 #' @param wd a path to the working directory
 #' @param ... ...
-#' @param create_dir logical. if TRUE create directory of the returned path. (default: `TRUE`)
+#' @param create_dir logical. if `TRUE` create directory of the returned path. (default: `TRUE`)
 #' @param save_dir directory name to save the output. (default: `"cmdout_cache"`)
 #'
 #' @examples
@@ -144,7 +157,11 @@ run_get_stderr <- function(statement, ...) {
 #' @export
 path_cmdout <- function(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache") {
   fpath <- fs::path(wd, ...)
-  new_fpath <- stringr::str_replace(fpath, wd, fs::path(wd, save_dir))
+  new_fpath <- stringr::str_replace(
+    string = fpath,
+    pattern = as.character(fs::as_fs_path(wd)),
+    replacement = fs::path(wd, save_dir)
+  )
   if(create_dir) {
     fs::dir_create(fs::path_dir(new_fpath))
   }

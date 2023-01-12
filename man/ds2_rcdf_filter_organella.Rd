@@ -7,7 +7,7 @@
 ds2_rcdf_filter_organella(rcdf)
 }
 \arguments{
-\item{rcdf}{a data.frame created by \code{ds2_tbl_to_rcdf()}}
+\item{rcdf}{a read-count data.frame created by \code{ds2_tbl_to_rcdf()}}
 }
 \description{
 Filter organella reads from readcount data.frame

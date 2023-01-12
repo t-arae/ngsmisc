@@ -7,9 +7,9 @@
 cmd_run(sep_cmd, ...)
 }
 \arguments{
-\item{sep_cmd}{separated command created by \code{sep_by_blank()}}
+\item{sep_cmd}{separated command created by \code{sep_by_blank()}.}
 
-\item{...}{options for pass to \code{processx::run()}}
+\item{...}{further options are passed to \code{processx::run()}.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

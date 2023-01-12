@@ -11,16 +11,16 @@ cat_stdout(ps_out)
 cat_stderr(ps_out)
 }
 \arguments{
-\item{ps_out}{output from processx::run()}
+\item{ps_out}{an output from \code{processx::run()}}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \examples{
 cmd_ok <- "echo 'hoge hoge'"
-cat_stdout(cmd_run(sep_by_blank(cmd_ok)))
+cmd_ok \%>\% sep_by_blank() \%>\% cmd_run() \%>\% cat_stdout()
 
 cmd_err <- "cat sonzai_shinai_file.txt"
-cat_stderr(cmd_run(sep_by_blank(cmd_err), error_on_status = FALSE))
+cmd_err \%>\% sep_by_blank() \%>\% cmd_run(error_on_status = FALSE) \%>\% cat_stderr()
 
 }

@@ -6,16 +6,16 @@
 \alias{ds2_dds_test_nbinomWaldTest}
 \title{Run Likelihood ratio test or Wald test}
 \usage{
-ds2_dds_test_nbinomLRT(dds, reduced = ~1)
+ds2_dds_test_nbinomLRT(dds, reduced = ~1, ...)
 
 ds2_dds_test_nbinomWaldTest(dds, ...)
 }
 \arguments{
-\item{dds}{a DESeqDataSet object}
+\item{dds}{a \code{DESeq2::DESeqDataSet} class object}
 
 \item{reduced}{reduced model. (default: \code{~ 1})}
 
-\item{...}{pass to the DESeq2::nbinomWaldTest()}
+\item{...}{further arguments are passed to \code{DESeq2::nbinomLRT()} or \code{DESeq2::nbinomWaldTest()}. See Details.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -23,4 +23,35 @@ ds2_dds_test_nbinomWaldTest(dds, ...)
 \code{ds2_dds_test_nbinomLRT()} does the same thing as \code{DESeq2::nbinomLRT()}.
 
 \code{ds2_dds_test_nbinomWaldTest()} does the same thing as \code{DESeq2::nbinomWaldTest()}.
+}
+\details{
+To see the advanced settings, run \code{?DESeq2::nbinomLRT()} or \code{?DESeq2::nbinomWaldTest()}.
+}
+\examples{
+# Example read-count data.frame
+rcdf <-
+  system.file(package = "ngsmisc", "deseq2") \%>\%
+  fs::dir_ls(regexp = "count.csv$") \%>\%
+  readr::read_csv(show_col_types = FALSE) \%>\%
+  ds2_tbl_to_rcdf()
+
+# Prepare `DESeqDataSet` object, estimate size-factor, and compute dispersion.
+dds <-
+  ds2_rcdf_to_dds(
+    rcdf = rcdf,
+    coldata = data.frame(
+      sample = colnames(rcdf),
+      group = as.factor(c("A", "A", "B"))
+    ),
+    design = ~ group
+  ) \%>\%
+  ds2_dds_estimate_sizefactor() \%>\%
+  ds2_dds_estimate_disp()
+
+# Likelihood ratio test
+ds2_dds_test_nbinomLRT(dds) \%>\% ds2_dds_to_ddr()
+
+# Wald test
+ds2_dds_test_nbinomWaldTest(dds) \%>\% ds2_dds_to_ddr()
+
 }

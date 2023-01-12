@@ -19,7 +19,7 @@ run_get_stderr(statement, ...)
 \arguments{
 \item{statement}{a command line statement.}
 
-\item{...}{options for pass to \code{processx::run()}}
+\item{...}{further options are passed to \code{processx::run()}.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

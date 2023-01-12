@@ -7,7 +7,7 @@
 ds2_rcdf_to_dds(rcdf, coldata, design = ~1)
 }
 \arguments{
-\item{rcdf}{a data.frame created by \code{ds2_tbl_to_rcdf()}}
+\item{rcdf}{a read-count data.frame created by \code{ds2_tbl_to_rcdf()}}
 
 \item{coldata}{a data.frame specifying sample info}
 
@@ -17,16 +17,18 @@ ds2_rcdf_to_dds(rcdf, coldata, design = ~1)
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
 \code{ds2_rcdf_to_dds()} does the same thing as \code{DESeq2::DESeqDataSetFromMatrix()}.
+
+\code{?DESeq2::`estimateSizeFactors,DESeqDataSet-method`}
 }
 \examples{
-# example read-count data.frame
+# Example read-count data.frame.
 rcdf <-
   system.file(package = "ngsmisc", "deseq2") \%>\%
   fs::dir_ls(regexp = "count.csv$") \%>\%
-  {suppressMessages(readr::read_csv(.))} \%>\%
+  readr::read_csv(show_col_types = FALSE) \%>\%
   ds2_tbl_to_rcdf()
 
-# convert read-count data.frame to a `DESeq2::DESeqDataSet-class` object
+# Convert read-count data.frame to a `DESeq2::DESeqDataSet-class` object.
 ds2_rcdf_to_dds(
   rcdf = rcdf,
   coldata = data.frame(sample = colnames(rcdf))

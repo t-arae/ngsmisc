@@ -149,7 +149,7 @@ rename_fpath_bam <- function(tbl, nth, prefix = "") {
 #'
 rename_col_fpath <- function(tbl, col_fpath, rm_file_suffix, file_suffix) {
   lifecycle::deprecate_warn(
-    when = "1.0.0",
+    when = "0.3.0",
     what = "rename_col_fpath()",
     with = "rename_fpath()"
   )
@@ -171,6 +171,10 @@ rename_col_fpath <- function(tbl, col_fpath, rm_file_suffix, file_suffix) {
 #' @export
 #'
 rename_col_AGI <- function(tbl, col_AGI) {
+  lifecycle::deprecate_warn(
+    when = "0.3.0",
+    what = "rename_col_AGI()"
+  )
   colnames(tbl)[col_AGI] <- "AGI"
   tbl
 }

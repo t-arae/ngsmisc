@@ -11,7 +11,7 @@ path_cmdout(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache")
 
 \item{...}{...}
 
-\item{create_dir}{logical. if TRUE create directory of the returned path. (default: \code{TRUE})}
+\item{create_dir}{logical. if \code{TRUE} create directory of the returned path. (default: \code{TRUE})}
 
 \item{save_dir}{directory name to save the output. (default: \code{"cmdout_cache"})}
 }

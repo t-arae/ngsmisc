@@ -226,7 +226,7 @@ fC_calc_tpm <- function(tbl_fC) {
 #' @export
 fC_rename_col <- function(tbl_fC, col_fpath = 7L, file_suffix = ".sort.bam$") {
   lifecycle::deprecate_warn(
-    when = "1.0.0",
+    when = "0.3.0",
     what = "fC_rename_col()",
     with = "rename_fpath_bam()"
   )

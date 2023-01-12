@@ -4,25 +4,25 @@ template:
 
 reference:
 - title: "wraper functions for processx::run()"
-- contents:
+  contents:
   - sep_by_blank
   - cmd_run
   - cat_process_out
   - run_process_and
   - path_cmdout
-- title: "functions for STAR"
-- contents:
+- title: "STAR"
+  contents:
   - ST_final_log
   - ST_sj_tab
   - ST_parse_final_log
-- title: "functions for featureCounts"
-- contents:
+- title: "featureCounts"
+  contents:
   - fC_count
   - fC_summary
   - fC_write_count
   - fC_calc
-- title: "misc functions for rMATS"
-- contents:
+- title: "rMATS"
+  contents:
   - rM_read_MATS_test_out
   - rM_filter_by_AGI
   - rM_filter_by_count
@@ -30,22 +30,27 @@ reference:
   - rM_mutate_count_stat
   - rM_select_switch_start_end_col
   - rM_extract_event_type
-- title: "functions for DESeq2"
-- contents:
+- title: "DESeq2"
+- subtitle: "preprocess"
+  contents:
   - ds2_tbl_to_rcdf
   - ds2_rcdf_filter_by_rownames
   - ds2_rcdf_filter_organella
+- subtitle: "pipeline"
+  contents:
   - ds2_rcdf_to_dds
   - ds2_sizefactor
   - ds2_dds_estimate_disp
   - ds2_test
   - ds2_design
+- subtitle: "result"
+  contents:
   - ds2_dds_get_normalized_count_tbl
   - ds2_dds_to
   - ds2_ddr_to_tbl
   - ds2_ddr_plot_independent_filtering
-- title: "misc functions for clusterProfiler"
-- contents:
+- title: "clusterProfiler"
+  contents:
   - clP_write_li_ego
   - clP_write_li_ego_as_csv
   - clP_plot_bar
@@ -55,13 +60,8 @@ reference:
   - clP_num_significant
   - clP_path2label
   - clP_gp_theme_bar
-- title: "Calculate RPM/RPKM/TPM"
-- contents:
-  - calc_rpm
-  - calc_rpkm
-  - calc_tpm
 - title: "Misc"
-- contents:
+  contents:
   - rename_nth_col
   - renamer_fpath
   - rename_fpath
@@ -69,3 +69,4 @@ reference:
   - rename_col_fpath
   - wrap_strings
   - integer_breaks
+  - norm_count

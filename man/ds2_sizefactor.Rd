@@ -14,11 +14,11 @@ ds2_dds_get_sizefactor(dds, ...)
 ds2_dds_set_sizefactor(dds, sizefactor)
 }
 \arguments{
-\item{dds}{a DESeqDataSet object}
+\item{dds}{a \code{DESeqDataSet} object}
 
-\item{...}{...}
+\item{...}{further arguments passed to \code{DESeq2:::estimateSizeFactors.DESeqDataSet()}. see Details.}
 
-\item{sizefactor}{a double vector. its length must be equal to ncol(dds)}
+\item{sizefactor}{a double vector. the length must be equal to \code{ncol(dds)}.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -29,28 +29,34 @@ ds2_dds_set_sizefactor(dds, sizefactor)
 
 \code{ds2_dds_set_sizefactor()} manually sets specified size-factor to the given object.
 }
+\details{
+To see the advanced settings, run \code{?DESeq2::`estimateSizeFactors,DESeqDataSet-method`}.
+}
 \examples{
-# example read-count data.frame
+# Example read-count data.frame
 rcdf <-
   system.file(package = "ngsmisc", "deseq2") \%>\%
   fs::dir_ls(regexp = "count.csv$") \%>\%
-  {suppressMessages(readr::read_csv(.))} \%>\%
+  readr::read_csv(show_col_types = FALSE) \%>\%
   ds2_tbl_to_rcdf()
 
+# Prepare `DESeqDataSet` object without estimating size-factor.
 dds_wo_sf <-
   ds2_rcdf_to_dds(
     rcdf = rcdf,
     coldata = data.frame(sample = colnames(rcdf))
   )
 
-# estimate and set library size factors
+# Estimate and set library size factors.
 dds_w_sf <- dds_wo_sf \%>\% ds2_dds_estimate_sizefactor()
 
-# if the specfied `dds` object has not been calculate size-factor previously,
-# automatically calculate size-factor and return it.
-dds_wo_sf \%>\% ds2_dds_get_sizefactor()
+# If the specfied `dds` object has not computed size-factor before,
+# it will automatically compute size-factor and return it.
 dds_w_sf \%>\% ds2_dds_get_sizefactor()
 
+dds_wo_sf \%>\% ds2_dds_get_sizefactor()
+
+# The size-factor can be set manually.
 dds_wo_sf \%>\% ds2_dds_set_sizefactor(1:3) \%>\% ds2_dds_get_sizefactor()
 
 }
