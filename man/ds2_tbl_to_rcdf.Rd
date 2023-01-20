@@ -4,13 +4,32 @@
 \alias{ds2_tbl_to_rcdf}
 \title{Prepare input readcount data.frame for DESeq2 from a tibble}
 \usage{
-ds2_tbl_to_rcdf(tbl, genename_col = "Geneid")
+ds2_tbl_to_rcdf(tbl, id_col = "Geneid")
 }
 \arguments{
 \item{tbl}{a tibble containing read count columns and a gene name column}
 
-\item{genename_col}{character specifying the gene name column. default: "Geneid"}
+\item{id_col}{character specifying the gene name column. (default: \code{"Geneid"})}
 }
 \description{
-Prepare input readcount data.frame for DESeq2 from a tibble
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
+\code{ds2_tbl_to_rcdf()} convert a read-count data tibble into a data.frame.
+}
+\examples{
+# Example read-count csv file
+inf <-
+  system.file(package = "ngsmisc", "deseq2") \%>\%
+  fs::dir_ls(regexp = "count.csv$")
+
+# Read read-count csv file
+tbl_count <- readr::read_csv(inf, show_col_types = FALSE)
+tbl_count
+
+# Convert tibble to data.frame
+rcdf <- ds2_tbl_to_rcdf(tbl_count)
+head(rcdf)
+
+rownames(head(rcdf))
+
 }

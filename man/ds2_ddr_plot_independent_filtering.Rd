@@ -7,10 +7,39 @@
 ds2_ddr_plot_independent_filtering(ddr, title = "")
 }
 \arguments{
-\item{ddr}{a DESeqResult object}
+\item{ddr}{a \code{DESeq2::DESeqResults} class object object}
 
-\item{title}{plot title}
+\item{title}{plot title. (default: \code{""})}
 }
 \description{
-Plot independent filtering
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
+\code{ds2_ddr_plot_independent_filtering()} plots the independent filtering result.
+}
+\examples{
+# Example read-count data.frame
+rcdf <-
+  system.file(package = "ngsmisc", "deseq2") \%>\%
+  fs::dir_ls(regexp = "count.csv$") \%>\%
+  readr::read_csv(show_col_types = FALSE) \%>\%
+  ds2_tbl_to_rcdf()
+
+# Prepare `DESeqDataSet` object, estimate size-factor, and compute dispersion.
+dds <-
+  ds2_rcdf_to_dds(
+    rcdf = rcdf,
+    coldata = data.frame(
+      sample = colnames(rcdf),
+      group = as.factor(c("A", "A", "B"))
+    ),
+    design = ~ group
+  ) \%>\%
+  ds2_dds_estimate_sizefactor() \%>\%
+  ds2_dds_estimate_disp()
+
+# Likelihood ratio test
+ddr <- ds2_dds_test_nbinomLRT(dds) \%>\% ds2_dds_to_ddr()
+
+# Plot the result of independent filtering
+ddr \%>\% ds2_ddr_plot_independent_filtering()
 }

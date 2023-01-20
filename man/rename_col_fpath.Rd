@@ -16,5 +16,5 @@ rename_col_fpath(tbl, col_fpath, rm_file_suffix, file_suffix)
 \item{file_suffix}{regex pattern which specified file suffix to remove}
 }
 \description{
-Rename tibble column names which containing file path
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 }

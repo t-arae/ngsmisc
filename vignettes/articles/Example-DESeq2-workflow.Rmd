@@ -1,0 +1,115 @@
+---
+title: "Example DESeq2 workflow"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Prepare read-count data
+
+```{r}
+# example read-count files
+infs <-
+  system.file(package = "ngsmisc", "featurecounts") |>
+  fs::dir_ls(regexp = "_gene_counts.txt$")
+
+# Read and merge read-count files. 
+tbl <- 
+  lapply(infs, ngsmisc::fC_read_count) |>
+  lapply(ngsmisc::rename_fpath_bam, nth = 7) |>
+  ngsmisc::fC_merge_count()
+tbl
+
+# Remove unnecessally columns.
+tbl_count <- tbl |> dplyr::select(!c(Chr:Length))
+tbl_count
+```
+
+# Carry out the DESeq2 pipeline
+
+```{r}
+# Prepare a read-count data.frame using `ds2_tbl_to_rcdf()`.
+rcdf <- tbl_count |> ngsmisc::ds2_tbl_to_rcdf()
+head(rcdf)
+
+# Prepare a `DESeqDataSet` object, estimate size-factor, estimate dispersion,
+# and perform the differential expression analysis using Likelihood Ratio Test.
+dds <-
+  ngsmisc::ds2_rcdf_to_dds(
+    rcdf = rcdf,
+    coldata = data.frame(group = as.factor(c("A", "A", "B"))),
+    design = ~ group
+  ) |>
+  ngsmisc::ds2_dds_estimate_sizefactor() |>
+  ngsmisc::ds2_dds_estimate_disp() |>
+  ngsmisc::ds2_dds_test_nbinomLRT()
+
+# Check the constructed `DESeqDataSet` object.
+dds
+```
+
+```{r, eval = FALSE}
+# Above codes are equivalent to the following codes using `DESeq2` functions directly.
+dds <-
+  DESeq2::DESeqDataSetFromMatrix(
+    countData = rcdf,
+    colData = data.frame(group = as.factor(c("A", "A", "B"))),
+    design = ~ group
+  ) |>
+  DESeq2::estimateSizeFactors() |>
+  DESeq2::estimateDispersions() |>
+  DESeq2::nbinomLRT(reduced = ~ 1)
+```
+
+
+```{r}
+dds |> ngsmisc::ds2_dds_to_tbl() |> dplyr::glimpse()
+
+# Covert the `DESeqDataSet` object to the `DESeqResults` object
+ddr <- dds |> ngsmisc::ds2_dds_to_ddr()
+ddr
+
+# Print the test summary
+ddr |> DESeq2:::summary.DESeqResults()
+```
+
+```{r}
+# Extract Defferentially Expressed Genes (DEG) from the `DESeqResults` object
+tbl_deg <-
+  ddr |>
+  ngsmisc::ds2_ddr_to_tbl() |>
+  dplyr::filter(padj <= 0.01, abs(l2fc) >= 1) |>
+  dplyr::arrange(desc(abs(l2fc)))
+tbl_deg
+
+tbl_plot <-
+  dds |>
+  ngsmisc::ds2_dds_get_normalized_count_tbl() |>
+  dplyr::filter(Geneid %in% tbl_deg$Geneid) |>
+  tidyr::pivot_longer(cols = !Geneid) |>
+  dplyr::mutate(group = ifelse(name == "sample_3", "B", "A"))
+tbl_plot
+
+library(ggplot2)
+tbl_plot |>
+  ggplot(aes(group, value)) +
+  geom_point(aes(color = group), size = 2, position = position_dodge2(width = .5)) +
+  facet_wrap(~ Geneid, scales = "free_y") +
+  labs(x = "", y = "Normalized count") +
+  theme_linedraw(base_size = 14) +
+  scale_y_continuous(
+    expand = expansion(.2),
+    labels = scales::label_number(big.mark = ",")
+  ) +
+  theme(legend.position = "none")
+```
+
+
+# Sessioninfo
+```{r}
+sessioninfo::package_info()
+```

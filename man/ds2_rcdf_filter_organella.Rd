@@ -7,8 +7,8 @@
 ds2_rcdf_filter_organella(rcdf)
 }
 \arguments{
-\item{rcdf}{a data.frame created by ds2_prepare_rcdf()}
+\item{rcdf}{a read-count data.frame created by \code{ds2_tbl_to_rcdf()}}
 }
 \description{
-Filter organella reads from readcount data.frame
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 }

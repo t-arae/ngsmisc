@@ -2,17 +2,37 @@
 % Please edit documentation in R/DESeq2.R
 \name{ds2_rcdf_filter_by_rownames}
 \alias{ds2_rcdf_filter_by_rownames}
-\title{Filter readcount data.frame by rownames}
+\title{Filter read-count data.frame by rownames}
 \usage{
-ds2_rcdf_filter_by_rownames(rcdf, pattern, negate = TRUE)
+ds2_rcdf_filter_by_rownames(rcdf, pattern, negate = FALSE)
 }
 \arguments{
-\item{rcdf}{a data.frame created by ds2_prepare_rcdf()}
+\item{rcdf}{a read-count data.frame created by \code{ds2_tbl_to_rcdf()}}
 
 \item{pattern}{a regex pattern to look for.}
 
-\item{negate}{If TRUE, return non-matching elements. default: TRUE}
+\item{negate}{If \code{TRUE}, return non-matching elements. (default: \code{FALSE})}
 }
 \description{
-Filter readcount data.frame by rownames
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
+\code{ds2_rcdf_filter_by_rownames()} filter a read-count data.frame by rownames.
+}
+\examples{
+# Example read-count data.frame
+rcdf <-
+  system.file(package = "ngsmisc", "deseq2") \%>\%
+  fs::dir_ls(regexp = "count.csv$") \%>\%
+  readr::read_csv(show_col_types = FALSE) \%>\%
+  ds2_tbl_to_rcdf()
+
+# Original read-count data.frame
+head(rcdf)
+
+# Filtering read-count data.frame by rownames.
+ds2_rcdf_filter_by_rownames(head(rcdf), pattern = "[123]0")
+
+# Invert filter by setting as `negate = TRUE`.
+ds2_rcdf_filter_by_rownames(head(rcdf), pattern = "[123]0", negate = TRUE)
+
 }

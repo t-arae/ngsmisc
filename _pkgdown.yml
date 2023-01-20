@@ -1,25 +1,29 @@
 template:
-  params:
-    bootswatch: flatly
+  bootstrap: 5
+  bootswatch: simplex
 
 reference:
 - title: "wraper functions for processx::run()"
-- contents:
+  contents:
   - sep_by_blank
   - cmd_run
-  - cat_stdout
-  - cat_stderr
-  - run_cat_stderr
-  - run_cat_stdout
-- title: "misc functions for featureCounts"
-- contents:
-  - fC_read_count
-  - fC_read_summary
-  - fC_rename_col
-  - fC_merge_tbl_li
+  - cat_process_out
+  - run_process_and
+  - path_cmdout
+  - cache_io
+- title: "STAR"
+  contents:
+  - ST_final_log
+  - ST_sj_tab
+  - ST_parse_final_log
+- title: "featureCounts"
+  contents:
+  - fC_count
+  - fC_summary
+  - fC_write_count
   - fC_calc
-- title: "misc functions for rMATS"
-- contents:
+- title: "rMATS"
+  contents:
   - rM_read_MATS_test_out
   - rM_filter_by_AGI
   - rM_filter_by_count
@@ -27,8 +31,32 @@ reference:
   - rM_mutate_count_stat
   - rM_select_switch_start_end_col
   - rM_extract_event_type
-- title: "misc functions for clusterProfiler"
-- contents:
+- title: "DESeq2"
+- subtitle: "preprocess"
+  contents:
+  - ds2_tbl_to_rcdf
+  - ds2_rcdf_filter_by_rownames
+  - ds2_rcdf_filter_organella
+- subtitle: "pipeline"
+  contents:
+  - ds2_rcdf_to_dds
+  - ds2_sizefactor
+  - ds2_dds_estimate_disp
+  - ds2_test
+  - ds2_design
+- subtitle: "result"
+  contents:
+  - ds2_dds_get_normalized_count_tbl
+  - ds2_dds_to
+  - ds2_ddr_to_tbl
+  - ds2_ddr_plot_independent_filtering
+- subtitle: "misc"
+  contents:
+  - ds2_mat_select_col
+  - ds2_mat_check_linear_dependency
+  - ds2_mat_plot_design
+- title: "clusterProfiler"
+  contents:
   - clP_write_li_ego
   - clP_write_li_ego_as_csv
   - clP_plot_bar
@@ -38,33 +66,13 @@ reference:
   - clP_num_significant
   - clP_path2label
   - clP_gp_theme_bar
-- title: "misc functions for DESeq2"
-- contents:
-  - ds2_tbl_to_rcdf
-  - ds2_rcdf_filter_by_rownames
-  - ds2_rcdf_filter_organella
-  - ds2_rcdf_to_dds
-  - ds2_dds_estimate_sizefactor
-  - ds2_dds_set_sizefactor
-  - ds2_dds_get_sizefactor
-  - ds2_dds_estimate_disp
-  - ds2_dds_test_nbinomLRT
-  - ds2_dds_test_nbinomWaldTest
-  - ds2_dds_get_design
-  - ds2_dds_set_design
-  - ds2_dds_get_normalized_count_tbl
-  - ds2_dds_to_ddr
-  - ds2_dds_to_tbl
-  - ds2_ddr_to_tbl
-  - ds2_ddr_plot_independent_filtering
-- title: "Calculate RPM/RPKM/TPM"
-- contents:
-  - calc_rpm
-  - calc_rpkm
-  - calc_tpm
 - title: "Misc"
-- contents:
+  contents:
+  - rename_nth_col
+  - renamer_fpath
+  - rename_fpath
   - rename_col_AGI
   - rename_col_fpath
   - wrap_strings
   - integer_breaks
+  - norm_count

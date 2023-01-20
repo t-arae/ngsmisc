@@ -1,0 +1,130 @@
+---
+title: "Run an external command from R and record its output."
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Run an external command from R
+
+The `ngsmisc` package provides some wrapper functions for easy handling of `processx::run()`.
+
+The procedure for executing a command line statement is as follows.
+
+1. Split the command line statement with `sep_by_blank()`.
+2. Pass the split statement to `cmd_run()` and execute it.
+3. Check the execution results of output.
+
+To run a external command line statement using `processx::run()`, 
+you have to split the statement into the command and each argument.
+You can separate the command line statement by white spaces using `sep_by_blank()`.
+
+```{r}
+# Define an example command line statement.
+cmd <- "echo 'This is stdout.'"
+
+# Split the statement.
+# The first element is the name of command you want to run.
+# And rests are the arguments of it.
+ngsmisc::sep_by_blank(cmd)
+```
+
+The splitted statement can be executed using `cmd_run()`.
+The `cmd_run()` passes the first element of the first argument to the `command` 
+of `processx::run()` and the rest of the first argument to the `args`.
+The rest of the arguments are passed directly to `processx::run()`.
+
+The `cmd_run()`(`processx::run()`) returns the result of execution as the named list.
+
+```{r}
+# Run the separated command statement using `cmd_run()`.
+out <-
+  ngsmisc::sep_by_blank(cmd) |>
+  ngsmisc::cmd_run()
+
+# The output is a named list containing, execution status, 
+# output of stdout, output of stderr, and whether timeout or not.
+out
+```
+
+The output is a list, so you can easily print and check the results in it.
+The `ngsmisc` package also provides some deadly simple wrapper functions to get/print the results.
+
+```{r}
+# Write a simple shell script, which outputs both stdout and stderr.
+c(
+  "echo 'This is stdout.' >&1",
+  "echo 'This is stderr.' >&2"
+) |>
+  readr::write_lines("temp.sh")
+
+# Execute above shell script and get results.
+out <- ngsmisc::sep_by_blank("bash temp.sh") |> ngsmisc::cmd_run()
+
+# Show the stdout result.
+cat(out$stdout)
+
+# or you can do this using `cat_stdout()`
+out |> ngsmisc::cat_stdout()
+
+# Show the stderr result.
+out |> ngsmisc::cat_stderr()
+```
+
+```{r, echo=FALSE}
+fs::file_delete("temp.sh")
+```
+
+# Shortened form
+
+The `ngsmisc` also provides several shortened functions that performs the above 
+processes in a single function.
+
+```{r}
+# Do the same thing above by `run_cat_stdout()`
+ngsmisc::run_cat_stdout(cmd)
+
+# Or, get output by `run_get_stdout()`
+ngsmisc::run_get_stdout(cmd)
+```
+
+# Save the result of command line execution
+
+Sometimes I think it would be useful to save the results in a file so I can look at them later.
+This is because if the results are saved (cached), there is no need to run it again.
+It is especially true when you run a process that takes a long time.
+
+When saving the results to a text file, you can keep the directory clean if you can save the files in one place.
+The `path_cmdout()` is a convenience function that returns the file path to save the output,  and also makes the destination directory.
+
+```{r}
+# `path_cmdout()` inserts specified directory by the `save_dir` argument 
+# (default: `"cmdout_cache"`) in between the directory specified by the `wd` and
+# file path (`...`).
+# if `create_dir` is `TRUE`, intermediate directories will be created.
+args(ngsmisc::path_cmdout)
+
+ngsmisc::path_cmdout("/path/to/workdir", "cmdout.txt", create_dir = FALSE)
+
+# If you are working with RStudio's project feature,
+# you can use `here::here()` as follows.
+fpath <- ngsmisc::path_cmdout(here::here(), "cmdout.txt")
+
+# Save the output to a file, and then see the result later as follows.
+ngsmisc::run_get_stdout(cmd) |> readr::write_lines(file = fpath)
+readr::read_lines(fpath) |> cat(sep = "\n")
+```
+
+```{r, echo=FALSE}
+fs::file_delete(fpath)
+fs::file_delete(fs::path_dir(fpath))
+```
+
+# Sessioninfo
+```{r}
+sessioninfo::package_info()
+```

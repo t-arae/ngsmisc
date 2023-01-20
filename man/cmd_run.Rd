@@ -7,18 +7,18 @@
 cmd_run(sep_cmd, ...)
 }
 \arguments{
-\item{sep_cmd}{separated command created by sep_by_blank()}
+\item{sep_cmd}{separated command created by \code{sep_by_blank()}.}
 
-\item{...}{options for pass to processx::run()}
+\item{...}{further options are passed to \code{processx::run()}.}
 }
 \description{
-Run a separated command in external process
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \examples{
 cmd_ok <- "echo 'hoge hoge'"
 cmd_run(sep_by_blank(cmd_ok))
 
-cmd_err <- "sleep 100"
-cmd_run(sep_by_blank(cmd_err), timeout = 1, error_on_status = FALSE)
+cmd_err <- "cat sonzai_shinai_file.txt"
+cmd_run(sep_by_blank(cmd_err), error_on_status = FALSE)
 
 }

@@ -14,12 +14,15 @@ fC_rename_col(tbl_fC, col_fpath = 7L, file_suffix = ".sort.bam$")
 \item{file_suffix}{regex pattern. default = ".sort.bam$"}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+\code{fC_rename_col()} renames the 7th column (file path).
 }
 \examples{
 infs <-
-  system.file(package = "ngsmisc") \%>\%
+  system.file(package = "ngsmisc", "featurecounts") \%>\%
   fs::dir_ls(regexp = "_gene_counts.txt$")
 fC_read_count(infs[1]) \%>\% fC_rename_col()
 
 }
+\keyword{internal}

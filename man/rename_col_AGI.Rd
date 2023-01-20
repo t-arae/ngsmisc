@@ -12,5 +12,5 @@ rename_col_AGI(tbl, col_AGI)
 \item{col_AGI}{integer vector. specified column number which containing file path in its column name}
 }
 \description{
-Rename tibble column names which containing AGI
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 }

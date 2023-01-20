@@ -7,13 +7,15 @@
 sep_by_blank(statement)
 }
 \arguments{
-\item{statement}{a command line statement. (character)}
+\item{statement}{a command line statement.}
 }
 \description{
-Separate a statement by white spaces
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \examples{
 cmd <- "echo 'hoge hoge'"
 sep_by_blank(cmd)
+
+"ls -l -a" \%>\% sep_by_blank()
 
 }
