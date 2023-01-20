@@ -1,7 +1,7 @@
 Package: ngsmisc
 Type: Package
 Title: What the Package Does (Title Case)
-Version: 0.2.0.9001
+Version: 0.3.0.9001
 Authors@R: person(given = "Toshihiro", family = "Arae", 
                  email = "toshihiro.arae@gmail.com", 
                  role = c("aut", "cre"))
