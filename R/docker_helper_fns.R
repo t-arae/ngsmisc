@@ -167,3 +167,33 @@ path_cmdout <- function(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache") {
   }
   new_fpath
 }
+
+#' Read/Write cached command-line outputs.
+#'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
+#' @param x A character vector to write to a cache file.
+#' @inheritParams path_cmdout
+#'
+#' @examples
+#' NULL
+#'
+#' @name cache_io
+
+#' @rdname cache_io
+#' @export
+cache_write <- function(x, wd, ..., create_dir = TRUE, save_dir = "cmdout_cache") {
+  readr::write_lines(
+    x = x,
+    file = path_cmdout(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache")
+  )
+}
+
+#' @rdname cache_io
+#' @export
+cache_read <- function(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache") {
+  readr::read_lines(
+    file = path_cmdout(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache")
+  )
+}

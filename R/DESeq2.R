@@ -31,6 +31,172 @@ ds2_tbl_to_rcdf <- function(tbl, id_col = "Geneid") {
     tibble::column_to_rownames(var = id_col)
 }
 
+#' Select matrix columns matching column names using Regex.
+#'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
+#' `ds2_mat_select_col()` selects columns in a matrix using regex matching to the column names.
+#'
+#' @param mat A matrix.
+#' @param pattern Pattern to look for.
+#' @param negate If `TRUE`, return non-matching columns. (default: `FALSE`)
+#'
+#' @examples
+#' mat <- head(iris[, 1:4]) %>% as.matrix()
+#'
+#' ds2_mat_select_col(mat, "Length")
+#' ds2_mat_select_col(mat, "Length", negate = TRUE)
+#'
+#' @export
+ds2_mat_select_col <- function(mat, pattern, negate = FALSE) {
+  which_col <- stringr::str_detect(colnames(mat), pattern, negate)
+  as.matrix(mat[, which_col])
+}
+
+#' Find linear dependence in between columns in the matrix
+#'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
+#' `ds2_mat_check_linear_dependency()` checks linear dependencies in between columns in a matrix.
+#'
+#' @param mat A matrix.
+#' @param to_colname If `TRUE`, the colnames are used as variable names. (default: `TRUE`)
+#'
+#' @examples
+#' df <-
+#'   data.frame(
+#'     genotype = c("WT", "mutant") %>% rep(each = 4),
+#'     treatment = c(rep("mock", 2), rep("poison", 2)) %>% rep(2),
+#'     time = c("0h", "2h") %>% rep(4)
+#'   )
+#' row.names(df) <- apply(df, 1, paste, collapse = "_")
+#' df
+#'
+#' mat_independent <- model.matrix(~ genotype * treatment * time, df)
+#' ds2_mat_check_linear_dependency(mat_independent)
+#'
+#' mat_dependent <- mat_independent[3:8,]
+#' mat_dependent <- model.matrix(~ genotype * treatment * time, df[3:8,])
+#' ds2_mat_check_linear_dependency(mat_dependent)
+#'
+#' ds2_mat_check_linear_dependency(matrix(rep(1, 4), ncol = 2), FALSE)
+#'
+#' @export
+ds2_mat_check_linear_dependency <- function(mat, to_colname = TRUE) {
+  col_a <- col_b <- . <- NULL
+  tbl_checked <-
+    seq_len(ncol(mat)) %>%
+    utils::combn(2) %>%
+    t() %>%
+    as.data.frame() %>%
+    purrr::set_names(nm = c("col_a", "col_b")) %>%
+    tibble::as_tibble()
+
+  is_independent <- logical()
+  for(i in seq_len(nrow(tbl_checked))) {
+    temp_mat <- mat[, c(tbl_checked[["col_a"]][i], tbl_checked[["col_b"]][i])]
+    is_independent <- c(is_independent, qr(temp_mat)[["rank"]] == 2L)
+  }
+  tbl_checked <- dplyr::mutate(tbl_checked, is_independent)
+
+  if(to_colname) {
+    tbl_checked <-
+      tbl_checked %>%
+      dplyr::mutate(
+        var_a = colnames(mat)[col_a],
+        var_b = colnames(mat)[col_b],
+        .before = 1
+      ) %>%
+      dplyr::select(!c(col_a, col_b))
+  }
+
+  n_var <- ncol(mat)
+  tested <- nrow(tbl_checked)
+  dependent <- sum(!tbl_checked$is_independent)
+  "nrow(mat): {nrow(mat)}, ncol(mat): {n_var}, combi: {tested}, linear dependent pair: {dependent}" %>%
+    {print(stringr::str_glue(.))}
+
+  if(dependent > 0) {
+    # To help removing vars, find the most looks unnecessary var and print it.
+    if(to_colname) {
+      most <-
+        dplyr::filter(tbl_checked, !is_independent) %>%
+        {c(table(.$var_a), table(.$var_b))} %>%
+        sort(decreasing = TRUE) %>%
+        .[1]
+      if(most >= 2) {
+        "'{names(most)}' looks excess. ({most} times observed in dep. combis.)" %>%
+          {print(stringr::str_glue(.))}
+      }
+    }
+
+    tbl_checked %>%
+      dplyr::filter(!is_independent) %>%
+      {print(., n = Inf)}
+  }
+}
+
+#' Plot a design matrix to check it visually
+#'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
+#' `ds2_mat_plot_design()` plots a design matrix.
+#'
+#' @param mat_design A design matrix. Typically an output from `stats::model.matrix()`.
+#' @param flip If `TRUE`, flip the x and y-axis. (default: `TRUE`)
+#'
+#' @examples
+#' df <-
+#'   data.frame(
+#'     genotype = c("WT", "mutant") %>% rep(each = 4),
+#'     treatment = c(rep("mock", 2), rep("poison", 2)) %>% rep(2),
+#'     time = c("0 h", "2 h") %>% rep(4)
+#'   )
+#' row.names(df) <- apply(df, 1, paste, collapse = "_")
+#' df
+#'
+#' mat_independent <- model.matrix(~ genotype * treatment * time, df)
+#' ds2_mat_plot_design(mat_independent)
+#'
+#' mat_dependent <- mat_independent[3:8,]
+#' ds2_mat_plot_design(mat_dependent)
+#'
+#' @export
+ds2_mat_plot_design <- function(mat_design, flip = TRUE) {
+  value <- NULL
+  tbl_plot <-
+    mat_design %>%
+    tibble::as_tibble(rownames = "sample") %>%
+    tidyr::pivot_longer(cols = !sample, names_to = "factor") %>%
+    dplyr::mutate(
+      sample = forcats::fct_inorder(sample),
+      factor = forcats::fct_inorder(factor),
+      value = as.character(value)
+    )
+
+  if(flip) {
+    gp <- ggplot2::ggplot(tbl_plot, ggplot2::aes(factor, sample))
+  } else {
+    gp <- ggplot2::ggplot(tbl_plot, ggplot2::aes(sample, factor))
+  }
+  gp +
+    ggplot2::geom_tile(ggplot2::aes(fill = value), color = "grey50") +
+    ggplot2::coord_equal() +
+    ggplot2::scale_fill_manual(values = c("1" = "grey20", "0" = "#00000000")) +
+    ggplot2::scale_x_discrete(position = "top") +
+    ggplot2::scale_y_discrete(limits = rev) +
+    ggplot2::theme(
+      axis.text.x.top = ggplot2::element_text(angle = 45, hjust = 0, vjust = 0),
+      axis.ticks = ggplot2::element_blank(),
+      panel.background = ggplot2::element_blank(),
+      panel.grid = ggplot2::element_blank()
+    )
+}
+
+
 #' Filter read-count data.frame by rownames
 #'
 #' @description

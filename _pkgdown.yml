@@ -10,6 +10,7 @@ reference:
   - cat_process_out
   - run_process_and
   - path_cmdout
+  - cache_io
 - title: "STAR"
   contents:
   - ST_final_log
@@ -49,6 +50,11 @@ reference:
   - ds2_dds_to
   - ds2_ddr_to_tbl
   - ds2_ddr_plot_independent_filtering
+- subtitle: "misc"
+  contents:
+  - ds2_mat_select_col
+  - ds2_mat_check_linear_dependency
+  - ds2_mat_plot_design
 - title: "clusterProfiler"
   contents:
   - clP_write_li_ego

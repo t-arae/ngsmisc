@@ -11,14 +11,12 @@ ds2_rcdf_filter_by_rownames(rcdf, pattern, negate = FALSE)
 
 \item{pattern}{a regex pattern to look for.}
 
-\item{negate}{If TRUE, return non-matching elements. (default: \code{FALSE})}
+\item{negate}{If \code{TRUE}, return non-matching elements. (default: \code{FALSE})}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
 \code{ds2_rcdf_filter_by_rownames()} filter a read-count data.frame by rownames.
-
-\code{?DESeq2::`estimateSizeFactors,DESeqDataSet-method`}
 }
 \examples{
 # Example read-count data.frame

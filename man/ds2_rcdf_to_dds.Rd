@@ -17,8 +17,6 @@ ds2_rcdf_to_dds(rcdf, coldata, design = ~1)
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
 \code{ds2_rcdf_to_dds()} does the same thing as \code{DESeq2::DESeqDataSetFromMatrix()}.
-
-\code{?DESeq2::`estimateSizeFactors,DESeqDataSet-method`}
 }
 \examples{
 # Example read-count data.frame.
