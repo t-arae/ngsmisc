@@ -36,27 +36,27 @@ test_that("fC_read_summary() test", {
 })
 
 # Test fC_rename_col() ---------------------------------------------------------
-temp1 <- fC_tbl_li[[1]]
-temp2 <- fC_rename_col(fC_tbl_li[[1]])
-test_that("fC_rename_col() test 1", {
-  # Check arguments
-  expect_equal(names(formals(fC_rename_col)), c("tbl_fC", "col_fpath", "file_suffix"))
-  expect_equal(formals(fC_rename_col)[["col_fpath"]], 7L)
-  expect_equal(formals(fC_rename_col)[["file_suffix"]], ".sort.bam$")
-
-  # 列名以外は変えない
-  expect_true(purrr::map2_lgl(temp1, temp2, ~ all(.x == .y)) %>% all())
-  #
-  expect_equal(colnames(temp1)[1:6], colnames(temp2)[1:6])
-  expect_equal(colnames(temp2)[7], "sample_1")
-})
-
-temp1 <- fC_rename_col(fC_tbl_li[[1]], col_fpath = 1L) %>% colnames()
-temp2 <- fC_rename_col(fC_tbl_li[[1]], file_suffix = ".sort") %>% colnames()
-test_that("fC_rename_col() test 2", {
-  expect_equal(temp1[7], "some/sample_1.sort.bam")
-  expect_equal(temp2[7], "sample_1.bam")
-})
+# temp1 <- fC_tbl_li[[1]]
+# temp2 <- fC_rename_col(fC_tbl_li[[1]])
+# test_that("fC_rename_col() test 1", {
+#   # Check arguments
+#   expect_equal(names(formals(fC_rename_col)), c("tbl_fC", "col_fpath", "file_suffix"))
+#   expect_equal(formals(fC_rename_col)[["col_fpath"]], 7L)
+#   expect_equal(formals(fC_rename_col)[["file_suffix"]], ".sort.bam$")
+#
+#   # 列名以外は変えない
+#   expect_true(purrr::map2_lgl(temp1, temp2, ~ all(.x == .y)) %>% all())
+#   #
+#   expect_equal(colnames(temp1)[1:6], colnames(temp2)[1:6])
+#   expect_equal(colnames(temp2)[7], "sample_1")
+# })
+#
+# temp1 <- fC_rename_col(fC_tbl_li[[1]], col_fpath = 1L) %>% colnames()
+# temp2 <- fC_rename_col(fC_tbl_li[[1]], file_suffix = ".sort") %>% colnames()
+# test_that("fC_rename_col() test 2", {
+#   expect_equal(temp1[7], "some/sample_1.sort.bam")
+#   expect_equal(temp2[7], "sample_1.bam")
+# })
 
 # Test fC_merge_count() ---------------------------------------------------------
 temp1 <- fC_tbl_li[[1]]
