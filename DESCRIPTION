@@ -32,7 +32,9 @@ Imports:
     patchwork,
     lifecycle,
     DESeq2,
-    rlang
+    rlang,
+    forcats,
+    scales
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
 Suggests: 
