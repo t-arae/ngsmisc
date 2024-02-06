@@ -6,9 +6,20 @@
 \alias{cache_read}
 \title{Read/Write cached command-line outputs.}
 \usage{
-cache_write(x, wd, ..., create_dir = TRUE, save_dir = "cmdout_cache")
+cache_write(
+  x,
+  wd,
+  ...,
+  create_dir = TRUE,
+  save_dir = getOption("ngsmisc.path_cmdout.save_dir", "cmdout_cache")
+)
 
-cache_read(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache")
+cache_read(
+  wd,
+  ...,
+  create_dir = TRUE,
+  save_dir = getOption("ngsmisc.path_cmdout.save_dir", "cmdout_cache")
+)
 }
 \arguments{
 \item{x}{A character vector to write to a cache file.}

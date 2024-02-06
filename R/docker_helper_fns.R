@@ -155,7 +155,10 @@ run_get_stderr <- function(statement, ...) {
 #' path_cmdout("/path/to/wd", "level1", "level2", "cmd_out.txt", create_dir = FALSE)
 #'
 #' @export
-path_cmdout <- function(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache") {
+path_cmdout <- function(
+    wd, ..., create_dir = TRUE,
+    save_dir = getOption("ngsmisc.path_cmdout.save_dir", "cmdout_cache")
+) {
   fpath <- fs::path(wd, ...)
   new_fpath <- stringr::str_replace(
     string = fpath,
@@ -183,17 +186,23 @@ path_cmdout <- function(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache") {
 
 #' @rdname cache_io
 #' @export
-cache_write <- function(x, wd, ..., create_dir = TRUE, save_dir = "cmdout_cache") {
+cache_write <- function(
+    x, wd, ..., create_dir = TRUE,
+    save_dir = getOption("ngsmisc.path_cmdout.save_dir", "cmdout_cache")
+) {
   readr::write_lines(
     x = x,
-    file = path_cmdout(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache")
+    file = path_cmdout(wd, ..., create_dir = TRUE, save_dir = save_dir)
   )
 }
 
 #' @rdname cache_io
 #' @export
-cache_read <- function(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache") {
+cache_read <- function(
+    wd, ..., create_dir = TRUE,
+    save_dir = getOption("ngsmisc.path_cmdout.save_dir", "cmdout_cache")
+) {
   readr::read_lines(
-    file = path_cmdout(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache")
+    file = path_cmdout(wd, ..., create_dir = TRUE, save_dir = save_dir)
   )
 }

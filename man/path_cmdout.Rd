@@ -4,7 +4,12 @@
 \alias{path_cmdout}
 \title{Create file path to save the command line output}
 \usage{
-path_cmdout(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache")
+path_cmdout(
+  wd,
+  ...,
+  create_dir = TRUE,
+  save_dir = getOption("ngsmisc.path_cmdout.save_dir", "cmdout_cache")
+)
 }
 \arguments{
 \item{wd}{a path to the working directory}
