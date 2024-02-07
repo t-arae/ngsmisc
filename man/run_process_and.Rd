@@ -6,7 +6,7 @@
 \alias{run_cat_stderr}
 \alias{run_get_stdout}
 \alias{run_get_stderr}
-\title{Run a command line and show/get output}
+\title{Run a command line and show/get stdout/stderr outputs from the result.}
 \usage{
 run_cat_stdout(statement, ...)
 

@@ -24,16 +24,21 @@ cache_read(
 \arguments{
 \item{x}{A character vector to write to a cache file.}
 
-\item{wd}{a path to the working directory}
+\item{wd}{A path or character vector to the working directory.}
 
-\item{...}{...}
+\item{...}{Arguments passed on to \code{fs::path()}.}
 
-\item{create_dir}{logical. if \code{TRUE} create directory of the returned path. (default: \code{TRUE})}
+\item{create_dir}{A logical. if set to \code{TRUE}, will create directory of the
+created file path. (default: \code{TRUE})}
 
-\item{save_dir}{directory name to save the output. (default: \code{"cmdout_cache"})}
+\item{save_dir}{A path or character vector of directory name to save the
+cache files. (default: \code{"cmdout_cache"}, default can be overridden by
+setting \code{options("ngsmisc.path_cmdout.save_dir")}.)}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
+Wrapper functions of \code{path_cmdout()} to help the text file I/O.
 }
 \examples{
 NULL
