@@ -54,90 +54,6 @@ ds2_mat_select_col <- function(mat, pattern, negate = FALSE) {
   as.matrix(mat[, which_col])
 }
 
-#' Find linear dependence in between columns in the matrix
-#'
-#' @description
-#' `r lifecycle::badge("experimental")`
-#'
-#' `ds2_mat_check_linear_dependency()` checks linear dependencies in between columns in a matrix.
-#'
-#' @param mat A matrix.
-#' @param to_colname If `TRUE`, the colnames are used as variable names. (default: `TRUE`)
-#'
-#' @examples
-#' df <-
-#'   data.frame(
-#'     genotype = c("WT", "mutant") %>% rep(each = 4),
-#'     treatment = c(rep("mock", 2), rep("poison", 2)) %>% rep(2),
-#'     time = c("0h", "2h") %>% rep(4)
-#'   )
-#' row.names(df) <- apply(df, 1, paste, collapse = "_")
-#' df
-#'
-#' mat_independent <- model.matrix(~ genotype * treatment * time, df)
-#' ds2_mat_check_linear_dependency(mat_independent)
-#'
-#' mat_dependent <- mat_independent[3:8,]
-#' mat_dependent <- model.matrix(~ genotype * treatment * time, df[3:8,])
-#' ds2_mat_check_linear_dependency(mat_dependent)
-#'
-#' ds2_mat_check_linear_dependency(matrix(rep(1, 4), ncol = 2), FALSE)
-#'
-#' @export
-ds2_mat_check_linear_dependency <- function(mat, to_colname = TRUE) {
-  col_a <- col_b <- . <- NULL
-  tbl_checked <-
-    seq_len(ncol(mat)) %>%
-    utils::combn(2) %>%
-    t() %>%
-    as.data.frame() %>%
-    purrr::set_names(nm = c("col_a", "col_b")) %>%
-    tibble::as_tibble()
-
-  is_independent <- logical()
-  for(i in seq_len(nrow(tbl_checked))) {
-    temp_mat <- mat[, c(tbl_checked[["col_a"]][i], tbl_checked[["col_b"]][i])]
-    is_independent <- c(is_independent, qr(temp_mat)[["rank"]] == 2L)
-  }
-  tbl_checked <- dplyr::mutate(tbl_checked, is_independent)
-
-  if(to_colname) {
-    tbl_checked <-
-      tbl_checked %>%
-      dplyr::mutate(
-        var_a = colnames(mat)[col_a],
-        var_b = colnames(mat)[col_b],
-        .before = 1
-      ) %>%
-      dplyr::select(!c(col_a, col_b))
-  }
-
-  n_var <- ncol(mat)
-  tested <- nrow(tbl_checked)
-  dependent <- sum(!tbl_checked$is_independent)
-  "nrow(mat): {nrow(mat)}, ncol(mat): {n_var}, combi: {tested}, linear dependent pair: {dependent}" %>%
-    {print(stringr::str_glue(.))}
-
-  if(dependent > 0) {
-    # To help removing vars, find the most looks unnecessary var and print it.
-    if(to_colname) {
-      most <-
-        dplyr::filter(tbl_checked, !is_independent) %>%
-        {c(table(.$var_a), table(.$var_b))} %>%
-        sort(decreasing = TRUE) %>%
-        .[1]
-      if(most >= 2) {
-        "'{names(most)}' looks excess. ({most} times observed in dep. combis.)" %>%
-          {print(stringr::str_glue(.))}
-      }
-    }
-
-    tbl_checked %>%
-      dplyr::filter(!is_independent) %>%
-      {print(., n = Inf)}
-  }
-}
-
 #' Plot a design matrix to check it visually
 #'
 #' @description
@@ -241,7 +157,8 @@ ds2_rcdf_filter_by_rownames <- function(rcdf, pattern, negate = FALSE) {
 ds2_rcdf_filter_organella <- function(rcdf) {
   lifecycle::deprecate_warn(
     when = "0.3.0",
-    what = "ds2_rcdf_filter_organella()"
+    what = "ds2_rcdf_filter_organella()",
+    with = "ds2_rcdf_filter_by_rownames()"
   )
   ds2_rcdf_filter_by_rownames(rcdf, "^AT[CM]G")
 }
