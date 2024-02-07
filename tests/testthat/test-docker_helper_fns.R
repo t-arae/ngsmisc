@@ -84,13 +84,29 @@ test_that("run_get_stderr", {
 
 # Test path_cmdout() -----------------------------------------------------------
 test_that("path_cmdout", {
-  expect_equal(path_cmdout("/path/to/wd", "cmd_out.txt", create_dir = FALSE),
-               "/path/to/wd/cmdout_cache/cmd_out.txt")
-  expect_equal(path_cmdout("/path/to/wd", "cmd_out.txt", create_dir = FALSE, save_dir = "other"),
-               "/path/to/wd/other/cmd_out.txt")
-  expect_equal(path_cmdout("/path/to/wd", "level1", "level2", "cmd_out.txt", create_dir = FALSE, save_dir = "other"),
-               "/path/to/wd/other/level1/level2/cmd_out.txt")
+  # Check interface
+  expect_equal(names(formals(path_cmdout)), c("wd", "...", "create_dir", "save_dir"))
+  expect_true(formals(path_cmdout)$create_dir)
+  expect_equal(
+    formals(path_cmdout)$save_dir,
+    quote(getOption("ngsmisc.path_cmdout.save_dir", "cmdout_cache"))
+  )
 
+  # Check output
+  expect_equal(path_cmdout("/path/to/wd", "cmd_out.txt", create_dir = FALSE),
+               fs::path("/path/to/wd/cmdout_cache/cmd_out.txt"))
+  expect_equal(path_cmdout("/path/to/wd", "cmd_out.txt", create_dir = FALSE, save_dir = "other"),
+               fs::path("/path/to/wd/other/cmd_out.txt"))
+  expect_equal(path_cmdout("/path/to/wd", "level1", "level2", "cmd_out.txt", create_dir = FALSE, save_dir = "other"),
+               fs::path("/path/to/wd/other/level1/level2/cmd_out.txt"))
+  expect_equal(path_cmdout(NULL, "level1", "level2", "cmd_out.txt", create_dir = FALSE),
+               fs::path("cmdout_cache/level1/level2/cmd_out.txt"))
+  expect_equal(path_cmdout("/path/to/wd", "level1", "level2", "cmd_out.txt", create_dir = FALSE, save_dir = NULL),
+               fs::path("/path/to/wd/level1/level2/cmd_out.txt"))
+  expect_equal(path_cmdout(NULL, "level1", "level2", "cmd_out.txt", create_dir = FALSE, save_dir = NULL),
+               fs::path("level1/level2/cmd_out.txt"))
+
+  # Check side-effect
   temp_wd <- fs::path(".", "temptemptemp")
   if(fs::dir_exists(temp_wd)) fs::dir_delete(temp_wd)
   path_cmdout(temp_wd, "file")
