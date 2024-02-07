@@ -7,121 +7,167 @@ fC_summary_fpath <-
   system.file(package = "ngsmisc", "featurecounts") %>%
   fs::dir_ls(regexp = "gene_counts.txt.summary$")
 
-# Test fC_read_count() ---------------------------------------------------------
-fC_tbl_li <- lapply(fC_count_fpath, fC_read_count)
-test_that("fC_read_count() test", {
-  # Check arguments
+test_that("fC_read_count()", {
+  # Check interface
   expect_equal(names(formals(fC_read_count)), "fpath")
 
+  # Check output
+  expect_no_message(fC_read_count(fC_count_fpath[1]))
+
+  tbl <- fC_read_count(fC_count_fpath[1])
+  expect_equal(class(tbl), c("spec_tbl_df", "tbl_df", "tbl", "data.frame"))
+  expect_equal(dim(tbl), c(133L, 7L))
   expect_equal(
-    fC_tbl_li[[1]],
+    tbl,
     readr::read_tsv(file = fC_count_fpath[1], skip = 1L, col_types = "cccccii")
   )
-  expect_equal(
-    colnames(fC_tbl_li[[1]])[1:6],
-    c("Geneid", "Chr", "Start", "End", "Strand", "Length")
-  )
+  expect_equal(colnames(tbl),
+               c("Geneid", "Chr", "Start", "End", "Strand", "Length",
+                 "some/sample_1.sort.bam"))
+
+  # test the checking of file header
+  tempf <- tempfile("temp.txt")
+  file.copy(fC_count_fpath[1], tempf)
+  readLines(tempf) %>%
+    sub(pattern = "^# Program:featureCounts v", replacement = "#Program:featureCounts v") %>%
+    writeLines(tempf)
+  expect_error(fC_read_count(tempf))
+  file.remove(tempf)
 })
 
-# Test fC_read_summary() -------------------------------------------------------
-fC_sum_li <- fC_read_summary(fpath = fC_summary_fpath)
-test_that("fC_read_summary() test", {
-  # Check arguments
+test_that("fC_merge_count()", {
+  # Check interface
+  expect_equal(names(formals(fC_merge_count)), "li_tbl")
+
+  # Check output
+  expect_no_message(fC_merge_count(lapply(fC_count_fpath, fC_read_count)))
+  li_tbl <- lapply(fC_count_fpath, fC_read_count)
+  li_tbl[[3]]$Strand[1] <- ""
+  expect_error(fC_merge_count(li_tbl))
+
+  tbl_merged <- fC_merge_count(lapply(fC_count_fpath, fC_read_count))
+  expect_equal(class(tbl_merged), c("spec_tbl_df", "tbl_df", "tbl", "data.frame"))
+  expect_equal(dim(tbl_merged), c(133L, 9L))
+})
+
+test_that("fC_write_count()", {
+  # Check interface
+  expect_equal(names(formals(fC_write_count)), c("tbl_fC", "fpath"))
+
+  # Check output
+  tbl <- fC_read_count(fC_count_fpath[1])
+  tempf <- tempfile("temp.txt")
+  expect_no_message(fC_write_count(tbl, tempf))
+  expect_error(fC_write_count(tbl))
+
+  expect_equal(readr::read_csv(tempf, col_types = "ci"), tbl[,c(1,7)])
+  file.remove(tempf)
+})
+
+test_that("fC_read_summary()", {
+  # Check interface
   expect_equal(names(formals(fC_read_summary)), "fpath")
 
-  expect_equal(dim(fC_sum_li), c(14, 4))
-  expect_true(is.character(fC_sum_li[[1]]))
-  expect_equal(colnames(fC_sum_li)[1], "Status")
-  expect_true(all(unlist(lapply(fC_sum_li[-1], is.integer))))
+  # Check output
+  expect_no_message(fC_read_summary(fC_summary_fpath[1]))
+
+  tbl <- fC_read_summary(fC_summary_fpath[1])
+  expect_equal(class(tbl), c("spec_tbl_df", "tbl_df", "tbl", "data.frame"))
+  expect_equal(dim(tbl), c(14L, 2L))
+  expect_equal(
+    tbl,
+    readr::read_tsv(file = fC_summary_fpath[1], col_types = "ci")
+  )
 })
 
-# Test fC_rename_col() ---------------------------------------------------------
-# temp1 <- fC_tbl_li[[1]]
-# temp2 <- fC_rename_col(fC_tbl_li[[1]])
-# test_that("fC_rename_col() test 1", {
-#   # Check arguments
-#   expect_equal(names(formals(fC_rename_col)), c("tbl_fC", "col_fpath", "file_suffix"))
-#   expect_equal(formals(fC_rename_col)[["col_fpath"]], 7L)
-#   expect_equal(formals(fC_rename_col)[["file_suffix"]], ".sort.bam$")
-#
-#   # 列名以外は変えない
-#   expect_true(purrr::map2_lgl(temp1, temp2, ~ all(.x == .y)) %>% all())
-#   #
-#   expect_equal(colnames(temp1)[1:6], colnames(temp2)[1:6])
-#   expect_equal(colnames(temp2)[7], "sample_1")
-# })
-#
-# temp1 <- fC_rename_col(fC_tbl_li[[1]], col_fpath = 1L) %>% colnames()
-# temp2 <- fC_rename_col(fC_tbl_li[[1]], file_suffix = ".sort") %>% colnames()
-# test_that("fC_rename_col() test 2", {
-#   expect_equal(temp1[7], "some/sample_1.sort.bam")
-#   expect_equal(temp2[7], "sample_1.bam")
-# })
-
-# Test fC_merge_count() ---------------------------------------------------------
-temp1 <- fC_tbl_li[[1]]
-temp2 <- fC_merge_count(fC_tbl_li)
-test_that("fC_merge_count() test 1", {
-  expect_equal(dim(temp2), c(133, 9))
-  expect_true(identical(temp1[,1:7], temp2[,1:7]))
+test_that("fC_rename_col()", {
+  lifecycle::expect_deprecated(
+    fC_rename_col(fC_read_count(fC_count_fpath[1]))
+  )
 })
 
-# Test fC_calc_rpm() ---------------------------------------------------------
-fC_tbl_merged <- lapply(fC_count_fpath, fC_read_count) %>% fC_merge_count()
+test_that("fC_merge_summary()", {
+  # Check interface
+  expect_equal(names(formals(fC_merge_summary)), "li_tbl")
+
+  # Check output
+  expect_no_message(fC_merge_summary(lapply(fC_summary_fpath, fC_read_summary)))
+  li_tbl <- lapply(fC_summary_fpath, fC_read_summary)
+  li_tbl[[3]]$Status[1] <- ""
+  expect_error(fC_merge_summary(li_tbl))
+
+  tbl_merged <- fC_merge_summary(lapply(fC_summary_fpath, fC_read_summary))
+  expect_equal(class(tbl_merged), c("spec_tbl_df", "tbl_df", "tbl", "data.frame"))
+  expect_equal(dim(tbl_merged), c(14L, 4L))
+})
+
+tbl_merged <- fC_merge_count(lapply(fC_count_fpath, fC_read_count))
 test_that("fC_calc_rpm()", {
-  # Check arguments
+  # Check interface
   expect_equal(names(formals(fC_calc_rpm)), "tbl_fC")
 
-  expect_no_error(fC_calc_rpm(fC_tbl_merged))
+  # Check output
+  expect_no_message(fC_calc_rpm(tbl_merged))
+
   expect_equal(
-    ncol(fC_calc_rpm(fC_tbl_merged)),
-    ncol(fC_tbl_merged) + 3L
+    ncol(fC_calc_rpm(tbl_merged)),
+    ncol(tbl_merged) + 3L
   )
-  expect_equal(
-    colnames(fC_calc_rpm(fC_tbl_merged)),
-    c(
-      colnames(fC_tbl_merged),
-      paste0("rpm_", colnames(fC_tbl_merged)[-(1:6)])
-    )
+  expect_true(
+    colnames(fC_calc_rpm(tbl_merged))[-(1:6)] %>%
+      sub(pattern = "^rpm_", replacement = "") %>%
+      table() %>%
+      {all(. == 2L)}
   )
 })
 
-# Test fC_calc_rpkm() ---------------------------------------------------------
-fC_tbl_merged <- lapply(fC_count_fpath, fC_read_count) %>% fC_merge_count()
 test_that("fC_calc_rpkm()", {
-  # Check arguments
+  # Check interface
   expect_equal(names(formals(fC_calc_rpkm)), "tbl_fC")
 
-  expect_no_error(fC_calc_rpkm(fC_tbl_merged))
+  # Check output
+  expect_no_message(fC_calc_rpkm(tbl_merged))
+
   expect_equal(
-    ncol(fC_calc_rpkm(fC_tbl_merged)),
-    ncol(fC_tbl_merged) + 3L
+    ncol(fC_calc_rpkm(tbl_merged)),
+    ncol(tbl_merged) + 3L
   )
-  expect_equal(
-    colnames(fC_calc_rpkm(fC_tbl_merged)),
-    c(
-      colnames(fC_tbl_merged),
-      paste0("rpkm_", colnames(fC_tbl_merged)[-(1:6)])
-    )
+  expect_true(
+    colnames(fC_calc_rpkm(tbl_merged))[-(1:6)] %>%
+      sub(pattern = "^rpkm_", replacement = "") %>%
+      table() %>%
+      {all(. == 2L)}
   )
 })
 
-# Test fC_calc_tpm() ---------------------------------------------------------
-fC_tbl_merged <- lapply(fC_count_fpath, fC_read_count) %>% fC_merge_count()
 test_that("fC_calc_tpm()", {
-  # Check arguments
+  # Check interface
   expect_equal(names(formals(fC_calc_tpm)), "tbl_fC")
 
-  expect_no_error(fC_calc_tpm(fC_tbl_merged))
+  # Check output
+  expect_no_message(fC_calc_tpm(tbl_merged))
+
   expect_equal(
-    ncol(fC_calc_tpm(fC_tbl_merged)),
-    ncol(fC_tbl_merged) + 3L
+    ncol(fC_calc_tpm(tbl_merged)),
+    ncol(tbl_merged) + 3L
   )
-  expect_equal(
-    colnames(fC_calc_tpm(fC_tbl_merged)),
-    c(
-      colnames(fC_tbl_merged),
-      paste0("tpm_", colnames(fC_tbl_merged)[-(1:6)])
-    )
+  expect_true(
+    colnames(fC_calc_tpm(tbl_merged))[-(1:6)] %>%
+      sub(pattern = "^tpm_", replacement = "") %>%
+      table() %>%
+      {all(. == 2L)}
+  )
+})
+
+test_that("all calc", {
+  expect_true(
+    tbl_merged %>%
+      fC_calc_rpm() %>%
+      fC_calc_rpkm() %>%
+      fC_calc_tpm() %>%
+      {colnames(.)[-(1:6)]} %>%
+      sub(pattern = "^(rpm|rpkm|tpm)_", replacement = "") %>%
+      table() %>%
+      {all(. == 4L)}
   )
 })
