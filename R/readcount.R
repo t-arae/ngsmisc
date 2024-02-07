@@ -33,18 +33,18 @@ NULL
 #' @rdname norm_count
 #' @export
 calc_rpm <- function(readcount) {
-  (readcount / sum(readcount, na.rm = T)) * 10^6
+  (readcount / sum(readcount, na.rm = TRUE)) * 10^6
 }
 
 #' @rdname norm_count
 #' @export
 calc_rpkm <- function(readcount, len) {
-  readcount * (10^3 / len) * (10^6 / sum(readcount, na.rm = T))
+  readcount * (10^3 / len) * (10^6 / sum(readcount, na.rm = TRUE))
 }
 
 #' @rdname norm_count
 #' @export
 calc_tpm <- function(readcount, len) {
   t <- readcount / len * 10^3
-  t / sum(t, na.rm = T) * 10^6
+  t / sum(t, na.rm = TRUE) * 10^6
 }
