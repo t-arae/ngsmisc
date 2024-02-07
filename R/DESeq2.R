@@ -210,7 +210,7 @@ ds2_rcdf_to_dds <- function(rcdf, coldata, design = ~ 1) {
 #'
 #' @param dds a `DESeqDataSet` object
 #' @param sizefactor a double vector. the length must be equal to `ncol(dds)`.
-#' @param ... further arguments passed to `DESeq2:::estimateSizeFactors.DESeqDataSet()`. see Details.
+#' @param ... further arguments passed to `DESeq2::estimateSizeFactors()`. see Details.
 #'
 #' @details
 #' To see the advanced settings, run `` ?DESeq2::`estimateSizeFactors,DESeqDataSet-method` ``.
@@ -247,16 +247,18 @@ ds2_rcdf_to_dds <- function(rcdf, coldata, design = ~ 1) {
 #' @rdname ds2_sizefactor
 #' @export
 ds2_dds_estimate_sizefactor <- function(dds, ...) {
-  DESeq2:::estimateSizeFactors.DESeqDataSet(object = dds, ...)
+  stopifnot(inherits(dds, "DESeqDataSet"))
+  DESeq2::estimateSizeFactors(object = dds, ...)
 }
 
 #' @rdname ds2_sizefactor
 #' @export
 ds2_dds_get_sizefactor <- function(dds, ...) {
+  stopifnot(inherits(dds, "DESeqDataSet"))
   sf <- DESeq2::sizeFactors(dds)
   if(is.null(sf)) {
     sf <-
-      DESeq2:::estimateSizeFactors.DESeqDataSet(object = dds, ...) %>%
+      DESeq2::estimateSizeFactors(object = dds, ...) %>%
       DESeq2::sizeFactors()
   }
   sf
@@ -265,6 +267,10 @@ ds2_dds_get_sizefactor <- function(dds, ...) {
 #' @rdname ds2_sizefactor
 #' @export
 ds2_dds_set_sizefactor <- function(dds, sizefactor) {
+  stopifnot(inherits(dds, "DESeqDataSet"))
+  stopifnot(all(is.numeric(sizefactor)))
+  stopifnot(all(!is.na(sizefactor)))
+
   DESeq2::sizeFactors(dds) <- sizefactor
   dds
 }
@@ -304,7 +310,8 @@ ds2_dds_set_sizefactor <- function(dds, sizefactor) {
 #'
 #' @export
 ds2_dds_estimate_disp <- function(dds, ...) {
-  DESeq2:::estimateDispersions.DESeqDataSet(dds, ...)
+  stopifnot(inherits(dds, "DESeqDataSet"))
+  DESeq2::estimateDispersions(dds, ...)
 }
 
 #' Run Likelihood ratio test or Wald test
@@ -356,12 +363,14 @@ NULL
 #' @rdname ds2_test
 #' @export
 ds2_dds_test_nbinomLRT <- function(dds, reduced = ~ 1, ...) {
+  stopifnot(inherits(dds, "DESeqDataSet"))
   DESeq2::nbinomLRT(dds, reduced = reduced, ...)
 }
 
 #' @rdname ds2_test
 #' @export
 ds2_dds_test_nbinomWaldTest <- function(dds, ...) {
+  stopifnot(inherits(dds, "DESeqDataSet"))
   DESeq2::nbinomWaldTest(object = dds, ...)
 }
 
@@ -405,12 +414,14 @@ NULL
 #' @rdname ds2_design
 #' @export
 ds2_dds_get_design <- function(dds) {
+  stopifnot(inherits(dds, "DESeqDataSet"))
   DESeq2::design(dds)
 }
 
 #' @rdname ds2_design
 #' @export
 ds2_dds_set_design <- function(dds, design) {
+  stopifnot(inherits(dds, "DESeqDataSet"))
   DESeq2::design(dds) <- design
   dds
 }
@@ -451,10 +462,16 @@ ds2_dds_set_design <- function(dds, design) {
 #'
 #' @export
 ds2_dds_get_normalized_count_tbl <- function(dds, rownames = "Geneid") {
+  stopifnot(inherits(dds, "DESeqDataSet"))
+  sf <- ds2_dds_get_sizefactor(dds)
   df <- as.data.frame(DESeq2::counts(dds))
+
+  if(!identical(sort(colnames(df)), sort(names(sf))))
+    stop("Sample names and names of size factors does not match.")
+
   purrr::modify2(
     .x = df,
-    .y = DESeq2::sizeFactors(dds),
+    .y = sf[colnames(df)],
     .f = ~ .x / .y
   ) %>%
     `row.names<-`(row.names(df)) %>%
@@ -513,6 +530,7 @@ NULL
 #' @rdname ds2_dds_to
 #' @export
 ds2_dds_to_ddr <- function(dds, ...) {
+  stopifnot(inherits(dds, "DESeqDataSet"))
   DESeq2::results(object = dds, ...)
 }
 
@@ -520,8 +538,9 @@ ds2_dds_to_ddr <- function(dds, ...) {
 #' @rdname ds2_dds_to
 #' @export
 ds2_dds_to_tbl <- function(dds, rownames = "Geneid") {
+  stopifnot(inherits(dds, "DESeqDataSet"))
   test <- attr(dds, which = "test")
-  if(test %in% c("Wald", "LRT")) {
+  if(!is.null(test) && test %in% c("Wald", "LRT")) {
     dds@rowRanges@elementMetadata %>%
       tibble::as_tibble() %>%
       dplyr::mutate(
@@ -531,7 +550,7 @@ ds2_dds_to_tbl <- function(dds, rownames = "Geneid") {
       dplyr::mutate(padj = DESeq2::results(dds)$padj) %>%
       return()
   } else {
-    stop("dds have to be tested.")
+    stop("dds has to be tested.")
   }
 }
 
@@ -574,6 +593,7 @@ ds2_dds_to_tbl <- function(dds, rownames = "Geneid") {
 #'
 #' @export
 ds2_ddr_to_tbl <- function(ddr, rownames = "Geneid") {
+  stopifnot(inherits(ddr, "DESeqResults"))
   log2FoldChange <- NULL
   tibble::as_tibble(ddr, rownames = rownames) %>%
     dplyr::rename(l2fc = log2FoldChange)
@@ -617,6 +637,7 @@ ds2_ddr_to_tbl <- function(ddr, rownames = "Geneid") {
 #' ddr %>% ds2_ddr_plot_independent_filtering()
 #' @export
 ds2_ddr_plot_independent_filtering <- function(ddr, title = "") {
+  stopifnot(inherits(ddr, "DESeqResults"))
   theta <- numRej <- x <- y <- log2FoldChange <- NULL
   ddr@metadata$filterNumRej %>%
     ggplot2::ggplot(ggplot2::aes(theta, numRej)) +
