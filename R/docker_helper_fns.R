@@ -96,7 +96,7 @@ cat_stderr <- function(ps_out) {
   cat(ps_out$stderr)
 }
 
-#' Run a command line and show/get output
+#' Run a command line and show/get stdout/stderr outputs from the result.
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
@@ -144,10 +144,16 @@ run_get_stderr <- function(statement, ...) {
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
-#' @param wd a path to the working directory
-#' @param ... ...
-#' @param create_dir logical. if `TRUE` create directory of the returned path. (default: `TRUE`)
-#' @param save_dir directory name to save the output. (default: `"cmdout_cache"`)
+#' Make a file path by inserting a directory between the working directory and
+#' specified file path.
+#'
+#' @param wd A path or character vector to the working directory.
+#' @param ... Arguments passed on to `fs::path()`.
+#' @param create_dir A logical. if set to `TRUE`, will create directory of the
+#'  created file path. (default: `TRUE`)
+#' @param save_dir A path or character vector of directory name to save the
+#'  cache files. (default: `"cmdout_cache"`, default can be overridden by
+#'  setting `options("ngsmisc.path_cmdout.save_dir")`.)
 #'
 #' @examples
 #' path_cmdout("/path/to/wd", "cmd_out.txt", create_dir = FALSE)
@@ -178,6 +184,8 @@ path_cmdout <- function(
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
+#'
+#' Wrapper functions of `path_cmdout()` to help the text file I/O.
 #'
 #' @param x A character vector to write to a cache file.
 #' @inheritParams path_cmdout
