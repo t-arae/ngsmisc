@@ -159,15 +159,18 @@ path_cmdout <- function(
     wd, ..., create_dir = TRUE,
     save_dir = getOption("ngsmisc.path_cmdout.save_dir", "cmdout_cache")
 ) {
-  fpath <- fs::path(wd, ...)
-  new_fpath <- stringr::str_replace(
-    string = fpath,
-    pattern = as.character(fs::as_fs_path(wd)),
-    replacement = fs::path(wd, save_dir)
-  )
+  skip_wd <- is.null(wd)
+  skip_save_dir <- is.null(save_dir)
+
+  new_fpath <- fs::path(wd, save_dir, ...)
+  if(skip_wd) new_fpath <- fs::path(save_dir, ...)
+  if(skip_save_dir) new_fpath <- fs::path(wd, ...)
+  if(skip_wd & skip_save_dir) new_fpath <- fs::path(...)
+
   if(create_dir) {
     fs::dir_create(fs::path_dir(new_fpath))
   }
+
   new_fpath
 }
 
