@@ -96,7 +96,7 @@ cat_stderr <- function(ps_out) {
   cat(ps_out$stderr)
 }
 
-#' Run a command line and show/get output
+#' Run a command line and show/get stdout/stderr outputs from the result.
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
@@ -144,10 +144,16 @@ run_get_stderr <- function(statement, ...) {
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
-#' @param wd a path to the working directory
-#' @param ... ...
-#' @param create_dir logical. if `TRUE` create directory of the returned path. (default: `TRUE`)
-#' @param save_dir directory name to save the output. (default: `"cmdout_cache"`)
+#' Make a file path by inserting a directory between the working directory and
+#' specified file path.
+#'
+#' @param wd A path or character vector to the working directory.
+#' @param ... Arguments passed on to `fs::path()`.
+#' @param create_dir A logical. if set to `TRUE`, will create directory of the
+#'  created file path. (default: `TRUE`)
+#' @param save_dir A path or character vector of directory name to save the
+#'  cache files. (default: `"cmdout_cache"`, default can be overridden by
+#'  setting `options("ngsmisc.path_cmdout.save_dir")`.)
 #'
 #' @examples
 #' path_cmdout("/path/to/wd", "cmd_out.txt", create_dir = FALSE)
@@ -155,16 +161,22 @@ run_get_stderr <- function(statement, ...) {
 #' path_cmdout("/path/to/wd", "level1", "level2", "cmd_out.txt", create_dir = FALSE)
 #'
 #' @export
-path_cmdout <- function(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache") {
-  fpath <- fs::path(wd, ...)
-  new_fpath <- stringr::str_replace(
-    string = fpath,
-    pattern = as.character(fs::as_fs_path(wd)),
-    replacement = fs::path(wd, save_dir)
-  )
+path_cmdout <- function(
+    wd, ..., create_dir = TRUE,
+    save_dir = getOption("ngsmisc.path_cmdout.save_dir", "cmdout_cache")
+) {
+  skip_wd <- is.null(wd)
+  skip_save_dir <- is.null(save_dir)
+
+  new_fpath <- fs::path(wd, save_dir, ...)
+  if(skip_wd) new_fpath <- fs::path(save_dir, ...)
+  if(skip_save_dir) new_fpath <- fs::path(wd, ...)
+  if(skip_wd & skip_save_dir) new_fpath <- fs::path(...)
+
   if(create_dir) {
     fs::dir_create(fs::path_dir(new_fpath))
   }
+
   new_fpath
 }
 
@@ -172,6 +184,8 @@ path_cmdout <- function(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache") {
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
+#'
+#' Wrapper functions of `path_cmdout()` to help the text file I/O.
 #'
 #' @param x A character vector to write to a cache file.
 #' @inheritParams path_cmdout
@@ -183,17 +197,23 @@ path_cmdout <- function(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache") {
 
 #' @rdname cache_io
 #' @export
-cache_write <- function(x, wd, ..., create_dir = TRUE, save_dir = "cmdout_cache") {
+cache_write <- function(
+    x, wd, ..., create_dir = TRUE,
+    save_dir = getOption("ngsmisc.path_cmdout.save_dir", "cmdout_cache")
+) {
   readr::write_lines(
     x = x,
-    file = path_cmdout(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache")
+    file = path_cmdout(wd, ..., create_dir = TRUE, save_dir = save_dir)
   )
 }
 
 #' @rdname cache_io
 #' @export
-cache_read <- function(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache") {
+cache_read <- function(
+    wd, ...,
+    save_dir = getOption("ngsmisc.path_cmdout.save_dir", "cmdout_cache")
+) {
   readr::read_lines(
-    file = path_cmdout(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache")
+    file = path_cmdout(wd, ..., create_dir = FALSE, save_dir = save_dir)
   )
 }

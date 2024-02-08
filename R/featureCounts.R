@@ -230,8 +230,5 @@ fC_rename_col <- function(tbl_fC, col_fpath = 7L, file_suffix = ".sort.bam$") {
     what = "fC_rename_col()",
     with = "rename_fpath_bam()"
   )
-  tbl_fC <-
-    rename_col_fpath(tbl = tbl_fC, col_fpath = col_fpath,
-                     rm_file_suffix = TRUE, file_suffix = file_suffix)
-  tbl_fC
+  rename_fpath_bam(tbl = tbl_fC, nth = col_fpath)
 }

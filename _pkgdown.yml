@@ -53,7 +53,6 @@ reference:
 - subtitle: "misc"
   contents:
   - ds2_mat_select_col
-  - ds2_mat_check_linear_dependency
   - ds2_mat_plot_design
 - title: "clusterProfiler"
   contents:

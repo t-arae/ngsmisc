@@ -4,19 +4,30 @@
 \alias{path_cmdout}
 \title{Create file path to save the command line output}
 \usage{
-path_cmdout(wd, ..., create_dir = TRUE, save_dir = "cmdout_cache")
+path_cmdout(
+  wd,
+  ...,
+  create_dir = TRUE,
+  save_dir = getOption("ngsmisc.path_cmdout.save_dir", "cmdout_cache")
+)
 }
 \arguments{
-\item{wd}{a path to the working directory}
+\item{wd}{A path or character vector to the working directory.}
 
-\item{...}{...}
+\item{...}{Arguments passed on to \code{fs::path()}.}
 
-\item{create_dir}{logical. if \code{TRUE} create directory of the returned path. (default: \code{TRUE})}
+\item{create_dir}{A logical. if set to \code{TRUE}, will create directory of the
+created file path. (default: \code{TRUE})}
 
-\item{save_dir}{directory name to save the output. (default: \code{"cmdout_cache"})}
+\item{save_dir}{A path or character vector of directory name to save the
+cache files. (default: \code{"cmdout_cache"}, default can be overridden by
+setting \code{options("ngsmisc.path_cmdout.save_dir")}.)}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
+Make a file path by inserting a directory between the working directory and
+specified file path.
 }
 \examples{
 path_cmdout("/path/to/wd", "cmd_out.txt", create_dir = FALSE)

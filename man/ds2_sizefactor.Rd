@@ -16,7 +16,7 @@ ds2_dds_set_sizefactor(dds, sizefactor)
 \arguments{
 \item{dds}{a \code{DESeqDataSet} object}
 
-\item{...}{further arguments passed to \code{DESeq2:::estimateSizeFactors.DESeqDataSet()}. see Details.}
+\item{...}{further arguments passed to \code{DESeq2::estimateSizeFactors()}. see Details.}
 
 \item{sizefactor}{a double vector. the length must be equal to \code{ncol(dds)}.}
 }

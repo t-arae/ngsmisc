@@ -18,7 +18,7 @@ ST_parse_final_log <- function(fpath) {
   temp <- NULL
   # Check the first of lines
   fl <- readLines(fpath, n = 1L)
-  if(!stringr::str_detect(fl, "Started job on |"))
+  if(!stringr::str_detect(fl, "Started job on \\|"))
     stop(paste0("fpath must be the log file from STAR (*.final.log)"))
 
   lines <- readLines(fpath) %>% stringr::str_trim()
@@ -139,24 +139,37 @@ ST_read_sj_tab <- function(fpath, decode = FALSE) {
   if(decode) {
     tbl <-
       tbl %>%
-      dplyr::mutate(strand = dplyr::case_when(
-        strand == 0L ~ "*",
-        strand == 1L ~ "+",
-        strand == 2L ~ "-"
-      )) %>%
-      dplyr::mutate(intron_motif = dplyr::case_when(
-        intron_motif == 0L ~ "non-canonical",
-        intron_motif == 1L ~ "GT/AG",
-        intron_motif == 2L ~ "CT/AC",
-        intron_motif == 3L ~ "GC/AG",
-        intron_motif == 4L ~ "CT/GC",
-        intron_motif == 5L ~ "AT/AC",
-        intron_motif == 6L ~ "GT/AT"
-      )) %>%
-      dplyr::mutate(annotated = dplyr::case_when(
-        annotated == 0L ~ "unannotated",
-        annotated == 1L ~ "annotated"
-      ))
+      dplyr::mutate(
+        strand =
+          dplyr::case_when(
+            strand == 0L ~ "*",
+            strand == 1L ~ "+",
+            strand == 2L ~ "-"
+          ) %>%
+          as.factor() %>%
+          `levels<-.factor`(c("+", "-", "*")),
+          # forcats::fct_relevel(c("+", "-", "*")),
+        intron_motif =
+          dplyr::case_when(
+            intron_motif == 0L ~ "non-canonical",
+            intron_motif == 1L ~ "GT/AG",
+            intron_motif == 2L ~ "CT/AC",
+            intron_motif == 3L ~ "GC/AG",
+            intron_motif == 4L ~ "CT/GC",
+            intron_motif == 5L ~ "AT/AC",
+            intron_motif == 6L ~ "GT/AT"
+          ) %>%
+          as.factor() %>%
+          `levels<-.factor`(c("GT/AG", "CT/AC", "GC/AG", "CT/GC",
+                              "AT/AC", "GT/AT", "non-canonical")),
+        annotated =
+          dplyr::case_when(
+            annotated == 0L ~ "unannotated",
+            annotated == 1L ~ "annotated"
+          ) %>%
+          as.factor() %>%
+          `levels<-.factor`(c("annotated", "unannotated"))
+      )
   }
   return(tbl)
 }
