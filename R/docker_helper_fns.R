@@ -210,10 +210,10 @@ cache_write <- function(
 #' @rdname cache_io
 #' @export
 cache_read <- function(
-    wd, ..., create_dir = TRUE,
+    wd, ...,
     save_dir = getOption("ngsmisc.path_cmdout.save_dir", "cmdout_cache")
 ) {
   readr::read_lines(
-    file = path_cmdout(wd, ..., create_dir = TRUE, save_dir = save_dir)
+    file = path_cmdout(wd, ..., create_dir = FALSE, save_dir = save_dir)
   )
 }
