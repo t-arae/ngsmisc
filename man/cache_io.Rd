@@ -17,7 +17,6 @@ cache_write(
 cache_read(
   wd,
   ...,
-  create_dir = TRUE,
   save_dir = getOption("ngsmisc.path_cmdout.save_dir", "cmdout_cache")
 )
 }

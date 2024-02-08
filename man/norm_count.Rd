@@ -23,9 +23,9 @@ calc_tpm(readcount, len)
 
 \code{calc_rpm()} calculates Reads Per Million mapped reads (RPM).
 
-\code{calc_rpkm()} calculates Reads Per Kilobase of exon per Million mappled reads (RPKM).
+\code{calc_rpkm()} calculates Reads Per Kilobase of exon per Million mapped reads (RPKM).
 
-\code{calc_tpm()} calculates Transcripts Per kilobase Million (TPM).
+\code{calc_tpm()} calculates Transcripts Per Million (TPM).
 }
 \examples{
 
