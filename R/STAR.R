@@ -18,7 +18,7 @@ ST_parse_final_log <- function(fpath) {
   temp <- NULL
   # Check the first of lines
   fl <- readLines(fpath, n = 1L)
-  if(!stringr::str_detect(fl, "Started job on |"))
+  if(!stringr::str_detect(fl, "Started job on \\|"))
     stop(paste0("fpath must be the log file from STAR (*.final.log)"))
 
   lines <- readLines(fpath) %>% stringr::str_trim()
