@@ -5,9 +5,9 @@
 #'
 #' `calc_rpm()` calculates Reads Per Million mapped reads (RPM).
 #'
-#' `calc_rpkm()` calculates Reads Per Kilobase of exon per Million mappled reads (RPKM).
+#' `calc_rpkm()` calculates Reads Per Kilobase of exon per Million mapped reads (RPKM).
 #'
-#' `calc_tpm()` calculates Transcripts Per kilobase Million (TPM).
+#' `calc_tpm()` calculates Transcripts Per Million (TPM).
 #'
 #' @param readcount read count. atomic vector
 #' @param len feature length. atomic vector
