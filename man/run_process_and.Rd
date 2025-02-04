@@ -2,16 +2,10 @@
 % Please edit documentation in R/docker_helper_fns.R
 \name{run_process_and}
 \alias{run_process_and}
-\alias{run_cat_stdout}
-\alias{run_cat_stderr}
 \alias{run_get_stdout}
 \alias{run_get_stderr}
-\title{Run a command line and show/get stdout/stderr outputs from the result.}
+\title{Run a command line and get stdout/stderr outputs from the result.}
 \usage{
-run_cat_stdout(statement, ...)
-
-run_cat_stderr(statement, ...)
-
 run_get_stdout(statement, ...)
 
 run_get_stderr(statement, ...)
@@ -22,15 +16,13 @@ run_get_stderr(statement, ...)
 \item{...}{further options are passed to \code{processx::run()}.}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Run a command line and get stdout/stderr outputs from the result.
 }
 \examples{
 cmd_ok <- "echo 'hoge hoge'"
-run_cat_stdout(cmd_ok)
 run_get_stdout(cmd_ok)
 
 cmd_err <- "cat sonzai_shinai_file.txt"
-run_cat_stderr(cmd_err, error_on_status = FALSE)
 run_get_stderr(cmd_err, error_on_status = FALSE)
 
 }

@@ -24,8 +24,6 @@ cache files. (default: \code{"cmdout_cache"}, default can be overridden by
 setting \code{options("ngsmisc.path_cmdout.save_dir")}.)}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-
 Make a file path by inserting a directory between the working directory and
 specified file path.
 }
@@ -33,5 +31,9 @@ specified file path.
 path_cmdout("/path/to/wd", "cmd_out.txt", create_dir = FALSE)
 path_cmdout("/path/to/wd", "cmd_out.txt", create_dir = FALSE, save_dir = "other")
 path_cmdout("/path/to/wd", "level1", "level2", "cmd_out.txt", create_dir = FALSE)
+
+options("ngsmisc.path_cmdout.save_dir")
+options(ngsmisc.path_cmdout.save_dir = "new_dir")
+path_cmdout("/path/to/wd", "cmd_out.txt", create_dir = FALSE)
 
 }

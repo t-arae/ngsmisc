@@ -2,7 +2,7 @@
 #' common arguments for docker_helpler_fns.R
 #'
 #' @param statement a command line statement.
-#' @param sep_cmd separated command created by `sep_by_blank()`.
+#' @param sep_cmd separated command created by `tokenize_cmd()`.
 #' @param ps_out an output from `processx::run()`
 #' @param ... further options are passed to `processx::run()`.
 #'
@@ -11,105 +11,99 @@
 #' @name common_args_docker_helpler_fns
 NULL
 
-#' Separate a statement by white spaces
-#'
-#' @description
-#' `r lifecycle::badge("experimental")`
+#' Separate a shell command statement by white spaces
 #'
 #' @inheritParams common_args_docker_helpler_fns
 #'
 #' @examples
-#' cmd <- "echo 'hoge hoge'"
-#' sep_by_blank(cmd)
-#'
-#' "ls -l -a" %>% sep_by_blank()
+#' tokenize_cmd("ls -l -a")
+#' tokenize_cmd("echo 'hoge hoge'")
 #'
 #' @export
-sep_by_blank <- function(statement) {
-  pos_ws <- stringr::str_locate_all(statement, " ")[[1]][,1]
-  pos_bt <- stringr::str_locate_all(statement, "`[^`]*`")[[1]]
-  pos_sq <- stringr::str_locate_all(statement, "'[^']*'")[[1]]
-  pos_dq <- stringr::str_locate_all(statement, '"[^"]*"')[[1]]
-  pos_all <- rbind(pos_bt, pos_sq, pos_dq)
+tokenize_cmd <- function(statement) {
+  chars <- strsplit(statement, "")[[1]]
+  tokens <- character()
+  current_token <- character()
 
-  temp <- tibble::tibble(pos_ws, sub = TRUE)
-  if(nrow(pos_all) > 0) {
-    for(i in 1:nrow(pos_all)) {
-      temp <-
-        dplyr::mutate(
-          temp,
-          sub = sub & !(pos_all[i,1] < pos_ws & pos_ws < pos_all[i,2])
-        )
+  flush_token <- function() {
+    if (length(current_token) > 0) {
+      tokens <<- c(tokens, paste0(current_token, collapse = ""))
+      current_token <<- character()
     }
   }
-  for(i in rev(dplyr::filter(temp, sub)$pos_ws)) {
-    stringr::str_sub(statement, i, i) <- "WAKACHI"
+  
+  quote_mode <- NULL
+  i <- 1L
+  while(i < length(chars)+1L) {
+    ch <- chars[i]
+    if (is.null(quote_mode)) {
+      if (ch %in% c("'", '"')) {
+        quote_mode <- if (ch == "'") "'" else '"' 
+        current_token <- c(current_token, quote_mode)
+      } else if (grepl("\\s", ch)) {
+        flush_token()
+      } else {
+        current_token <- c(current_token, ch)
+      }
+    } else {
+      if (quote_mode == ch) {
+        current_token <- c(current_token, quote_mode)
+        quote_mode <- NULL
+      } else {
+        current_token <- c(current_token, ch)
+      }
+    }
+    i <- i + 1L
   }
-  stringr::str_split(statement, "WAKACHI")[[1]]
+  flush_token()
+  return(tokens)
 }
 
 #' Run a separated command in external process
 #'
-#' @description
-#' `r lifecycle::badge("experimental")`
+#' @inheritParams common_args_docker_helpler_fns
+#' @param error_on_status see `processx::run()`
+#' @param echo see `processx::run()`
+#' @param spinner see `processx::run()`
+#'
+#' @examples
+#' rlang::with_interactive({
+#'   cmd_ok <- "echo 'hoge hoge'"
+#'   run_cmd(tokenize_cmd(cmd_ok))
+#' })
+#'
+#' rlang::with_interactive({
+#'   cmd_err <- "cat sonzai_shinai_file.txt"
+#'   run_cmd(tokenize_cmd(cmd_err), error_on_status = FALSE)
+#' })
+#' 
+#' str(run_cmd(tokenize_cmd(cmd_ok)))
+#' 
+#' str(run_cmd(tokenize_cmd(cmd_err), error_on_status = FALSE))
+#'
+#' @export
+run_cmd <- function(sep_cmd, ..., error_on_status = TRUE, echo = rlang::is_interactive(), spinner = rlang::is_interactive()) {
+  invisible(
+    processx::run(
+      command = sep_cmd[1],
+      args = sep_cmd[-1],
+      error_on_status = error_on_status,
+      echo = echo,
+      spinner = spinner,
+      ...
+    )
+  )
+}
+
+#' Run a command line and get stdout/stderr outputs from the result.
 #'
 #' @inheritParams common_args_docker_helpler_fns
 #'
 #' @examples
 #' cmd_ok <- "echo 'hoge hoge'"
-#' cmd_run(sep_by_blank(cmd_ok))
-#'
-#' cmd_err <- "cat sonzai_shinai_file.txt"
-#' cmd_run(sep_by_blank(cmd_err), error_on_status = FALSE)
-#'
-#' @export
-cmd_run <- function(sep_cmd, ...) {
-  processx::run(command = sep_cmd[1], args = sep_cmd[-1], ...)
-}
-
-#' Show the stdout/stderr message in processx::run() ouput.
-#'
-#' @description
-#' `r lifecycle::badge("experimental")`
-#'
-#' @inheritParams common_args_docker_helpler_fns
-#'
-#' @examples
-#' cmd_ok <- "echo 'hoge hoge'"
-#' cmd_ok %>% sep_by_blank() %>% cmd_run() %>% cat_stdout()
-#'
-#' cmd_err <- "cat sonzai_shinai_file.txt"
-#' cmd_err %>% sep_by_blank() %>% cmd_run(error_on_status = FALSE) %>% cat_stderr()
-#'
-#' @name cat_process_out
-NULL
-
-#' @rdname cat_process_out
-#' @export
-cat_stdout <- function(ps_out) {
-  cat(ps_out$stdout)
-}
-
-#' @rdname cat_process_out
-#' @export
-cat_stderr <- function(ps_out) {
-  cat(ps_out$stderr)
-}
-
-#' Run a command line and show/get stdout/stderr outputs from the result.
-#'
-#' @description
-#' `r lifecycle::badge("experimental")`
-#'
-#' @inheritParams common_args_docker_helpler_fns
-#'
-#' @examples
-#' cmd_ok <- "echo 'hoge hoge'"
-#' run_cat_stdout(cmd_ok)
 #' run_get_stdout(cmd_ok)
 #'
 #' cmd_err <- "cat sonzai_shinai_file.txt"
-#' run_cat_stderr(cmd_err, error_on_status = FALSE)
 #' run_get_stderr(cmd_err, error_on_status = FALSE)
 #'
 #' @name run_process_and
@@ -117,33 +111,25 @@ NULL
 
 #' @rdname run_process_and
 #' @export
-run_cat_stdout <- function(statement, ...) {
-  cat_stdout(cmd_run(sep_by_blank(statement), ...))
-}
-
-#' @rdname run_process_and
-#' @export
-run_cat_stderr <- function(statement, ...) {
-  cat_stderr(cmd_run(sep_by_blank(statement), ...))
-}
-
-#' @rdname run_process_and
-#' @export
 run_get_stdout <- function(statement, ...) {
-  ngsmisc::cmd_run(ngsmisc::sep_by_blank(statement), ...)$stdout
+  rlang::with_interactive(
+    run_cmd(tokenize_cmd(statement), ...)$stdout,
+    value = FALSE
+  )
 }
 
 #' @rdname run_process_and
 #' @export
 run_get_stderr <- function(statement, ...) {
-  ngsmisc::cmd_run(ngsmisc::sep_by_blank(statement), ...)$stderr
+  rlang::with_interactive(
+    run_cmd(tokenize_cmd(statement), ...)$stderr,
+    value = FALSE
+  )
 }
 
 #' Create file path to save the command line output
 #'
 #' @description
-#' `r lifecycle::badge("experimental")`
-#'
 #' Make a file path by inserting a directory between the working directory and
 #' specified file path.
 #'
@@ -159,6 +145,10 @@ run_get_stderr <- function(statement, ...) {
 #' path_cmdout("/path/to/wd", "cmd_out.txt", create_dir = FALSE)
 #' path_cmdout("/path/to/wd", "cmd_out.txt", create_dir = FALSE, save_dir = "other")
 #' path_cmdout("/path/to/wd", "level1", "level2", "cmd_out.txt", create_dir = FALSE)
+#' 
+#' options("ngsmisc.path_cmdout.save_dir")
+#' options(ngsmisc.path_cmdout.save_dir = "new_dir")
+#' path_cmdout("/path/to/wd", "cmd_out.txt", create_dir = FALSE)
 #'
 #' @export
 path_cmdout <- function(
@@ -183,8 +173,6 @@ path_cmdout <- function(
 #' Read/Write cached command-line outputs.
 #'
 #' @description
-#' `r lifecycle::badge("experimental")`
-#'
 #' Wrapper functions of `path_cmdout()` to help the text file I/O.
 #'
 #' @param x A character vector to write to a cache file.
@@ -215,5 +203,87 @@ cache_read <- function(
 ) {
   readr::read_lines(
     file = path_cmdout(wd, ..., create_dir = FALSE, save_dir = save_dir)
+  )
+}
+
+#' Separate a statement by white spaces
+#'
+#' @keywords internal
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' @inheritParams common_args_docker_helpler_fns
+#' @export
+sep_by_blank <- function(statement) {
+  lifecycle::deprecate_warn("0.5.0", "sep_by_blank()", "tokenize_cmd()")
+  tokenize_cmd(statement)
+}
+
+#' Run a separated command in external process
+#'
+#' @keywords internal
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' @inheritParams common_args_docker_helpler_fns
+#'
+#' @export
+cmd_run <- function(sep_cmd, ...) {
+  lifecycle::deprecate_warn("0.5.0", "cmd_run()", "run_cmd()")
+  run_cmd(sep_cmd, ...)
+}
+
+#' Show the stdout/stderr message in processx::run() ouput.
+#'
+#' @keywords internal
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' @inheritParams common_args_docker_helpler_fns
+#'
+#' @name cat_process_out
+NULL
+
+#' @rdname cat_process_out
+#' @export
+cat_stdout <- function(ps_out) {
+  lifecycle::deprecate_warn("0.5.0", "cat_stdout()", "run_cmd(echo = TRUE)")
+  cat(ps_out$stdout)
+}
+
+#' @rdname cat_process_out
+#' @export
+cat_stderr <- function(ps_out) {
+  lifecycle::deprecate_warn("0.5.0", "cat_stderr()", "run_cmd(echo = TRUE)")
+  cat(ps_out$stderr)
+}
+
+#' Run a command line and show stdout outputs from the result.
+#'
+#' @keywords internal
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' @inheritParams common_args_docker_helpler_fns
+run_cat_stdout <- function(statement, ...) {
+  lifecycle::deprecate_warn("0.5.0", "run_cat_stdout()", "run_cmd(echo = TRUE)")
+  rlang::with_interactive(
+    cat_stdout(run_cmd(tokenize_cmd(statement), ...)),
+    value = FALSE
+  )
+}
+
+#' Run a command line and show stderr outputs from the result.
+#'
+#' @keywords internal
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' @inheritParams common_args_docker_helpler_fns
+run_cat_stderr <- function(statement, ...) {
+  lifecycle::deprecate_warn("0.5.0", "run_cat_stderr()", "run_cmd(echo = TRUE)")
+  rlang::with_interactive(
+    cat_stderr(run_cmd(tokenize_cmd(statement), ...)),
+    value = FALSE
   )
 }

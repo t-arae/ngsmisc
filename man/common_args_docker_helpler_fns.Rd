@@ -6,7 +6,7 @@
 \arguments{
 \item{statement}{a command line statement.}
 
-\item{sep_cmd}{separated command created by \code{sep_by_blank()}.}
+\item{sep_cmd}{separated command created by \code{tokenize_cmd()}.}
 
 \item{ps_out}{an output from \code{processx::run()}}
 
