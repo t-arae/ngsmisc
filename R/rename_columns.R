@@ -139,6 +139,7 @@ rename_fpath_bam <- function(tbl, nth, prefix = "") {
 
 
 #' Rename tibble column names which containing file path
+#' @keywords internal
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #' @param tbl data.frame.
@@ -164,6 +165,7 @@ rename_col_fpath <- function(tbl, col_fpath, rm_file_suffix, file_suffix) {
 }
 
 #' Rename tibble column names which containing AGI
+#' @keywords internal
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #' @param tbl data.frame.

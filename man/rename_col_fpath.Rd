@@ -18,3 +18,4 @@ rename_col_fpath(tbl, col_fpath, rm_file_suffix, file_suffix)
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 }
+\keyword{internal}
