@@ -14,13 +14,6 @@ cat_stderr(ps_out)
 \item{ps_out}{an output from \code{processx::run()}}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 }
-\examples{
-cmd_ok <- "echo 'hoge hoge'"
-cmd_ok \%>\% sep_by_blank() \%>\% cmd_run() \%>\% cat_stdout()
-
-cmd_err <- "cat sonzai_shinai_file.txt"
-cmd_err \%>\% sep_by_blank() \%>\% cmd_run(error_on_status = FALSE) \%>\% cat_stderr()
-
-}
+\keyword{internal}

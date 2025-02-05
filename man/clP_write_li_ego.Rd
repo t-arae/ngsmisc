@@ -4,19 +4,36 @@
 \alias{clP_write_li_ego}
 \title{Run clustreProfiler::enrichGO() and write R object to a file}
 \usage{
-clP_write_li_ego(fg, bg, out_dir, label, ...)
+clP_write_li_ego(fg, bg, dir_output, label, ...)
 }
 \arguments{
 \item{fg}{A vector of foreground gene ids.}
 
 \item{bg}{A vector of background gene ids.}
 
-\item{out_dir}{Path to the output directory.}
+\item{dir_output}{Path to the output directory.}
 
 \item{label}{A label of the set of foreground gene}
 
-\item{...}{Named options will be passed to clusterProfiler::enrichGO(). without "gene", "universe", "ont", "pool"}
+\item{...}{Named options will be passed to clusterProfiler::enrichGO(). without "gene", "universe", "ont"}
 }
 \description{
 Run clustreProfiler::enrichGO() and write R object to a file
+}
+\examples{
+if(all(sapply(c("clusterProfiler", "org.At.tair.db"), \(x) requireNamespace(x, quietly = TRUE)))) {
+  # background <- org.At.tair.db::org.At.tair.db |> AnnotationDbi::keys()
+  background <- readRDS(system.file(package = "ngsmisc", "clusterprofiler", "background.rds"))
+  temp_wd <- tempdir(check = TRUE)
+  ngsmisc::clP_write_li_ego(
+    fg = background[grepl("C", background)],  bg = background,
+    OrgDb = "org.At.tair.db",  keyType = "TAIR",
+    dir_output = temp_wd,
+    label = "example"
+  )
+  li_ego_example <- readRDS(fs::path(temp_wd, "ego_rds", "li_ego_example.rds"))
+  li_ego_example$BP
+  #fs::dir_delete(temp_wd)
+}
+
 }

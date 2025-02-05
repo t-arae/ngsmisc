@@ -3,88 +3,78 @@ cmd_docker <- "docker run --rm -v {pwd}:/data {image} {command}"
 pwd <- "`pwd`"
 image <- "some_ngstool"
 command <- "some cmd --help"
-full_cmd <- stringr::str_glue(cmd_docker)
+full_cmd <- glue::glue(cmd_docker)
 sep_full_cmd <-
   c("docker", "run", "--rm", "-v", "`pwd`:/data", "some_ngstool",
     "some", "cmd", "--help")
 
-test_that("sep_by_blank()", {
+test_that("tokenize_cmd()", {
   # Check interface
-  expect_equal(names(formals(sep_by_blank)), c("statement"))
+  expect_equal(names(formals(tokenize_cmd)), c("statement"))
 
   # Check output
-  expect_no_message(sep_by_blank(""))
+  expect_no_message(tokenize_cmd(""))
 
   ws_path <- "'/a/b/c/space is included !'"
-  expect_equal(sep_by_blank(full_cmd), sep_full_cmd)
-  expect_equal(sep_by_blank(stringr::str_glue("cd {ws_path}")),
+  expect_equal(tokenize_cmd(full_cmd), sep_full_cmd)
+  expect_equal(tokenize_cmd(glue::glue("cd {ws_path}")),
                c("cd", "'/a/b/c/space is included !'"))
 })
 
 stmt1 <- "echo 'hello'"
-sep_cmd1 <- sep_by_blank(statement = stmt1)
-stmt2 <- "cat "
-sep_cmd2 <- sep_by_blank(statement = stmt2)
+sep_cmd1 <- tokenize_cmd(statement = stmt1)
+stmt2 <- "cat ''"
+sep_cmd2 <- tokenize_cmd(statement = stmt2)
 
-test_that("cmd_run()", {
+test_that("run_cmd()", {
   # Check interface
-  expect_equal(names(formals(cmd_run)), c("sep_cmd", "..."))
+  expect_equal(names(formals(run_cmd)), c("sep_cmd", "...", "error_on_status", "echo", "spinner"))
+  expect_equal(formals(run_cmd)$error_on_status, TRUE)
+  expect_equal(eval(formals(run_cmd)$echo), FALSE)
+  expect_equal(eval(formals(run_cmd)$spinner), FALSE)
+  rlang::with_interactive({
+    expect_equal(eval(formals(run_cmd)$echo), TRUE)
+    expect_equal(eval(formals(run_cmd)$spinner), TRUE)
+  })
 
   # Check output
-  expect_no_message(cmd_run(sep_cmd1))
-  expect_no_message(cmd_run(sep_cmd1[1]))
+  expect_no_message(run_cmd(sep_cmd1))
+  expect_no_message(run_cmd(sep_cmd1[1]))
+  expect_equal(capture.output(run_cmd(sep_cmd1)), character())
+  expect_invisible(run_cmd(sep_cmd1))
+  rlang::with_interactive(
+    expect_equal(capture.output(run_cmd(sep_cmd1))[1], "'hello'")
+  )
 
-  expect_error(cmd_run(sep_cmd2))
-  expect_no_message(cmd_run(sep_cmd2, error_on_status = FALSE))
+  expect_error(run_cmd(sep_cmd2))
+  expect_no_message(run_cmd(sep_cmd2, error_on_status = FALSE))
 
-  out <- cmd_run(sep_cmd1)
+  out <- run_cmd(sep_cmd1)
   expect_equal(class(out), "list")
   expect_equal(out[["status"]], 0L)
   expect_equal(out[["stdout"]], "'hello'\n")
   expect_equal(out[["stderr"]], "")
   expect_equal(out[["timeout"]], FALSE)
 
-  out2 <- cmd_run(sep_cmd2, error_on_status = FALSE)
+  out2 <- run_cmd(sep_cmd2, error_on_status = FALSE)
   expect_equal(out2[["status"]], 1L)
   expect_equal(out2[["stdout"]], "")
-  expect_equal(out2[["stderr"]], "cat: : No such file or directory\n")
+  expect_equal(out2[["stderr"]], "cat: '': No such file or directory\n")
   expect_equal(out2[["timeout"]], FALSE)
-})
-
-out <- cmd_run(sep_cmd1)
-out2 <- cmd_run(sep_cmd2, error_on_status = FALSE)
-test_that("cat_process_out", {
-  # Check interface
-  expect_equal(names(formals(cat_stdout)), "ps_out")
-  expect_equal(names(formals(cat_stderr)), "ps_out")
-
-  # Check output
-  capture.output(expect_no_message(cat_stdout(out)))
-  capture.output(expect_no_message(cat_stderr(out2)))
-
-  expect_output(cat_stdout(out), "'hello'")
-  expect_output(cat_stderr(out2), "cat: : No such file or directory")
 })
 
 test_that("run_process_and", {
   # Check interface
-  expect_equal(names(formals(run_cat_stdout)), c("statement", "..."))
-  expect_equal(names(formals(run_cat_stderr)), c("statement", "..."))
   expect_equal(names(formals(run_get_stdout)), c("statement", "..."))
   expect_equal(names(formals(run_get_stderr)), c("statement", "..."))
 
   # Check output
-  capture.output(expect_no_message(run_cat_stdout(stmt1)))
-  capture.output(expect_no_message(run_cat_stderr(stmt2, error_on_status = FALSE)))
   expect_no_message(run_get_stdout(stmt1))
   expect_no_message(run_get_stderr(stmt2, error_on_status = FALSE))
 
-  expect_output(run_cat_stdout(stmt1), "'hello'", fixed = TRUE)
-  expect_output(run_cat_stderr(stmt2, error_on_status = FALSE),
-                "cat: : No such file or directory", fixed = TRUE)
   expect_equal(run_get_stdout(stmt1), "'hello'\n")
   expect_equal(run_get_stderr(stmt2, error_on_status = FALSE),
-               "cat: : No such file or directory\n")
+               "cat: '': No such file or directory\n")
 })
 
 test_that("path_cmdout", {
@@ -143,4 +133,12 @@ test_that("cache_io", {
   expect_equal(cache_read(wd = temp_wd, "test.txt"),
                "hello world.")
   fs::dir_delete(temp_wd)
+})
+
+test_that("sep_by_blank()", {
+  lifecycle::expect_deprecated(sep_by_blank(""))
+})
+
+test_that("cmd_run()", {
+  lifecycle::expect_deprecated(cmd_run(c("echo", "")))
 })

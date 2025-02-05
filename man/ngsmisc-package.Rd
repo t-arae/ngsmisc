@@ -4,9 +4,9 @@
 \name{ngsmisc-package}
 \alias{ngsmisc}
 \alias{ngsmisc-package}
-\title{ngsmisc: What the Package Does (Title Case)}
+\title{ngsmisc: Miscellaneous Functions for NGS Related Data Analysis}
 \description{
-More about what it does (maybe more than one line) Use four spaces when indenting paragraphs within the Description.
+Provides a collection of utility functions for processing and analyzing NGS related data, including quality control, data visualization, and statistical analysis tools.
 }
 \author{
 \strong{Maintainer}: Toshihiro Arae \email{toshihiro.arae@gmail.com}

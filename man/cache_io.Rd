@@ -35,8 +35,6 @@ cache files. (default: \code{"cmdout_cache"}, default can be overridden by
 setting \code{options("ngsmisc.path_cmdout.save_dir")}.)}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-
 Wrapper functions of \code{path_cmdout()} to help the text file I/O.
 }
 \examples{

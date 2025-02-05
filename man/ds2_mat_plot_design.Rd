@@ -12,16 +12,14 @@ ds2_mat_plot_design(mat_design, flip = TRUE)
 \item{flip}{If \code{TRUE}, flip the x and y-axis. (default: \code{TRUE})}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-
 \code{ds2_mat_plot_design()} plots a design matrix.
 }
 \examples{
 df <-
   data.frame(
-    genotype = c("WT", "mutant") \%>\% rep(each = 4),
-    treatment = c(rep("mock", 2), rep("poison", 2)) \%>\% rep(2),
-    time = c("0 h", "2 h") \%>\% rep(4)
+    genotype = c("WT", "mutant") |> rep(each = 4),
+    treatment = c(rep("mock", 2), rep("poison", 2)) |> rep(2),
+    time = c("0 h", "2 h") |> rep(4)
   )
 row.names(df) <- apply(df, 1, paste, collapse = "_")
 df

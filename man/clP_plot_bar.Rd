@@ -16,3 +16,10 @@ clP_plot_bar(li_ego, n = 10, width = 40)
 \description{
 Write ego result as barplot
 }
+\examples{
+li_ego_example <-
+  system.file(package = "ngsmisc", "clusterprofiler", "li_ego_example.rds") |>
+  readRDS()
+clP_plot_bar(li_ego_example)
+
+}

@@ -1,7 +1,9 @@
 
+skip_if_not_installed("DESeq2")
+
 tbl_count <-
-  system.file(package = "ngsmisc", "deseq2") %>%
-  fs::dir_ls(regexp = "count.csv$") %>%
+  system.file(package = "ngsmisc", "deseq2") |>
+  fs::dir_ls(regexp = "count.csv$") |>
   readr::read_csv(show_col_types = FALSE)
 
 test_that("ds2_tbl_to_rcdf()", {
@@ -18,6 +20,23 @@ test_that("ds2_tbl_to_rcdf()", {
   expect_equal(as.logical(apply(rcdf, 2, is.integer)), rep(TRUE, 3))
 })
 
+test_that("ds2_mat_select_col()", {
+  # Check interface
+  expect_equal(names(formals(ds2_mat_select_col)), c("mat", "pattern", "negate"))
+  expect_equal(formals(ds2_mat_select_col)$negate, FALSE)
+
+  # Check output
+  mat <- head(iris[, 1:4]) |> as.matrix()
+  expect_equal(ds2_mat_select_col(mat, "Length"), mat[,c(1,3)])
+  expect_equal(ds2_mat_select_col(mat, "Length", negate = TRUE), mat[,c(2,4)])
+})
+
+test_that("ds2_mat_plot_design()", {
+  # Check interface
+  expect_equal(names(formals(ds2_mat_plot_design)), c("mat_design", "flip"))
+  expect_equal(formals(ds2_mat_plot_design)$flip, TRUE)
+})
+
 rcdf <- ds2_tbl_to_rcdf(tbl_count)
 test_that("ds2_rcdf_filter_by_rownames()", {
   # Check interface
@@ -31,10 +50,6 @@ test_that("ds2_rcdf_filter_by_rownames()", {
                rcdf[grepl("000..$", rownames(rcdf)),])
   expect_equal(ds2_rcdf_filter_by_rownames(rcdf, "000..$", negate = TRUE),
                rcdf[!grepl("000..$", rownames(rcdf)),])
-})
-
-test_that("ds2_rcdf_filter_organella()", {
-  lifecycle::expect_deprecated(ds2_rcdf_filter_organella(rcdf))
 })
 
 coldata <-
@@ -86,12 +101,12 @@ test_that("ds2_sizefactor", {
 
   sf <- 1:3
   expect_equal(
-    ds2_dds_set_sizefactor(dds_after, sf) %>% ds2_dds_get_sizefactor(),
+    ds2_dds_set_sizefactor(dds_after, sf) |> ds2_dds_get_sizefactor(),
     setNames(sf, paste0("sample_", 1:3)))
 })
 
 dds_w_sf <-
-  ds2_rcdf_to_dds(rcdf, coldata, ~ group) %>%
+  ds2_rcdf_to_dds(rcdf, coldata, ~ group) |>
   ds2_dds_estimate_sizefactor()
 test_that("ds2_dds_estimate_disp", {
   # Check interface
@@ -225,4 +240,8 @@ test_that("ds2_ddr_plot_independent_filtering()", {
   # Check output
   expect_no_message(ds2_ddr_plot_independent_filtering(ddr_lrt))
   expect_no_message(ds2_ddr_plot_independent_filtering(ddr_wald))
+})
+
+test_that("ds2_rcdf_filter_organella()", {
+  lifecycle::expect_deprecated(ds2_rcdf_filter_organella(rcdf))
 })

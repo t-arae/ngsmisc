@@ -12,3 +12,4 @@ clP_is_significant(ego)
 \description{
 Check the ego contains significantly enriched GO term
 }
+\keyword{internal}

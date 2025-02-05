@@ -14,3 +14,16 @@ clP_wrap_barplots(li_gp, scale_fill = ggplot2::scale_fill_viridis_c)
 \description{
 Wrapping barplots of enrichResult-objects
 }
+\examples{
+li_gp <-
+  system.file(package = "ngsmisc", "clusterprofiler", "li_ego_example.rds") |>
+  readRDS() |>
+  clP_plot_bar()
+
+li_gp |> clP_wrap_barplots() &
+  ggplot2::theme(text = ggplot2::element_text(size = 8))
+
+li_gp |> clP_wrap_barplots(\(...) ggplot2:: scale_fill_gradientn(..., colours = terrain.colors(10))) &
+  ggplot2::theme(text = ggplot2::element_text(size = 8))
+
+}

@@ -5,9 +5,8 @@ template:
 reference:
 - title: "wraper functions for processx::run()"
   contents:
-  - sep_by_blank
-  - cmd_run
-  - cat_process_out
+  - tokenize_cmd
+  - run_cmd
   - run_process_and
   - path_cmdout
   - cache_io
@@ -36,7 +35,6 @@ reference:
   contents:
   - ds2_tbl_to_rcdf
   - ds2_rcdf_filter_by_rownames
-  - ds2_rcdf_filter_organella
 - subtitle: "pipeline"
   contents:
   - ds2_rcdf_to_dds
@@ -61,17 +59,12 @@ reference:
   - clP_plot_bar
   - clP_wrap_barplots
   - clP_write_li_ego_as_bar
-  - clP_is_significant
-  - clP_num_significant
-  - clP_path2label
-  - clP_gp_theme_bar
 - title: "Misc"
   contents:
+  - cache_data
   - rename_nth_col
   - renamer_fpath
   - rename_fpath
-  - rename_col_AGI
-  - rename_col_fpath
   - wrap_strings
   - integer_breaks
   - norm_count

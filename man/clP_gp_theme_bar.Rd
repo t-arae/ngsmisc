@@ -9,3 +9,4 @@ clP_gp_theme_bar()
 \description{
 Theme for the barplot
 }
+\keyword{internal}

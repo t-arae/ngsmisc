@@ -14,16 +14,14 @@ ds2_rcdf_filter_by_rownames(rcdf, pattern, negate = FALSE)
 \item{negate}{If \code{TRUE}, return non-matching elements. (default: \code{FALSE})}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-
 \code{ds2_rcdf_filter_by_rownames()} filter a read-count data.frame by rownames.
 }
 \examples{
 # Example read-count data.frame
 rcdf <-
-  system.file(package = "ngsmisc", "deseq2") \%>\%
-  fs::dir_ls(regexp = "count.csv$") \%>\%
-  readr::read_csv(show_col_types = FALSE) \%>\%
+  system.file(package = "ngsmisc", "deseq2") |>
+  fs::dir_ls(regexp = "count.csv$") |>
+  readr::read_csv(show_col_types = FALSE) |>
   ds2_tbl_to_rcdf()
 
 # Original read-count data.frame

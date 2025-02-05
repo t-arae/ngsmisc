@@ -7,18 +7,11 @@
 cmd_run(sep_cmd, ...)
 }
 \arguments{
-\item{sep_cmd}{separated command created by \code{sep_by_blank()}.}
+\item{sep_cmd}{separated command created by \code{tokenize_cmd()}.}
 
 \item{...}{further options are passed to \code{processx::run()}.}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 }
-\examples{
-cmd_ok <- "echo 'hoge hoge'"
-cmd_run(sep_by_blank(cmd_ok))
-
-cmd_err <- "cat sonzai_shinai_file.txt"
-cmd_run(sep_by_blank(cmd_err), error_on_status = FALSE)
-
-}
+\keyword{internal}
