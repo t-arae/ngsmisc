@@ -21,8 +21,6 @@ ds2_dds_set_sizefactor(dds, sizefactor)
 \item{sizefactor}{a double vector. the length must be equal to \code{ncol(dds)}.}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-
 \code{ds2_dds_estimate_sizefactor()} does the same thing as \code{DESeq2::estimateSizeFactors()}.
 
 \code{ds2_dds_get_sizefactor()} gets size-factor as a named numeric vector.
@@ -33,30 +31,32 @@ ds2_dds_set_sizefactor(dds, sizefactor)
 To see the advanced settings, run \code{?DESeq2::`estimateSizeFactors,DESeqDataSet-method`}.
 }
 \examples{
-# Example read-count data.frame
-rcdf <-
-  system.file(package = "ngsmisc", "deseq2") \%>\%
-  fs::dir_ls(regexp = "count.csv$") \%>\%
-  readr::read_csv(show_col_types = FALSE) \%>\%
-  ds2_tbl_to_rcdf()
+if(requireNamespace("DESeq2", quietly = TRUE)) {
+  # Example read-count data.frame
+  rcdf <-
+    system.file(package = "ngsmisc", "deseq2") |>
+    fs::dir_ls(regexp = "count.csv$") |>
+    readr::read_csv(show_col_types = FALSE) |>
+    ds2_tbl_to_rcdf()
 
-# Prepare `DESeqDataSet` object without estimating size-factor.
-dds_wo_sf <-
-  ds2_rcdf_to_dds(
-    rcdf = rcdf,
-    coldata = data.frame(sample = colnames(rcdf))
-  )
+  # Prepare `DESeqDataSet` object without estimating size-factor.
+  dds_wo_sf <-
+    ds2_rcdf_to_dds(
+      rcdf = rcdf,
+      coldata = data.frame(sample = colnames(rcdf))
+    )
 
-# Estimate and set library size factors.
-dds_w_sf <- dds_wo_sf \%>\% ds2_dds_estimate_sizefactor()
+  # Estimate and set library size factors.
+  dds_w_sf <- dds_wo_sf |> ds2_dds_estimate_sizefactor()
 
-# If the specfied `dds` object has not computed size-factor before,
-# it will automatically compute size-factor and return it.
-dds_w_sf \%>\% ds2_dds_get_sizefactor()
+  # If the specfied `dds` object has not computed size-factor before,
+  # it will automatically compute size-factor and return it.
+  dds_w_sf |> ds2_dds_get_sizefactor()
 
-dds_wo_sf \%>\% ds2_dds_get_sizefactor()
+  dds_wo_sf |> ds2_dds_get_sizefactor()
 
-# The size-factor can be set manually.
-dds_wo_sf \%>\% ds2_dds_set_sizefactor(1:3) \%>\% ds2_dds_get_sizefactor()
+  # The size-factor can be set manually.
+  dds_wo_sf |> ds2_dds_set_sizefactor(1:3) |> ds2_dds_get_sizefactor()
+}
 
 }

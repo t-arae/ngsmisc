@@ -12,14 +12,12 @@ ds2_tbl_to_rcdf(tbl, id_col = "Geneid")
 \item{id_col}{character specifying the gene name column. (default: \code{"Geneid"})}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-
-\code{ds2_tbl_to_rcdf()} convert a read-count data tibble into a data.frame.
+\code{ds2_tbl_to_rcdf()} converts a read-count data tibble into a data.frame.
 }
 \examples{
 # Example read-count csv file
 inf <-
-  system.file(package = "ngsmisc", "deseq2") \%>\%
+  system.file(package = "ngsmisc", "deseq2") |>
   fs::dir_ls(regexp = "count.csv$")
 
 # Read read-count csv file

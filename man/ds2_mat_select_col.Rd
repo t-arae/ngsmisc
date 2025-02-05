@@ -14,12 +14,10 @@ ds2_mat_select_col(mat, pattern, negate = FALSE)
 \item{negate}{If \code{TRUE}, return non-matching columns. (default: \code{FALSE})}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-
 \code{ds2_mat_select_col()} selects columns in a matrix using regex matching to the column names.
 }
 \examples{
-mat <- head(iris[, 1:4]) \%>\% as.matrix()
+mat <- head(iris[, 1:4]) |> as.matrix()
 
 ds2_mat_select_col(mat, "Length")
 ds2_mat_select_col(mat, "Length", negate = TRUE)
