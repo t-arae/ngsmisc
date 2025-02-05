@@ -3,7 +3,7 @@ cmd_docker <- "docker run --rm -v {pwd}:/data {image} {command}"
 pwd <- "`pwd`"
 image <- "some_ngstool"
 command <- "some cmd --help"
-full_cmd <- stringr::str_glue(cmd_docker)
+full_cmd <- glue::glue(cmd_docker)
 sep_full_cmd <-
   c("docker", "run", "--rm", "-v", "`pwd`:/data", "some_ngstool",
     "some", "cmd", "--help")
@@ -17,7 +17,7 @@ test_that("tokenize_cmd()", {
 
   ws_path <- "'/a/b/c/space is included !'"
   expect_equal(tokenize_cmd(full_cmd), sep_full_cmd)
-  expect_equal(tokenize_cmd(stringr::str_glue("cd {ws_path}")),
+  expect_equal(tokenize_cmd(glue::glue("cd {ws_path}")),
                c("cd", "'/a/b/c/space is included !'"))
 })
 
@@ -29,10 +29,22 @@ sep_cmd2 <- tokenize_cmd(statement = stmt2)
 test_that("run_cmd()", {
   # Check interface
   expect_equal(names(formals(run_cmd)), c("sep_cmd", "...", "error_on_status", "echo", "spinner"))
+  expect_equal(formals(run_cmd)$error_on_status, TRUE)
+  expect_equal(eval(formals(run_cmd)$echo), FALSE)
+  expect_equal(eval(formals(run_cmd)$spinner), FALSE)
+  rlang::with_interactive({
+    expect_equal(eval(formals(run_cmd)$echo), TRUE)
+    expect_equal(eval(formals(run_cmd)$spinner), TRUE)
+  })
 
   # Check output
   expect_no_message(run_cmd(sep_cmd1))
   expect_no_message(run_cmd(sep_cmd1[1]))
+  expect_equal(capture.output(run_cmd(sep_cmd1)), character())
+  expect_invisible(run_cmd(sep_cmd1))
+  rlang::with_interactive(
+    expect_equal(capture.output(run_cmd(sep_cmd1))[1], "'hello'")
+  )
 
   expect_error(run_cmd(sep_cmd2))
   expect_no_message(run_cmd(sep_cmd2, error_on_status = FALSE))
@@ -121,4 +133,12 @@ test_that("cache_io", {
   expect_equal(cache_read(wd = temp_wd, "test.txt"),
                "hello world.")
   fs::dir_delete(temp_wd)
+})
+
+test_that("sep_by_blank()", {
+  lifecycle::expect_deprecated(sep_by_blank(""))
+})
+
+test_that("cmd_run()", {
+  lifecycle::expect_deprecated(cmd_run(c("echo", "")))
 })
