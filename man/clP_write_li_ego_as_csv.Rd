@@ -12,3 +12,8 @@ clP_write_li_ego_as_csv(path_li_ego_rds)
 \description{
 Write the enrichGO result to a csv file
 }
+\examples{
+#inf <- system.file(package = "ngsmisc", "clusterprofiler", "li_ego_example.rds")
+#clP_write_li_ego_as_csv(inf)
+
+}

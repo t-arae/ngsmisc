@@ -12,3 +12,4 @@ clP_num_significant(ego)
 \description{
 Return the number of significantly enriched GO term in the ego
 }
+\keyword{internal}

@@ -12,3 +12,4 @@ clP_path2label(path_li_ego_rds)
 \description{
 Extract label of gene set from the file path of result list
 }
+\keyword{internal}
