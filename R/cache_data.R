@@ -3,6 +3,7 @@
 #' @param object an object or an expression which return object
 #' @param fun_load a function to load object from file
 #' @param fun_save a function to write object into file.
+#' @export 
 #' @examples
 #' \dontrun{
 #' # cache iris to the file
