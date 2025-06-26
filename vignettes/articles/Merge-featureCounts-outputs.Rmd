@@ -1,5 +1,5 @@
 ---
-title: "Merge featureCounts outputs"
+title: "Working with featureCounts outputs"
 highlight: "tango"
 ---
 
@@ -10,51 +10,63 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Read, modify and merge read-count files.
+# Reading, Modifying, and Merging Read-Count Files
+
+The `featureCounts` tool outputs read-count files for each sample.  
+The `ngsmisc` package provides functions to read these files, rename columns for clarity,
+and merge multiple files into a single table.
+
 ```{r}
-# example output files of read-count.
+# Locate example read-count output files included in the ngsmisc package.
 infs <-
   system.file(package = "ngsmisc", "featurecounts") |>
   fs::dir_ls(regexp = "_gene_counts.txt$")
 
-# read read-count file by `fC_read_count()`
+# Read a read-count file using `fC_read_count()`
 ngsmisc::fC_read_count(infs[1])
 
-# rename the 7th column of the read-count file by `rename_fpath_bam()`
+# Rename the 7th column (sample column) using `rename_fpath_bam()`
 ngsmisc::fC_read_count(infs[1]) |>
   ngsmisc::rename_fpath_bam(nth = 7)
 
-# read multiple read-count files and merge them by `fC_merge_count()`.
-lapply(infs, ngsmisc::fC_read_count) |>
-  ngsmisc::fC_merge_count()
-
-# example workflow using these functions
+# Read multiple read-count files and merge them using `fC_merge_count()`
 lapply(infs, ngsmisc::fC_read_count) |>
   lapply(ngsmisc::rename_fpath_bam, nth = 7) |>
   ngsmisc::fC_merge_count()
 ```
 
-# Write merged read-count data to a csv file.
+# Writing Merged Read-Count Data to a CSV File
+
+After merging read-count data, you may want to save the results for downstream analysis or sharing.
+
 ```{r}
-# example read-count files
+# Locate example read-count files
 infs <-
   system.file(package = "ngsmisc", "featurecounts") |>
   fs::dir_ls(regexp = "_gene_counts.txt$")
 
-# Read and merge read-count files and write them into a single csv file. 
+# Read, rename, merge, and write the merged data to a CSV file
 lapply(infs, ngsmisc::fC_read_count) |>
   lapply(ngsmisc::rename_fpath_bam, nth = 7) |>
   ngsmisc::fC_merge_count() |>
-  ngsmisc::fC_write_count("./count.csv")
+  ngsmisc::fC_write_count("count.csv")
 
-# Check
-readr::read_csv("./count.csv", show_col_types = FALSE)
-fs::file_delete("./count.csv")
+# Check the written CSV file
+readr::read_csv("count.csv", show_col_types = FALSE)
 ```
 
-# Calculate RPM, RPKM, TPM
+```{r, echo=FALSE}
+fs::file_delete("count.csv")
+```
+
+# Calculating RPM, RPKM, and TPM
+
+Normalization metrics such as RPM (Reads Per Million), RPKM (Reads Per Kilobase Million),
+and TPM (Transcripts Per Million) are commonly used in RNA-seq analysis.  
+The `ngsmisc` package provides functions to calculate these metrics from merged read-count tables.
+
 ```{r}
-# example output files of read-count.
+# Prepare a merged read-count table
 tbl_readcount <-
   system.file(package = "ngsmisc", "featurecounts") |>
   fs::dir_ls(regexp = "_gene_counts.txt$") |>
@@ -62,16 +74,16 @@ tbl_readcount <-
   lapply(ngsmisc::rename_fpath_bam, nth = 7) |>
   ngsmisc::fC_merge_count()
 
-# calculate Reads Per Million mapped reads (RPM)
+# Calculate Reads Per Million mapped reads (RPM)
 tbl_readcount |> ngsmisc::fC_calc_rpm() |> dplyr::glimpse()
 
-# calculate Reads Per Kilobase of exon per Million reads mapped (RPKM)
+# Calculate Reads Per Kilobase of exon per Million reads mapped (RPKM)
 tbl_readcount |> ngsmisc::fC_calc_rpkm() |> dplyr::glimpse()
 
-# calculate Transcripts Per Million (TPM)
+# Calculate Transcripts Per Million (TPM)
 tbl_readcount |> ngsmisc::fC_calc_tpm() |> dplyr::glimpse()
 
-# calculate all three.
+# Calculate all three metrics in sequence.
 tbl_readcount |>
   ngsmisc::fC_calc_rpm() |>
   ngsmisc::fC_calc_rpkm() |>
@@ -79,22 +91,25 @@ tbl_readcount |>
   dplyr::glimpse()
 ```
 
+# Reading, Modifying, and Merging Read-Count **Summary** Files
 
-# Read, modify and merge read-count **summary** files.
+`featureCounts` also produces summary files that report the number of reads assigned to different categories.  
+These can be read, renamed, and merged for multi-sample comparison.
+
 ```{r}
-# example output files of summary.
+# Locate example summary files
 infs <-
   system.file(package = "ngsmisc", "featurecounts") |>
   fs::dir_ls(regexp = "_gene_counts.txt.summary$")
 
-# read read-count file by `fC_read_summary()`
+# Read a summary file using `fC_read_summary()`
 ngsmisc::fC_read_summary(infs[1])
 
-# rename the 2nd column of the summary file by `rename_fpath_bam()` with `nth` argument.
+# Rename the 2nd column (sample column) using `rename_fpath_bam()` with `nth` argument
 ngsmisc::fC_read_summary(infs[1]) |>
   ngsmisc::rename_fpath_bam(nth = 2)
 
-# read multiple summary files and merge them by `purrr::reduce()` and `dplyr::left_join`.
+# Read and merge multiple summary files using `purrr::reduce()` and `dplyr::left_join`
 lapply(infs, ngsmisc::fC_read_summary) |>
   lapply(ngsmisc::rename_fpath_bam, nth = 2) |>
   purrr::reduce(dplyr::left_join, by = "Status")

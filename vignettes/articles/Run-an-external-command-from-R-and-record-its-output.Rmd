@@ -11,34 +11,34 @@ knitr::opts_chunk$set(
 
 # Run an external command from R
 
-The `ngsmisc` package provides some wrapper functions for easy handling of `processx::run()`.
+The `ngsmisc` package provides wrapper functions for handling `processx::run()`.
 
-The procedure for executing a command line statement is as follows.
+The typical procedure for executing a command line statement in `ngsmisc` is as follows.
 
-1. Split the command line statement with `tokenize_cmd()`.
+1. Split the command line statement using `tokenize_cmd()`.
 2. Pass the split statement to `run_cmd()` and execute it.
-3. Check the execution results of output.
+3. Check the execution results.
 
-To run a external command line statement using `processx::run()`, 
+To run a external command line statement with `processx::run()`, 
 you have to split the statement into the command and each argument.
-You can separate the command line statement by white spaces using `tokenize_cmd()`.
+You can do this easily with `tokenize_cmd()`, which separates the statement by whitespace.
 
 ```{r}
 # Define an example command line statement.
 cmd <- "echo 'This is stdout.'"
 
 # Split the statement.
-# The first element is the name of command you want to run.
-# And rests are the arguments of it.
+# The first element is the command to run.
+# The remaining elements are its arguments.
 ngsmisc::tokenize_cmd(cmd)
 ```
 
-The splitted statement can be executed using `run_cmd()`.
-The `run_cmd()` passes the first element of the first argument to the `command` 
-of `processx::run()` and the rest of the first argument to the `args`.
-The rest of the arguments are passed directly to `processx::run()`.
+The splitted statement can then be executed using `run_cmd()`.
+`run_cmd()` passes the first element of the first argument to the `command` of `processx::run()`,
+and the remaining elements to the `args` parameter.
+Any additional arguments are passed to `processx::run()`.
 
-The `run_cmd()`(`processx::run()`) invisibly returns the result of execution as the named list.
+`run_cmd()` (like `processx::run()`) invisibly returns the execution result as a named list.
 
 ```{r}
 # Run the separated command statement using `run_cmd()`.
@@ -46,23 +46,23 @@ out <-
   ngsmisc::tokenize_cmd(cmd) |>
   ngsmisc::run_cmd()
 
-# The output is a named list containing, execution status, 
-# output of stdout, output of stderr, and whether timeout or not.
+# The output is a named list containing execution status, 
+# stdout, stderr, and whether timeout or not.
 out
 ```
 
-The output is a list, so you can easily print and check the results in it.
-The `ngsmisc` package also provides some deadly simple wrapper functions to get/print the results.
+Since the output is a list, you can easily print and check the results.
+The `ngsmisc` package also provides simple wrapper functions to get/print the results.
 
 ```{r}
-# Write a simple shell script, which outputs both stdout and stderr.
+# Write a simple shell script that outputs both stdout and stderr.
 c(
   "echo 'This is stdout.' >&1",
   "echo 'This is stderr.' >&2"
 ) |>
-  readr::write_lines("temp.sh")
+  writeLines("temp.sh")
 
-# Execute above shell script and get results.
+# Execute the shell script and get the results.
 out <- ngsmisc::tokenize_cmd("bash temp.sh") |> ngsmisc::run_cmd()
 
 # Get the stdout result.
@@ -75,39 +75,37 @@ fs::file_delete("temp.sh")
 
 # Shortened form
 
-The `ngsmisc` also provides several shortened functions that performs the above 
-processes in a single function.
+`ngsmisc` also provides several shortcut functions that performs the above processes in a single step.
 
 ```{r}
 # Do the same thing above by `run_get_stdout()`
 ngsmisc::run_get_stdout(cmd)
 ```
 
-# Save the result of command line execution
+# Saving the result of command execution
 
-Sometimes I think it would be useful to save the results in a file so I can look at them later.
-This is because if the results are saved (cached), there is no need to run it again.
-It is especially true when you run a process that takes a long time.
+It could be useful to save the results to a file for later reference.
+If the results are saved (cached), you don't need to rerun the command,
+which is especiall helpful for long-running processes.
 
-When saving the results to a text file, you can keep the directory clean if you can save the files in one place.
-The `path_cmdout()` is a convenience function that returns the file path to save the output,  and also makes the destination directory.
+When saving results to a text file, it's convienient to keeep all output files in one directory.
+The `path_cmdout()` function returns a file path for saving the output and creates the destination directory if needed.
 
 ```{r}
-# `path_cmdout()` inserts specified directory by the `save_dir` argument 
-# (default: `"cmdout_cache"`) in between the directory specified by the `wd` and
-# file path (`...`).
-# if `create_dir` is `TRUE`, intermediate directories will be created.
+# `path_cmdout()` inserts the directory specified by `save_dir` (default: `"cmdout_cache"`)
+# between the working directory (`wd`) and the fspecified by the file path (`...`).
+# if `create_dir` is `TRUE`, intermediate directories are created.
 args(ngsmisc::path_cmdout)
 
 ngsmisc::path_cmdout("/path/to/workdir", "cmdout.txt", create_dir = FALSE)
 
-# If you are working with RStudio's project feature,
+# If you are using RStudio's project feature,
 # you can use `here::here()` as follows.
 fpath <- ngsmisc::path_cmdout(here::here(), "cmdout.txt")
 
-# Save the output to a file, and then see the result later as follows.
+# Save the output to a file, then you can see the result later.
 ngsmisc::run_get_stdout(cmd) |> readr::write_lines(file = fpath)
-readr::read_lines(fpath) |> cat(sep = "\n")
+readLines(fpath) |> cat(sep = "\n")
 ```
 
 ```{r, echo=FALSE}
