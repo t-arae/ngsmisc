@@ -1,7 +1,7 @@
 Package: ngsmisc
 Type: Package
 Title: Miscellaneous Functions for NGS Related Data Analysis
-Version: 0.5.0
+Version: 0.5.1
 Authors@R: person(given = "Toshihiro", family = "Arae", 
                  email = "toshihiro.arae@gmail.com", 
                  role = c("aut", "cre"))
